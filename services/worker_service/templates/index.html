@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTrack - Worker Management</title>
+    <!-- Use basic beautiful CSS without external libs to be safe -->
+    <style>
+        :root {
+            --bg: #f4f6f8;
+            --surface: #ffffff;
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --text: #333333;
+            --text-light: #777777;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary-dark);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .worker-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .worker-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            background: white;
+        }
+
+        .worker-card h3 {
+            margin-top: 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background-color: #e8f5e9;
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 0.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🌾 AgriTrack Workers</h1>
+            <div>
+                <span>Login as: </span>
+                <select id="role-selector" onchange="switchTab('workers-tab')">
+                    <option value="supervisor">Supervisor</option>
+                    <option value="farm_manager">Farm Manager</option>
+                    <option value="field_worker">Field Worker</option>
+                    <option value="agronomist">Agronomist</option>
+                    <option value="quality_inspector">Quality Inspector</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('workers-tab')">Workers</div>
+            <div class="tab" onclick="switchTab('tasks-tab')">Tasks</div>
+            <div class="tab" onclick="switchTab('mock-tab')">Mock External Data</div>
+        </div>
+
+        <!-- WORKERS TAB -->
+        <div id="workers-tab" class="tab-content">
+            <div class="card">
+                <h3>Add New Worker</h3>
+                <form id="add-worker-form" onsubmit="addWorker(event)">
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex:1;">
+                            <label>First Name</label>
+                            <input type="text" id="w-first" required>
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Last Name</label>
+                            <input type="text" id="w-last" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex:1;">
+                            <label>Type</label>
+                            <select id="w-type">
+                                <option value="field_worker">Field Worker</option>
+                                <option value="irrigation_worker">Irrigation Worker</option>
+                                <option value="equipment_operator">Equipment Operator</option>
+                                <option value="supervisor">Supervisor</option>
+                                <option value="farm_manager">Farm Manager</option>
+                                <option value="agronomist">Agronomist</option>
+                                <option value="quality_inspector">Quality Inspector</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>Phone</label>
+                            <input type="text" id="w-phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hire Date</label>
+                        <input type="date" id="w-date" required>
+                    </div>
+                    <button type="submit">Create Worker</button>
+                </form>
+            </div>
+
+            <div class="worker-list" id="worker-list-container">
+                <!-- Rendered list of workers -->
+            </div>
+        </div>
+
+        <!-- TASKS TAB -->
+        <div id="tasks-tab" class="tab-content hidden">
+            <div class="card">
+                <h3>Recent Tasks</h3>
+                <div id="tasks-list">Loading...</div>
+            </div>
+        </div>
+
+        <!-- MOCK DATA TAB -->
+        <div id="mock-tab" class="tab-content hidden">
+            <div class="card">
+                <h3>Test Mock Connections (Sarah/Nadjoua)</h3>
+                <button onclick="testMockData('lands')">Load Mocks: Lands</button>
+                <button onclick="testMockData('cultures')">Load Mocks: Cultures</button>
+                <div id="mock-output" style="margin-top:1rem; background:#f0f0f0; padding:1rem; border-radius:8px;">
+                    <pre>...</pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function getHeaders() {
+            // We simulate the header injected by Nadjoua's auth service proxy
+            const role = document.getElementById('role-selector').value;
+            return {
+                'Content-Type': 'application/json',
+                'X-Mock-Role': role,
+                'X-Mock-UserId': "1" // fake user id
+            };
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(tabId).classList.remove('hidden');
+            event.target.classList.add('active');
+
+            if (tabId === 'workers-tab') fetchWorkers();
+            if (tabId === 'tasks-tab') fetchTasks();
+        }
+
+        async function fetchWorkers() {
+            try {
+                const res = await fetch(`${API_BASE}/workers/`, { headers: getHeaders() });
+                const data = await res.json();
+                const container = document.getElementById('worker-list-container');
+                container.innerHTML = '';
+
+                if (data.detail) {
+                    container.innerHTML = `<p style="color:red">${data.detail}</p>`;
+                    return;
+                }
+
+                data.results?.forEach(w => {
+                    container.innerHTML += `
+                    <div class="worker-card">
+                        <h3>${w.first_name} ${w.last_name}</h3>
+                        <div class="tag">${w.worker_type}</div>
+                        <p>Status: ${w.status}</p>
+                        <p>Zone: ${w.zone || 'Unassigned'}</p>
+                        <button onclick="deleteWorker(${w.id})" style="background:#e53935; padding: 0.3rem 0.8rem; font-size: 0.8rem;">Remove</button>
+                    </div>
+                `;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function addWorker(e) {
+            e.preventDefault();
+            const payload = {
+                first_name: document.getElementById('w-first').value,
+                last_name: document.getElementById('w-last').value,
+                worker_type: document.getElementById('w-type').value,
+                phone: document.getElementById('w-phone').value,
+                hire_date: document.getElementById('w-date').value
+            };
+
+            const res = await fetch(`${API_BASE}/workers/`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert('Worker created successfully!');
+                fetchWorkers();
+            } else {
+                const err = await res.json();
+                alert('Error: ' + JSON.stringify(err));
+            }
+        }
+
+        async function deleteWorker(id) {
+            if (!confirm('Deactivate this worker?')) return;
+            const res = await fetch(`${API_BASE}/workers/${id}/`, {
+                method: 'DELETE',
+                headers: getHeaders()
+            });
+            if (res.ok) {
+                fetchWorkers();
+            } else {
+                alert('Permission denied (Need Manager or Supervisor)');
+            }
+        }
+
+        async function fetchTasks() {
+            try {
+                const res = await fetch(`${API_BASE}/tasks/`, { headers: getHeaders() });
+                const data = await res.json();
+                const container = document.getElementById('tasks-list');
+
+                if (data.detail) {
+                    container.innerHTML = `<p style="color:red">${data.detail}</p>`;
+                    return;
+                }
+
+                container.innerHTML = data.results?.map(t =>
+                    `<p><b>Task #${t.id}</b>: ${t.description} (Status: ${t.status}) <br>
+                 <small>Land: ${t.land_name || '-'} | Culture: ${t.culture_name || '-'}</small></p><hr>`
+                ).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function testMockData(endpoint) {
+            const res = await fetch(`/mock/${endpoint}/`);
+            const data = await res.json();
+            document.getElementById('mock-output').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        // Initial load
+        fetchWorkers();
+    </script>
+
+</body>
+
+</html>
