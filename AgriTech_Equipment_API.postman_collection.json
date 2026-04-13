@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "AgriTech - Equipment Service API",
+    "description": "Collection for testing Gestion des Équipements Agricoles microservice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Equipment Management",
+      "item": [
+        {
+          "name": "Create Tractor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tracteur John Deere T740\",\n  \"type\": \"Tractor\",\n  \"serial_number\": \"JD-2024-001\",\n  \"usage_hours\": 850,\n  \"status\": \"active\",\n  \"last_revision\": \"2026-01-15\",\n  \"next_revision\": \"2027-01-15\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Irrigation Tool",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Système d'Irrigation Pivot\",\n  \"type\": \"Irrigation Tool\",\n  \"serial_number\": \"IRR-2024-001\",\n  \"usage_hours\": 450,\n  \"status\": \"active\",\n  \"last_revision\": \"2026-02-01\",\n  \"next_revision\": \"2026-08-01\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Harvesting Equipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Moissonneuse-batteuse CLAAS\",\n  \"type\": \"Harvesting Equipment\",\n  \"serial_number\": \"CLAAS-2024-001\",\n  \"usage_hours\": 320,\n  \"status\": \"maintenance\",\n  \"last_revision\": \"2026-03-01\",\n  \"next_revision\": \"2026-09-01\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", ""]
+            }
+          }
+        },
+        {
+          "name": "List All Equipment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Equipment Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/1/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Equipment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tracteur John Deere T740 (Modifié)\",\n  \"type\": \"Tractor\",\n  \"serial_number\": \"JD-2024-001\",\n  \"usage_hours\": 900,\n  \"status\": \"active\",\n  \"last_revision\": \"2026-01-15\",\n  \"next_revision\": \"2027-01-15\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/1/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Delete Equipment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/1/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", "1", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Business Endpoints",
+      "item": [
+        {
+          "name": "Get Equipment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/1/statut/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", "1", "statut", ""]
+            }
+          }
+        },
+        {
+          "name": "Record Maintenance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8000/api/equipements/1/maintenance/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "equipements", "1", "maintenance", ""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
