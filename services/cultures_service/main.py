@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- CONFIGURATION ---
-JWT_SECRET = os.getenv("JWT_SECRET", "change-me")
+JWT_SECRET = os.getenv("JWT_SECRET", "django-insecure-agritech-production-key-change-me-2024")
 ALGORITHM = "HS256"
 FIREBASE_KEY_PATH = os.getenv("FIREBASE_CREDENTIALS_JSON", "firebase-key.json")
 FIREBASE_CONFIG = os.getenv("FIREBASE_CONFIG") # Entire JSON as string
