@@ -1,0 +1,26 @@
+# Security & Secrets
+firebase-key.json
+.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+services/venv/
+services/cultures_service/venv/
+
+# Deployment
+.vercel/
+.koyeb/
+
+# IDEs
+.vscode/
+.idea/
+
+# Database
+*.sqlite3

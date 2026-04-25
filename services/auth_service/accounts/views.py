@@ -1,3 +1,25 @@
-from django.shortcuts import render
+from rest_framework import generics, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import RegisterSerializer, UserSerializer, MyTokenObtainPairSerializer
 
-# Create your views here.
+User = get_user_model()
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    # ONLY ADMINS CAN CREATE NEW USER ACCOUNTS
+    permission_classes = (permissions.IsAdminUser,)
+    serializer_class = RegisterSerializer
+
+
+class UserProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

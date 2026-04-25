@@ -1,0 +1,1829 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriTech — Agritecture Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cabinet+Grotesk:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --emerald-deep:   #022c22;
+      --emerald-dark:   #064e3b;
+      --emerald-mid:    #065f46;
+      --emerald-base:   #059669;
+      --emerald-vivid:  #10b981;
+      --emerald-glow:   #34d399;
+      --earth-brown:    #78350f;
+      --earth-warm:     #92400e;
+      --earth-sand:     #d97706;
+      --earth-light:    #fef3c7;
+      --glass-bg:       rgba(6, 78, 59, 0.18);
+      --glass-border:   rgba(52, 211, 153, 0.18);
+      --glass-strong:   rgba(6, 78, 59, 0.45);
+      --text-primary:   #ecfdf5;
+      --text-secondary: #a7f3d0;
+      --text-muted:     #6ee7b7;
+      --shadow-glow:    0 0 40px rgba(16, 185, 129, 0.15);
+      --shadow-card:    0 8px 32px rgba(2, 44, 34, 0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      background: var(--emerald-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BACKGROUND ─── */
+    .bg-field {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 80%, rgba(6,78,59,0.7) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(5,150,105,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(2,44,34,0.9) 0%, transparent 100%),
+        linear-gradient(160deg, #011a12 0%, #022c22 40%, #031f17 70%, #041a10 100%);
+    }
+    .bg-field::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(16,185,129,0.04) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(16,185,129,0.04) 40px);
+      animation: grid-drift 20s linear infinite;
+    }
+    @keyframes grid-drift { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%); top: -100px; right: -100px; animation: orb-float 12s ease-in-out infinite; }
+    .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%); bottom: 10%; left: 5%; animation: orb-float 15s ease-in-out infinite reverse; }
+    @keyframes orb-float { 0%,100%{transform:translate(0,0);} 33%{transform:translate(30px,-40px);} 66%{transform:translate(-20px,20px);} }
+
+    /* ─── GLASS UTILITY ─── */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(52,211,153,0.1);
+    }
+    .glass-strong {
+      background: var(--glass-strong);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(52,211,153,0.25);
+      box-shadow: var(--shadow-card), var(--shadow-glow), inset 0 1px 0 rgba(52,211,153,0.15);
+    }
+    .glass-card {
+      background: rgba(6,78,59,0.22);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(52,211,153,0.12);
+      box-shadow: 0 4px 24px rgba(2,44,34,0.5), inset 0 1px 0 rgba(52,211,153,0.08);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .glass-card:hover {
+      border-color: rgba(52,211,153,0.3);
+      box-shadow: 0 8px 40px rgba(2,44,34,0.7), 0 0 20px rgba(16,185,129,0.12), inset 0 1px 0 rgba(52,211,153,0.18);
+      transform: translateY(-3px);
+    }
+
+    /* ─── LOGIN PAGE ─── */
+    #login-page {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .login-box {
+      width: 100%; max-width: 440px;
+      padding: 3rem 2.5rem;
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-box::before {
+      content: '';
+      position: absolute; top: -2px; left: 15%; right: 15%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--emerald-glow), transparent);
+    }
+    .login-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--emerald-glow) 0%, var(--emerald-vivid) 50%, #6ee7b7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .login-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .field-group { position: relative; margin-top: 1.5rem; }
+    .field-group label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block; margin-bottom: 0.5rem;
+    }
+    .field-input {
+      width: 100%;
+      background: rgba(2,44,34,0.6);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 12px;
+      padding: 0.85rem 1rem 0.85rem 2.8rem;
+      color: var(--text-primary);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .field-input:focus {
+      border-color: var(--emerald-vivid);
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.12), inset 0 0 20px rgba(16,185,129,0.04);
+      background: rgba(6,78,59,0.4);
+    }
+    .field-input::placeholder { color: rgba(167,243,208,0.35); }
+    .field-icon {
+      position: absolute; left: 0.9rem; bottom: 0.85rem;
+      color: var(--emerald-vivid); opacity: 0.6;
+    }
+    .btn-primary {
+      width: 100%; margin-top: 2rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--emerald-mid) 0%, var(--emerald-base) 100%);
+      border: 1px solid rgba(52,211,153,0.3);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(52,211,153,0.15), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.35); }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:active { transform: translateY(0); }
+    .error-msg {
+      color: #fca5a5;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      margin-top: 0.4rem;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ─── MAIN APP ─── */
+    #app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+    #app.active { display: flex; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 260px; min-width: 260px;
+      min-height: 100vh;
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid rgba(52,211,153,0.1);
+      z-index: 50;
+    }
+    .sidebar-brand {
+      padding: 0.5rem 0.75rem 1.5rem;
+      border-bottom: 1px solid rgba(52,211,153,0.1);
+      margin-bottom: 1.5rem;
+    }
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--emerald-glow), var(--emerald-vivid));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .brand-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    .nav-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(110,231,183,0.4);
+      padding: 0 0.75rem;
+      margin-bottom: 0.4rem;
+      margin-top: 1.2rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      position: relative;
+      margin-bottom: 0.15rem;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover {
+      background: rgba(16,185,129,0.1);
+      color: var(--text-primary);
+      border-color: rgba(52,211,153,0.15);
+    }
+    .nav-item.active {
+      background: rgba(16,185,129,0.18);
+      color: var(--emerald-glow);
+      border-color: rgba(52,211,153,0.25);
+      box-shadow: inset 0 0 20px rgba(16,185,129,0.05);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: -1rem; top: 25%; bottom: 25%;
+      width: 3px; border-radius: 0 3px 3px 0;
+      background: var(--emerald-vivid);
+      box-shadow: 0 0 10px var(--emerald-vivid);
+    }
+    .nav-icon { font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: rgba(16,185,129,0.2);
+      color: var(--emerald-vivid);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 20px;
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(52,211,153,0.1);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      background: rgba(2,44,34,0.5);
+      border: 1px solid rgba(52,211,153,0.12);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .user-pill:hover { border-color: rgba(52,211,153,0.25); }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-base), var(--emerald-vivid));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+    .user-role { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.1em; }
+
+
+    .main-content { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; min-width: 0; }
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.9rem;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+    }
+    .page-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .btn-sm {
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      border: 1px solid;
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: rgba(52,211,153,0.25);
+      color: var(--text-secondary);
+    }
+    .btn-outline:hover { border-color: var(--emerald-vivid); color: var(--emerald-glow); background: rgba(16,185,129,0.08); }
+    .btn-filled {
+      background: linear-gradient(135deg, var(--emerald-mid), var(--emerald-base));
+      border-color: rgba(52,211,153,0.3);
+      color: white;
+    }
+    .btn-filled:hover { box-shadow: 0 4px 20px rgba(16,185,129,0.3); transform: translateY(-1px); }
+
+    /* ─── METRIC CARDS ─── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.4), transparent);
+    }
+    .metric-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .metric-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      margin: 0.4rem 0;
+      line-height: 1;
+    }
+    .metric-unit { font-size: 1rem; font-weight: 400; color: var(--text-muted); margin-left: 0.15rem; }
+    .metric-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .metric-change.up { color: var(--emerald-glow); }
+    .metric-change.down { color: #fca5a5; }
+    .metric-icon {
+      position: absolute; right: 1.2rem; top: 1.2rem;
+      font-size: 1.6rem; opacity: 0.25;
+    }
+    .progress-track {
+      height: 5px; border-radius: 3px;
+      background: rgba(52,211,153,0.1);
+      margin-top: 0.85rem; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--emerald-base), var(--emerald-glow));
+      box-shadow: 0 0 8px rgba(52,211,153,0.4);
+      transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── STATUS SECTION ─── */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .status-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-radius: 14px;
+    }
+    .status-label { font-size: 0.88rem; font-weight: 500; color: var(--text-secondary); }
+    .status-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.15rem; }
+    .toggle {
+      width: 44px; height: 24px;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 12px;
+      cursor: pointer; position: relative;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .toggle.on { background: rgba(16,185,129,0.4); border-color: var(--emerald-vivid); box-shadow: 0 0 12px rgba(16,185,129,0.3); }
+    .toggle::after {
+      content: '';
+      position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: rgba(167,243,208,0.5);
+      transition: all 0.3s ease;
+    }
+    .toggle.on::after { transform: translateX(20px); background: var(--emerald-glow); box-shadow: 0 0 8px var(--emerald-glow); }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--emerald-vivid);
+      box-shadow: 0 0 0 0 rgba(16,185,129,0.4);
+      animation: pulse-ring 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0);} }
+
+    /* ─── 3D FARM ILLUSTRATION (CSS) ─── */
+    .farm-canvas {
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .farm-scene {
+      display: flex; align-items: flex-end; gap: 0.75rem;
+      justify-content: center;
+      height: 140px; position: relative;
+    }
+    .farm-row { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .crop-plant {
+      width: 18px; position: relative;
+      animation: sway 3s ease-in-out infinite;
+    }
+    .crop-plant:nth-child(2n) { animation-delay: 0.4s; }
+    .crop-plant:nth-child(3n) { animation-delay: 0.8s; }
+    @keyframes sway { 0%,100%{transform:rotate(-3deg);} 50%{transform:rotate(3deg);} }
+    .crop-stem { width: 3px; height: 40px; background: linear-gradient(to top, #065f46, #10b981); margin: 0 auto; border-radius: 2px; }
+    .crop-leaf {
+      width: 16px; height: 10px;
+      background: radial-gradient(ellipse at 30% 50%, #34d399, #059669);
+      border-radius: 50% 50% 50% 0;
+      position: absolute; top: 5px;
+    }
+    .crop-leaf.right { border-radius: 50% 50% 0 50%; left: 8px; }
+    .crop-leaf.left { transform: scaleX(-1); right: 8px; }
+    .crop-bulb {
+      width: 20px; height: 20px;
+      background: radial-gradient(circle at 35% 35%, #6ee7b7, #059669);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(52,211,153,0.3);
+    }
+    .crop-tall .crop-stem { height: 70px; }
+    .crop-tall .crop-bulb { width: 26px; height: 26px; }
+    .soil-strip {
+      width: 100%; height: 10px;
+      background: linear-gradient(to bottom, #78350f, #451a03);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
+    .farm-drone {
+      position: absolute; top: 20px; right: 15%;
+      animation: drone-hover 4s ease-in-out infinite;
+    }
+    @keyframes drone-hover { 0%,100%{transform:translateY(0) rotate(2deg);} 50%{transform:translateY(-12px) rotate(-2deg);} }
+    .drone-body {
+      width: 36px; height: 14px;
+      background: rgba(52,211,153,0.3);
+      border: 1px solid rgba(52,211,153,0.5);
+      border-radius: 4px;
+      position: relative;
+    }
+    .drone-arm {
+      position: absolute; top: 50%; width: 18px; height: 2px;
+      background: rgba(52,211,153,0.4); border-radius: 1px;
+    }
+    .drone-arm.left { right: 100%; transform: translateY(-50%); }
+    .drone-arm.right { left: 100%; transform: translateY(-50%); }
+    .drone-prop {
+      position: absolute; width: 14px; height: 4px;
+      background: rgba(52,211,153,0.6); border-radius: 2px;
+      animation: spin-prop 0.3s linear infinite;
+    }
+    @keyframes spin-prop { to { transform: rotateY(180deg); } }
+    .drone-prop.tl { top: -3px; left: -22px; }
+    .drone-prop.tr { top: -3px; right: -22px; }
+    .drone-beam {
+      position: absolute; top: 100%; left: 50%;
+      width: 2px; height: 40px;
+      background: linear-gradient(to bottom, rgba(52,211,153,0.4), transparent);
+      transform: translateX(-50%);
+      filter: blur(1px);
+    }
+    .sun-orb {
+      position: absolute; top: 10px; left: 12%;
+      width: 50px; height: 50px;
+      background: radial-gradient(circle, rgba(217,119,6,0.7) 0%, rgba(245,158,11,0.3) 50%, transparent 70%);
+      border-radius: 50%; filter: blur(2px);
+    }
+    .farm-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: absolute;
+      bottom: 1.25rem; left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    /* ─── CULTURES PAGE ─── */
+    .cultures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .crop-card { border-radius: 18px; padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; }
+    .crop-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, rgba(52,211,153,0.08), transparent);
+      border-radius: 50%;
+    }
+    .crop-emoji { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+    .crop-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); }
+    .crop-variety { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 0.15rem; }
+    .crop-stats { display: flex; gap: 1rem; margin: 1rem 0; }
+    .crop-stat { flex: 1; }
+    .crop-stat-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .crop-stat-val { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 0.15rem; }
+    .health-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .health-excellent { background: rgba(52,211,153,0.15); color: var(--emerald-glow); border: 1px solid rgba(52,211,153,0.25); }
+    .health-good { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .health-warning { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.25); }
+
+    /* ─── EQUIPMENT PAGE ─── */
+    .equipment-list { display: flex; flex-direction: column; gap: 1rem; }
+    .equip-row {
+      border-radius: 14px; padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .equip-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(6,95,70,0.4);
+      border: 1px solid rgba(52,211,153,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+    }
+    .equip-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
+    .equip-model { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+    .equip-meta { display: flex; gap: 1rem; margin-top: 0.4rem; font-size: 0.78rem; color: var(--text-secondary); }
+    .avail-chip {
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .avail-yes { background: rgba(52,211,153,0.15); color: var(--emerald-glow); border: 1px solid rgba(52,211,153,0.2); }
+    .avail-no { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .avail-main { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.2); }
+
+    /* ─── TERRE PAGE ─── */
+    .terre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .plot-card { border-radius: 16px; padding: 1.5rem; }
+    .plot-id { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+    .plot-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-top: 0.2rem; }
+    .soil-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 1.25rem; }
+    .soil-metric { padding: 0.75rem; background: rgba(2,44,34,0.5); border-radius: 10px; border: 1px solid rgba(52,211,153,0.1); }
+    .soil-metric-name { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .soil-metric-val { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-top: 0.3rem; }
+    .soil-bar { height: 3px; border-radius: 2px; background: rgba(52,211,153,0.1); margin-top: 0.5rem; overflow: hidden; }
+    .soil-bar-fill { height: 100%; border-radius: 2px; transition: width 1.5s ease; }
+
+    /* ─── WORKERS PAGE ─── */
+    .workers-list { display: flex; flex-direction: column; gap: 0.85rem; }
+    .worker-row {
+      border-radius: 14px; padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .worker-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-mid), var(--emerald-dark));
+      border: 2px solid rgba(52,211,153,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+      color: var(--emerald-glow);
+    }
+    .worker-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
+    .worker-role { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+    .worker-task { flex: 1; }
+    .task-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(110,231,183,0.4); }
+    .task-val { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
+    .shift-chip {
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+    }
+    .shift-morning { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.2); }
+    .shift-afternoon { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .shift-night { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+
+    /* ─── SETTINGS PAGE ─── */
+    .settings-section { margin-bottom: 2rem; }
+    .settings-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.85rem; }
+    .setting-row { border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem; }
+    .setting-name { font-size: 0.88rem; font-weight: 500; color: var(--text-secondary); }
+    .setting-desc { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+    .settings-select {
+      background: rgba(2,44,34,0.6); border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 8px; padding: 0.4rem 0.75rem;
+      color: var(--text-primary); font-size: 0.8rem;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      outline: none; cursor: pointer;
+    }
+    .settings-select:focus { border-color: var(--emerald-vivid); }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(2,28,20,0.9);
+      border-top: 1px solid rgba(52,211,153,0.15);
+      padding: 0.6rem 0.5rem;
+      gap: 0;
+    }
+    .mob-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+      padding: 0.4rem 0.25rem;
+      cursor: pointer; transition: all 0.2s;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.08em;
+    }
+    .mob-nav-item.active { color: var(--emerald-vivid); }
+    .mob-nav-icon { font-size: 1.15rem; }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52,211,153,0.4); }
+
+    /* ─── PAGE TRANSITIONS ─── */
+    .page-section { display: none; animation: fade-in 0.35s ease; }
+    .page-section.active { display: block; }
+    @keyframes fade-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .mobile-nav { display: flex; }
+      .main-content { padding: 1.25rem 1rem 80px; }
+      .status-grid { grid-template-columns: 1fr; }
+      .terre-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .cultures-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── AMBIENT BACKGROUND ─── -->
+<div class="bg-field"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ════════════════════════════════════════════
+     LOGIN PAGE
+     ════════════════════════════════════════════ -->
+<div id="login-page">
+  <div class="login-box glass-strong" style="border-radius:28px;">
+
+    <div class="text-center mb-8">
+      <div class="login-logo">AgriTech</div>
+      <div class="login-subtitle">Agritecture Platform · v2.4.1</div>
+    </div>
+
+    <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(52,211,153,0.2),transparent);margin-bottom:2rem;"></div>
+
+    <!-- Status indicator -->
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;padding:0.6rem 0.9rem;background:rgba(16,185,129,0.08);border:1px solid rgba(52,211,153,0.15);border-radius:10px;">
+      <span class="pulse-dot" style="width:6px;height:6px;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;color:var(--text-muted);">SECURE CONNECTION ESTABLISHED</span>
+    </div>
+
+    <div class="field-group">
+      <label>Identifier</label>
+      <div style="position:relative;">
+        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input id="login-user" type="text" class="field-input" placeholder="admin@agritech.farm" autocomplete="username" />
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Access Key</label>
+      <div style="position:relative;">
+        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input id="login-pass" type="password" class="field-input" placeholder="••••••••••••" autocomplete="current-password" />
+      </div>
+      <div id="login-error" class="error-msg">⚠ Invalid credentials. Please try again.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;">
+      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+        <div id="remember-toggle" class="toggle on" onclick="this.classList.toggle('on')" style="width:34px;height:18px;"></div>
+        <span style="font-size:0.8rem;color:var(--text-muted);">Remember device</span>
+      </label>
+      <span style="font-size:0.78rem;color:var(--emerald-vivid);cursor:pointer;font-weight:500;">Forgot key?</span>
+    </div>
+
+    <button class="btn-primary" onclick="handleLogin()">
+      <span id="btn-text">Access Platform</span>
+    </button>
+
+    <p style="text-align:center;margin-top:1.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:rgba(110,231,183,0.35);">
+      ENCRYPTED · ISO 27001 · GDPR COMPLIANT
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN APPLICATION
+     ════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar glass-strong">
+    <div class="sidebar-brand">
+      <div class="brand-name">AgriTech</div>
+      <div class="brand-tag">Agritecture Platform</div>
+    </div>
+
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="navigate('dashboard', this)">
+      <span class="nav-icon">⬡</span> Dashboard
+      <span class="nav-badge">Live</span>
+    </div>
+
+    <div class="nav-section-label">Services</div>
+    <div class="nav-item" onclick="navigate('cultures', this)">
+      <span class="nav-icon">🌿</span> Cultures
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="navigate('equipment', this)">
+      <span class="nav-icon">⚙</span> Equipment
+    </div>
+    <div class="nav-item" onclick="navigate('terre', this)">
+      <span class="nav-icon">◈</span> Terre
+    </div>
+    <div class="nav-item" onclick="navigate('workers', this)">
+      <span class="nav-icon">◎</span> Workers
+      <span class="nav-badge">8</span>
+    </div>
+
+    <style>
+      .modal-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+        display:none; align-items:center; justify-content:center; z-index:2000;
+        padding: 1.5rem;
+      }
+      .modal-content {
+        max-width: 500px; width:100%; padding:2rem; border:1px solid rgba(255,255,255,0.1);
+      }
+      .form-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      }
+      .form-group label {
+        display:block; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em;
+        color:var(--text-muted); margin-bottom:0.4rem;
+      }
+      .form-group input {
+        width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+        border-radius:8px; padding:0.6rem; color:white; font-size:0.85rem; outline:none;
+      }
+      .form-group input:focus { border-color: var(--emerald-vivid); }
+
+      /* Card Actions */
+      .card-actions {
+        position: absolute; top: 0.75rem; right: 0.75rem;
+        display: flex; gap: 0.5rem; opacity: 0; transition: opacity 0.3s;
+      }
+      .crop-card:hover .card-actions { opacity: 1; }
+      .card-actions span {
+        width: 24px; height: 24px; border-radius: 6px;
+        background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; cursor: pointer; transition: background 0.2s;
+      }
+      .card-actions span:hover { background: rgba(255,255,255,0.2); }
+    </style>
+
+    <div class="nav-section-label">System</div>
+    <div class="nav-item" onclick="navigate('settings', this)">
+      <span class="nav-icon">⊛</span> Settings
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="ui-avatar">AG</div>
+        <div>
+          <div class="user-name" id="ui-name">Admin User</div>
+          <div class="user-role" id="ui-role">Farm Director</div>
+        </div>
+        <svg style="margin-left:auto;color:var(--text-muted);opacity:0.5;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <section id="page-dashboard" class="page-section active">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Good morning, Director</h1>
+          <p class="page-subtitle">Field Operations · Zone Alpha · All systems nominal</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">⬇ Export Report</button>
+          <button class="btn-sm btn-filled">+ New Land</button>
+        </div>
+      </div>
+
+      <!-- Farm Illustration -->
+      <div class="farm-canvas glass-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);">Live Field View · Sector 3</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--text-primary);margin-top:0.2rem;">North Greenhouse Array</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.75rem;background:rgba(16,185,129,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:8px;">
+            <span class="pulse-dot" style="width:6px;height:6px;"></span>
+            <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--emerald-vivid);letter-spacing:0.1em;">MONITORING ACTIVE</span>
+          </div>
+        </div>
+
+        <div class="farm-scene">
+          <div class="sun-orb"></div>
+          <div class="farm-drone">
+            <div class="drone-body">
+              <div class="drone-arm left"></div>
+              <div class="drone-arm right"></div>
+              <div class="drone-prop tl"></div>
+              <div class="drone-prop tr"></div>
+              <div class="drone-beam"></div>
+            </div>
+          </div>
+          <!-- Crop rows -->
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+            <div style="display:flex;gap:8px;align-items:flex-end;">
+              <div class="crop-plant crop-tall" style="animation-delay:0s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:20px;position:absolute;"></div><div class="crop-leaf left" style="top:35px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:0.3s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:6px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:16px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:0.6s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:25px;position:absolute;"></div><div class="crop-leaf left" style="top:42px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:0.9s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:6px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:20px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:1.2s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:10px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:28px;position:absolute;"></div><div class="crop-leaf left" style="top:46px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:1.5s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:18px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:0.2s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:24px;position:absolute;"></div><div class="crop-leaf left" style="top:40px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+            </div>
+            <div class="soil-strip" style="width:200px;"></div>
+          </div>
+        </div>
+        <div class="farm-label">Row 3-A · 7 plants · Est. yield 42kg · Harvest in 18 days</div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card glass-card">
+          <span class="metric-icon">🌿</span>
+          <div class="metric-label">Total Cultures</div>
+          <div class="metric-value">12<span class="metric-unit">Units</span></div>
+          <div class="metric-change up">↑ 3 new this week</div>
+          <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">⚙</span>
+          <div class="metric-label">Active Equipment</div>
+          <div class="metric-value">9<span class="metric-unit">Units</span></div>
+          <div class="metric-change up">↑ All systems online</div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">◈</span>
+          <div class="metric-label">Terre / Land</div>
+          <div class="metric-value">4<span class="metric-unit">Parcels</span></div>
+          <div class="metric-change up">↑ 8.2 Ha total</div>
+          <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">◎</span>
+          <div class="metric-label">Total Workers</div>
+          <div class="metric-value">8<span class="metric-unit">Staff</span></div>
+          <div class="metric-change up">↑ Full shift today</div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">⬢</span>
+          <div class="metric-label">Task Completion</div>
+          <div class="metric-value">85<span class="metric-unit">%</span></div>
+          <div class="metric-change up">↑ Above daily target</div>
+          <div class="progress-track"><div class="progress-fill" style="width:85%"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">⚡</span>
+          <div class="metric-label">Platform Health</div>
+          <div class="metric-value">99<span class="metric-unit">%</span></div>
+          <div class="metric-change up">↑ Systems nominal</div>
+          <div class="progress-track"><div class="progress-fill" style="width:99%;background:linear-gradient(90deg,#34d399,#6ee7b7)"></div></div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:0.85rem;">System Status</div>
+      <div class="status-grid">
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Cultures Engine</div></div>
+            <div class="status-sub">12 active varieties · Zone Alpha</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Terre Mapping</div></div>
+            <div class="status-sub">4 parcels · GIS ready</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Equipment Hub</div></div>
+            <div class="status-sub">9 units active · Sn:4521–A</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Personnel Sync</div></div>
+            <div class="status-sub">8 staff · Rota: Morning</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ CULTURES ════ -->
+    <section id="page-cultures" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Cultures</h1>
+          <p class="page-subtitle">Active crop monitoring · 12 varieties · 3 zones</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">Filter</button>
+          <button class="btn-sm btn-filled" onclick="openCultureModal()">+ Add Culture</button>
+        </div>
+      </div>
+      <div class="cultures-grid" id="cultures-container">
+        <!-- Dynamic content from Cultures Microservice -->
+      </div>
+    </section>
+
+    <!-- ════ EQUIPMENT ════ -->
+    <section id="page-equipment" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Equipment</h1>
+          <p class="page-subtitle">Machinery inventory · 9 units · Zone maintenance</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">Schedule</button>
+          <button class="btn-sm btn-filled">+ Add Unit</button>
+        </div>
+      </div>
+      <div class="equipment-list">
+        <div class="equip-row glass-card">
+          <div class="equip-icon">🚜</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">Autonomous Tractor</div>
+            <div class="equip-model">MODEL · AT-700X · SN:4521-A</div>
+            <div class="equip-meta"><span>Zone A</span><span>Last service: 3 days ago</span><span>Runtime: 1,240h</span></div>
+          </div>
+          <span class="avail-chip avail-yes">Available</span>
+        </div>
+        <div class="equip-row glass-card">
+          <div class="equip-icon">🚿</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">Precision Drip Array</div>
+            <div class="equip-model">MODEL · DA-200 · SN:8823-B</div>
+            <div class="equip-meta"><span>All Zones</span><span>Active since 06:00</span><span>Pressure: 2.4 bar</span></div>
+          </div>
+          <span class="avail-chip avail-no">In Use</span>
+        </div>
+        <div class="equip-row glass-card">
+          <div class="equip-icon">🤖</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">Harvesting Robot Mk.II</div>
+            <div class="equip-model">MODEL · HR-MK2 · SN:0019-C</div>
+            <div class="equip-meta"><span>Zone B</span><span>Last service: 14 days ago</span><span>Battery: 87%</span></div>
+          </div>
+          <span class="avail-chip avail-yes">Available</span>
+        </div>
+        <div class="equip-row glass-card">
+          <div class="equip-icon">🚁</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">Surveillance Drone Fleet</div>
+            <div class="equip-model">MODEL · SD-X12 · Fleet: 4 units</div>
+            <div class="equip-meta"><span>Airborne · Zone A–C</span><span>Mission: Field survey</span><span>ETA: 40min</span></div>
+          </div>
+          <span class="avail-chip avail-no">In Use</span>
+        </div>
+        <div class="equip-row glass-card">
+          <div class="equip-icon">🔬</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">Soil Analyzer Unit</div>
+            <div class="equip-model">MODEL · SA-PRO · SN:3301-D</div>
+            <div class="equip-meta"><span>Lab Station</span><span>Calibration due in 7 days</span><span>Status: Idle</span></div>
+          </div>
+          <span class="avail-chip avail-main">Maintenance</span>
+        </div>
+        <div class="equip-row glass-card">
+          <div class="equip-icon">💡</div>
+          <div style="flex:1;min-width:0;">
+            <div class="equip-name">LED Grow Light Array</div>
+            <div class="equip-model">MODEL · GL-360 · Panels: 48</div>
+            <div class="equip-meta"><span>Greenhouse 1 & 2</span><span>Spectrum B · 16h cycle</span><span>Power: 4.8kW</span></div>
+          </div>
+          <span class="avail-chip avail-no">Active</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ TERRE ════ -->
+    <section id="page-terre" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Terre</h1>
+          <p class="page-subtitle">Land health · Soil composition · 4 active plots</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">Run Analysis</button>
+          <button class="btn-sm btn-filled">+ Add Plot</button>
+        </div>
+      </div>
+      <div class="terre-grid">
+        <div class="plot-card glass-card">
+          <div class="plot-id">PLOT · Z-ALPHA · 2.4 HA</div>
+          <div class="plot-name">Alpha Field — North</div>
+          <div class="soil-metrics">
+            <div class="soil-metric">
+              <div class="soil-metric-name">pH Level</div>
+              <div class="soil-metric-val">6.8</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:68%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Nitrogen</div>
+              <div class="soil-metric-val">42 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:55%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Phosphorus</div>
+              <div class="soil-metric-val">18 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:38%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Moisture</div>
+              <div class="soil-metric-val">71%</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:71%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem;"><span class="health-badge health-excellent">⬤ Optimal Composition</span></div>
+        </div>
+        <div class="plot-card glass-card">
+          <div class="plot-id">PLOT · Z-BETA · 1.8 HA</div>
+          <div class="plot-name">Beta Field — East Wing</div>
+          <div class="soil-metrics">
+            <div class="soil-metric">
+              <div class="soil-metric-name">pH Level</div>
+              <div class="soil-metric-val">5.9</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:52%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Nitrogen</div>
+              <div class="soil-metric-val">29 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:35%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Phosphorus</div>
+              <div class="soil-metric-val">24 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:52%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Moisture</div>
+              <div class="soil-metric-val">58%</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:58%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem;"><span class="health-badge health-warning">⬤ pH Adjustment Needed</span></div>
+        </div>
+        <div class="plot-card glass-card">
+          <div class="plot-id">PLOT · Z-GAMMA · 3.1 HA</div>
+          <div class="plot-name">Gamma Greenhouse Complex</div>
+          <div class="soil-metrics">
+            <div class="soil-metric">
+              <div class="soil-metric-name">pH Level</div>
+              <div class="soil-metric-val">7.1</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:74%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Nitrogen</div>
+              <div class="soil-metric-val">61 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:78%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Potassium</div>
+              <div class="soil-metric-val">180 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:82%;background:linear-gradient(90deg,#7c3aed,#8b5cf6);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Moisture</div>
+              <div class="soil-metric-val">79%</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:79%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem;"><span class="health-badge health-excellent">⬤ Excellent Fertility</span></div>
+        </div>
+        <div class="plot-card glass-card">
+          <div class="plot-id">PLOT · Z-DELTA · 0.9 HA</div>
+          <div class="plot-name">Delta Nursery Zone</div>
+          <div class="soil-metrics">
+            <div class="soil-metric">
+              <div class="soil-metric-name">pH Level</div>
+              <div class="soil-metric-val">6.2</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:60%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Nitrogen</div>
+              <div class="soil-metric-val">38 mg/kg</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:48%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Organic Matter</div>
+              <div class="soil-metric-val">4.2%</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:64%;background:linear-gradient(90deg,#78350f,#92400e);"></div></div>
+            </div>
+            <div class="soil-metric">
+              <div class="soil-metric-name">Moisture</div>
+              <div class="soil-metric-val">65%</div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:65%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem;"><span class="health-badge health-good">⬤ Stable · Monitor N levels</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ WORKERS ════ -->
+    <section id="page-workers" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Workers</h1>
+          <p class="page-subtitle">Team management · 8 active · 3 shifts</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">View Roster</button>
+          <button class="btn-sm btn-filled">+ Assign Task</button>
+        </div>
+      </div>
+      <div class="workers-list">
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">KA</div>
+          <div>
+            <div class="worker-name">Karim Abdellah</div>
+            <div class="worker-role">Head Agronomist</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Soil pH analysis · Plot Z-Beta</div>
+          </div>
+          <span class="shift-chip shift-morning">☀ Morning</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">SA</div>
+          <div>
+            <div class="worker-name">Sofia Amrani</div>
+            <div class="worker-role">Field Technician</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">LED calibration · Greenhouse 2</div>
+          </div>
+          <span class="shift-chip shift-morning">☀ Morning</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">MB</div>
+          <div>
+            <div class="worker-name">Mehdi Bouali</div>
+            <div class="worker-role">Equipment Operator</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Tractor maintenance · Bay 3</div>
+          </div>
+          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">LH</div>
+          <div>
+            <div class="worker-name">Lina Hadjadj</div>
+            <div class="worker-role">Data Analyst</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Weekly yield report compilation</div>
+          </div>
+          <span class="shift-chip shift-morning">☀ Morning</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">YT</div>
+          <div>
+            <div class="worker-name">Yacine Tounsi</div>
+            <div class="worker-role">Drone Pilot</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Aerial survey · Zones A–C</div>
+          </div>
+          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">NB</div>
+          <div>
+            <div class="worker-name">Nora Benali</div>
+            <div class="worker-role">Irrigation Specialist</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Drip system check · North Grid</div>
+          </div>
+          <span class="shift-chip shift-night">◑ Night</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">AM</div>
+          <div>
+            <div class="worker-name">Amine Mansouri</div>
+            <div class="worker-role">Harvest Coordinator</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Broccoli harvest prep · Zone B</div>
+          </div>
+          <span class="shift-chip shift-morning">☀ Morning</span>
+        </div>
+        <div class="worker-row glass-card">
+          <div class="worker-avatar">FS</div>
+          <div>
+            <div class="worker-name">Fatima Saidi</div>
+            <div class="worker-role">Quality Control</div>
+          </div>
+          <div class="worker-task">
+            <div class="task-label">Current Task</div>
+            <div class="task-val">Tomato grading · Packing Station</div>
+          </div>
+          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ SETTINGS ════ -->
+    <section id="page-settings" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Platform configuration · Preferences · Integrations</p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Automation Thresholds</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Moisture Alert Threshold</div><div class="setting-desc">Trigger watering below this value</div></div>
+          <select class="settings-select"><option>40%</option><option selected>50%</option><option>60%</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Temperature Alert Range</div><div class="setting-desc">Alert when outside range</div></div>
+          <select class="settings-select"><option>18–28°C</option><option selected>20–26°C</option><option>22–28°C</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Nutrient Refill Trigger</div><div class="setting-desc">Auto-order when index drops below</div></div>
+          <select class="settings-select"><option>5.0</option><option selected>6.0</option><option>7.0</option></select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Notifications</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Email Alerts</div><div class="setting-desc">Receive critical alerts via email</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">SMS Notifications</div><div class="setting-desc">Urgent system failures</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Weekly Digest Report</div><div class="setting-desc">Auto-generated performance summary</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Platform</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Language</div><div class="setting-desc">Interface display language</div></div>
+          <select class="settings-select"><option>English</option><option>Français</option><option>العربية</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Data Refresh Rate</div><div class="setting-desc">Sensor polling interval</div></div>
+          <select class="settings-select"><option>5s</option><option selected>15s</option><option>30s</option><option>60s</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Dark Mode</div><div class="setting-desc">Deep field dark theme (active)</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem;border-radius:16px;border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:#fca5a5;margin-bottom:0.5rem;">Danger Zone</div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">These actions are irreversible. Proceed with extreme caution.</p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn-sm" style="border-color:rgba(239,68,68,0.3);color:#fca5a5;background:rgba(239,68,68,0.08);">Reset All Settings</button>
+          <button class="btn-sm" style="border-color:rgba(239,68,68,0.3);color:#fca5a5;background:rgba(239,68,68,0.08);" onclick="handleLogout()">Log Out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ CULTURE DETAILS ════ -->
+    <section id="page-culture-details" class="page-section">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-sm btn-outline" onclick="navigate('cultures')">← Back</button>
+          <div>
+            <h1 class="page-title" id="det-name">Culture Details</h1>
+            <p class="page-subtitle" id="det-variety">Var. Loading...</p>
+          </div>
+        </div>
+        <div class="header-actions" id="det-actions">
+          <!-- Populated by JS based on role -->
+        </div>
+      </div>
+
+      <div class="details-layout">
+        <div class="glass-card" style="padding:2rem;display:flex;flex-direction:column;gap:1.5rem;">
+          <div style="font-size:3rem;text-align:center;" id="det-emoji">🌿</div>
+          <div class="details-list">
+            <div class="details-row"><span>Status</span><span class="health-badge" id="det-health">⬤ Good</span></div>
+            <div class="details-row"><span>Growth</span><span id="det-growth">0%</span></div>
+            <div class="details-row"><span>Days Remaining</span><span id="det-days">0</span></div>
+            <div class="details-row"><span>Estimated Yield</span><span id="det-yield">0kg</span></div>
+            <div class="details-row"><span>Assigned Zone</span><span id="det-zone">1</span></div>
+            <div class="details-row"><span>Location</span><span>Block 4-A · Greenhouse</span></div>
+          </div>
+        </div>
+        
+        <div class="glass-card" style="padding:1.5rem;">
+          <div class="settings-title" style="margin-bottom:1rem;">Operational Notes</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">
+            Regular monitoring requested for nutrient absorption in this zone. 
+            Automated irrigation cycle is currently maintaining optimal moisture at 62%.
+          </p>
+        </div>
+      </div>
+
+      <style>
+        .details-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .details-list { display: flex; flex-direction: column; gap: 1rem; }
+        .details-row { 
+          display: flex; justify-content: space-between; align-items: center; 
+          padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .details-row span:first-child { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .details-row span:last-child { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--text-primary); }
+      </style>
+    </section>
+  </main>
+<!-- /main-content -->
+
+  <!-- ════ ADD CULTURE MODAL ════ -->
+  <div class="modal-overlay" id="culture-modal">
+    <div class="glass-card modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="font-family:'Syne',sans-serif;margin:0;">New Culture</h2>
+        <span style="cursor:pointer;opacity:0.5;" onclick="closeCultureModal()">✕</span>
+      </div>
+      <form id="culture-form" onsubmit="saveCulture(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Crop Name</label>
+            <input type="text" id="c-name" placeholder="e.g. Cherry Tomatoes" required>
+          </div>
+          <div class="form-group">
+            <label>Variety</label>
+            <input type="text" id="c-variety" placeholder="e.g. Solanum lycopersicum" required>
+          </div>
+          <div class="form-group">
+            <label>Icon (Emoji)</label>
+            <input type="text" id="c-emoji" placeholder="🍅" required>
+          </div>
+          <div class="form-group">
+            <label>Zone</label>
+            <input type="number" id="c-zone" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Yield Est.</label>
+            <input type="text" id="c-yield" placeholder="42kg" required>
+          </div>
+          <div class="form-group">
+            <label>Days Left</label>
+            <input type="number" id="c-days" placeholder="18" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Create Culture</button>
+      </form>
+    </div>
+  </div>
+</div><!-- /app -->
+
+<!-- ─── MOBILE NAV ─── -->
+<nav class="mobile-nav">
+  <div class="mob-nav-item active" onclick="navigate('dashboard',this,true)">
+    <span class="mob-nav-icon">⬡</span>Home
+  </div>
+  <div class="mob-nav-item" onclick="navigate('cultures',this,true)">
+    <span class="mob-nav-icon">🌿</span>Crops
+  </div>
+  <div class="mob-nav-item" onclick="navigate('equipment',this,true)">
+    <span class="mob-nav-icon">⚙</span>Equip
+  </div>
+  <div class="mob-nav-item" onclick="navigate('terre',this,true)">
+    <span class="mob-nav-icon">◈</span>Land
+  </div>
+  <div class="mob-nav-item" onclick="navigate('workers',this,true)">
+    <span class="mob-nav-icon">◎</span>Team
+  </div>
+  <div class="mob-nav-item" onclick="navigate('settings',this,true)">
+    <span class="mob-nav-icon">⊛</span>Config
+  </div>
+</nav>
+
+<script>
+  // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
+  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
+  const CULTURES_API_URL = "http://localhost:8001/api/cultures";
+
+  async function handleLogin() {
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value.trim();
+    const err  = document.getElementById('login-error');
+    const btn  = document.getElementById('btn-text');
+
+    if (!user || !pass) { err.classList.add('visible'); err.textContent='⚠ Please fill in both fields.'; return; }
+
+    btn.textContent = 'Authenticating…';
+    try {
+        const res = await fetch(`${AUTH_API_URL}/login/`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: user, password: pass})
+        });
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || "Invalid credentials");
+        }
+        
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        
+        await loadProfile();
+        
+        document.getElementById('login-page').style.opacity = '0';
+        document.getElementById('login-page').style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+            document.getElementById('login-page').style.display = 'none';
+            const app = document.getElementById('app');
+            app.classList.add('active');
+            app.style.opacity = '0';
+            app.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => { app.style.opacity = '1'; }, 50);
+        }, 500);
+    } catch(error) {
+        err.classList.add('visible');
+        err.textContent = `⚠ ${error.message}`;
+    } finally {
+        btn.textContent = 'Access Platform';
+    }
+  }
+
+  async function loadProfile() {
+      const token = localStorage.getItem('access_token');
+      if (!token) return false;
+      try {
+          const res = await fetch(`${AUTH_API_URL}/profile/`, {
+              headers: {'Authorization': `Bearer ${token}`}
+          });
+          if (!res.ok) throw new Error("Invalid token");
+          const user = await res.json();
+          localStorage.setItem('user', JSON.stringify(user));
+          document.getElementById('ui-name').textContent = user.first_name ? `${user.first_name} ${user.last_name}` : user.username;
+          document.getElementById('ui-role').textContent = user.role.replace('_', ' ').toUpperCase();
+          document.getElementById('ui-avatar').textContent = user.username.substring(0,2).toUpperCase();
+          
+          // RBAC: Toggle "Add Culture" button
+          const addBtn = document.querySelector('#page-cultures .btn-filled');
+          if (addBtn) {
+            addBtn.style.display = (user.role === 'admin' || user.role === 'farm_manager') ? 'block' : 'none';
+          }
+
+          loadCultures(); // Load dynamic data
+          return true;
+      } catch (e) {
+          console.error(e);
+          handleLogout();
+          return false;
+      }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const lp = document.getElementById('login-page');
+      if (lp && lp.style.display !== 'none') handleLogin();
+    }
+  });
+
+  function handleLogout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    const app = document.getElementById('app');
+    app.style.opacity = '0';
+    app.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => {
+      app.classList.remove('active');
+      app.style.opacity = '1';
+      const lp = document.getElementById('login-page');
+      lp.style.display = 'flex';
+      lp.style.opacity = '0';
+      setTimeout(() => { lp.style.opacity = '1'; lp.style.transition = 'opacity 0.4s ease'; }, 10);
+    }, 400);
+  }
+
+  /* ─── NAVIGATION ─── */
+  function navigate(page, el, mobile = false) {
+    // Update page sections
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+
+    if (!mobile) {
+      // Desktop sidebar
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      // Sync mobile
+      const mItems = document.querySelectorAll('.mob-nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','settings'];
+      const idx = pages.indexOf(page);
+      mItems.forEach(m => m.classList.remove('active'));
+      if (idx > -1) mItems[idx]?.classList.add('active');
+    } else {
+      // Mobile nav
+      document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+      // Sync desktop
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','settings'];
+      const idx = pages.indexOf(page);
+      navItems.forEach(n => n.classList.remove('active'));
+      // desktop nav: home=0, cultures=1, equip=2, terre=3, workers=4, settings=5
+      // but nav items include section labels — select by data or order
+      const clickable = document.querySelectorAll('.nav-item');
+      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,settings:5};
+      if (map[page] !== undefined) clickable[map[page]]?.classList.add('active');
+    }
+
+    // Scroll top
+    document.querySelector('.main-content')?.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  /* ─── CULTURES INTEGRATION ─── */
+  async function loadCultures() {
+    const container = document.getElementById('cultures-container');
+    if (!container) return;
+    container.innerHTML = '<div style="color:var(--text-muted);grid-column:1/-1;text-align:center;">Synchronizing with Firebase...</div>';
+
+    try {
+      const res = await fetch(CULTURES_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Failed to fetch cultures");
+      const cultures = await res.json();
+      
+      container.innerHTML = '';
+      cultures.forEach(crop => {
+        const card = document.createElement('div');
+        card.className = 'crop-card glass-card';
+        card.onclick = () => showCultureDetails(crop);
+        card.innerHTML = `
+          <span class="crop-emoji">${crop.emoji}</span>
+          <div class="crop-name">${crop.name}</div>
+          <div class="crop-variety">${crop.variety}</div>
+          <div class="crop-stats">
+            <div class="crop-stat"><div class="crop-stat-label">Growth</div><div class="crop-stat-val">${crop.growth}%</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Days left</div><div class="crop-stat-val">${crop.days_left}</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Yield est.</div><div class="crop-stat-val">${crop.yield_est}</div></div>
+          </div>
+          <div class="progress-track" style="margin-bottom:0.85rem;">
+            <div class="progress-fill" style="width:${crop.growth}%"></div>
+          </div>
+          <span class="health-badge health-${crop.health.toLowerCase()}">⬤ ${crop.health}</span>
+        `;
+        container.appendChild(card);
+      });
+    } catch (e) {
+      container.innerHTML = `<div style="color:var(--text-muted);grid-column:1/-1;text-align:center;">Error: ${e.message}</div>`;
+    }
+  }
+
+  let currentEditId = null;
+
+  function openCultureModal(isEdit = false) {
+    currentEditId = isEdit ? currentEditId : null;
+    document.getElementById('culture-modal').querySelector('h2').textContent = isEdit ? 'Update Culture' : 'New Culture';
+    document.getElementById('culture-modal').querySelector('button').textContent = isEdit ? 'Save Changes' : 'Create Culture';
+    document.getElementById('culture-modal').style.display = 'flex';
+  }
+
+  function closeCultureModal() {
+    document.getElementById('culture-modal').style.display = 'none';
+  }
+
+  function editCulture(id, data) {
+    currentEditId = id;
+    document.getElementById('c-name').value = data.name;
+    document.getElementById('c-variety').value = data.variety;
+    document.getElementById('c-emoji').value = data.emoji;
+    document.getElementById('c-zone').value = data.zone;
+    document.getElementById('c-yield').value = data.yield_est;
+    document.getElementById('c-days').value = data.days_left;
+    openCultureModal(true);
+  }
+
+  async function confirmDelete(id) {
+    if (confirm("Are you sure you want to remove this culture?")) {
+      try {
+        const res = await fetch(`${CULTURES_API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (!res.ok) throw new Error("Delete failed");
+        loadCultures();
+      } catch (e) { alert(e.message); }
+    }
+  }
+
+  async function saveCulture(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    const data = {
+      name: document.getElementById('c-name').value,
+      variety: document.getElementById('c-variety').value,
+      emoji: document.getElementById('c-emoji').value,
+      zone: parseInt(document.getElementById('c-zone').value),
+      yield_est: document.getElementById('c-yield').value,
+      days_left: parseInt(document.getElementById('c-days').value),
+      growth: 0, // In true edit we might want to preserve this, but keeping it simple for now
+      health: 'Good'
+    };
+
+    try {
+      const url = currentEditId ? `${CULTURES_API_URL}/${currentEditId}` : CULTURES_API_URL;
+      const method = currentEditId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method: method,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to save culture");
+      
+      closeCultureModal();
+      e.target.reset();
+      loadCultures(); 
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      btn.textContent = currentEditId ? 'Save Changes' : 'Create Culture';
+      btn.disabled = false;
+    }
+  }
+
+  /* ─── CULTURE DETAILS LOGIC ─── */
+  let activeCultureData = null;
+
+  function showCultureDetails(crop) {
+    activeCultureData = crop;
+    document.getElementById('det-name').textContent = crop.name;
+    document.getElementById('det-variety').textContent = crop.variety;
+    document.getElementById('det-emoji').textContent = crop.emoji;
+    document.getElementById('det-health').textContent = `⬤ ${crop.health}`;
+    document.getElementById('det-health').className = `health-badge health-${crop.health.toLowerCase()}`;
+    document.getElementById('det-growth').textContent = `${crop.growth}%`;
+    document.getElementById('det-days').textContent = crop.days_left;
+    document.getElementById('det-yield').textContent = crop.yield_est;
+    document.getElementById('det-zone').textContent = crop.zone;
+
+    // Actions based on role
+    const actionsCont = document.getElementById('det-actions');
+    const role = localStorage.getItem('user_role'); 
+    
+    // Check role for buttons
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isManager = user && (user.role === 'admin' || user.role === 'farm_manager');
+    
+    if (isManager) {
+      actionsCont.innerHTML = `
+        <button class="btn-sm btn-outline" onclick="editCulture('${crop.id}', activeCultureData)">Edit Culture</button>
+        <button class="btn-sm btn-filled" style="background:#ef4444;" onclick="confirmDelete('${crop.id}')">Delete</button>
+      `;
+    } else {
+      actionsCont.innerHTML = '';
+    }
+
+    navigate('culture-details');
+  }
+
+  /* ─── ANIMATE PROGRESS BARS ON LOAD ─── */
+  function animateBars() {
+    document.querySelectorAll('.progress-fill, .soil-bar-fill').forEach(bar => {
+      const target = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = target; }, 300);
+    });
+  }
+
+  /* ─── SYSTEM METRICS ─── */
+  function updateMetrics() {
+    const metrics = document.querySelectorAll('.metric-value');
+    if (metrics.length === 0) return;
+    // We could fetch real counts from the services here later
+  }
+
+  window.addEventListener('load', async () => {
+    animateBars();
+    setInterval(updateMetrics, 5000);
+    
+    // Auto-login with existing token
+    if (localStorage.getItem('access_token')) {
+        const valid = await loadProfile();
+        if (valid) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('app').classList.add('active');
+        }
+    }
+  });
+</script>
+
+</body>
+</html>

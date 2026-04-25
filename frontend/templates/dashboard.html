@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="left-panel">
+        <div class="glass-card farm-viz" style="background-image: url('{% static 'img/3d_farm_illustration.png' %}');">
+            <div class="viz-overlay">Live Monitoring: Spinach Section</div>
+        </div>
+
+        <div class="metric-cards" style="margin-top: 30px;">
+            <div class="glass-card metric-card">
+                <span class="metric-label">Nutrient Level</span>
+                <span class="metric-value" style="color: var(--accent-green);">85%</span>
+                <div style="height: 4px; background: #eee; border-radius: 2px;">
+                    <div style="width: 85%; height: 100%; background: var(--accent-green); border-radius: 2px;"></div>
+                </div>
+            </div>
+            <div class="glass-card metric-card">
+                <span class="metric-label">Humidity</span>
+                <span class="metric-value">67%</span>
+                <div style="height: 4px; background: #eee; border-radius: 2px;">
+                    <div style="width: 67%; height: 100%; background: #3498db; border-radius: 2px;"></div>
+                </div>
+            </div>
+            <div class="glass-card metric-card">
+                <span class="metric-label">Temperature</span>
+                <span class="metric-value">27°C</span>
+                <div style="height: 4px; background: #eee; border-radius: 2px;">
+                    <div style="width: 75%; height: 100%; background: var(--accent-amber); border-radius: 2px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="glass-card" style="height: 100%;">
+            <h3>System Status</h3>
+            <div style="display: flex; flex-direction: column; gap: 20px; margin-top:20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="metric-label">Auto Watering</span>
+                    <span style="color: var(--accent-green); font-weight: 600;">ACTIVE</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="metric-label">LED Grow Lights</span>
+                    <span style="color: var(--accent-green); font-weight: 600;">ON</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="metric-label">Ventilation</span>
+                    <span style="color: var(--text-secondary);">STANDBY</span>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid #eee; margin: 10px 0;">
+                
+                <h4>Health Index</h4>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; font-weight: 700; color: var(--accent-green);">90%</div>
+                    <p class="metric-label">Excellent Condition</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

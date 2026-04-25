@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech | {% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Emu AgriTech</div>
+        <nav>
+            <a href="#" class="nav-item active">
+                <span class="icon">🏠</span> Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <span class="icon">📊</span> Analytics
+            </a>
+            <a href="#" class="nav-item">
+                <span class="icon">🌿</span> Crops
+            </a>
+            <a href="#" class="nav-item">
+                <span class="icon">⚙️</span> Settings
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="title-section">
+                <h1>{% block page_title %}Smart Farm Overview{% endblock %}</h1>
+                <p style="color: var(--text-secondary); margin: 5px 0 0 0;">Monitoring real-time performance</p>
+            </div>
+            <div class="user-profile">
+                <!-- Profile placeholder -->
+                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%;"></div>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
