@@ -6,7 +6,7 @@ A specialized service for tracking crop growth, health, and yields. This service
 - **Technology**: FastAPI (Python)
 - **Database**: Firebase Cloud Firestore
 - **Authentication**: JWT verification (Shared Secret)
-- **Port**: 8001
+- **Production URL**: `https://cultures-service.onrender.com`
 
 ## 🎭 Access Control Matrix
 

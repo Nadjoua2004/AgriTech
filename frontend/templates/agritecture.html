@@ -1212,116 +1212,44 @@
       </div>
     </section>
 
-    <!-- ════ WORKERS ════ -->
+    <!-- ════ TEAM ════ -->
     <section id="page-workers" class="page-section">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Workers</h1>
-          <p class="page-subtitle">Team management · 8 active · 3 shifts</p>
+          <h1 class="page-title">AgriTech Team</h1>
+          <p class="page-subtitle">Manage workforce, assignments, and payroll</p>
         </div>
         <div class="header-actions">
-          <button class="btn-sm btn-outline">View Roster</button>
-          <button class="btn-sm btn-filled">+ Assign Task</button>
+          <button class="btn-sm btn-outline" id="salary-hub-btn">Salary Hub</button>
+          <button class="btn-sm btn-filled" id="add-worker-btn">+ Add Worker</button>
         </div>
       </div>
-      <div class="workers-list">
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">KA</div>
-          <div>
-            <div class="worker-name">Karim Abdellah</div>
-            <div class="worker-role">Head Agronomist</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Soil pH analysis · Plot Z-Beta</div>
-          </div>
-          <span class="shift-chip shift-morning">☀ Morning</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">SA</div>
-          <div>
-            <div class="worker-name">Sofia Amrani</div>
-            <div class="worker-role">Field Technician</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">LED calibration · Greenhouse 2</div>
-          </div>
-          <span class="shift-chip shift-morning">☀ Morning</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">MB</div>
-          <div>
-            <div class="worker-name">Mehdi Bouali</div>
-            <div class="worker-role">Equipment Operator</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Tractor maintenance · Bay 3</div>
-          </div>
-          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">LH</div>
-          <div>
-            <div class="worker-name">Lina Hadjadj</div>
-            <div class="worker-role">Data Analyst</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Weekly yield report compilation</div>
-          </div>
-          <span class="shift-chip shift-morning">☀ Morning</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">YT</div>
-          <div>
-            <div class="worker-name">Yacine Tounsi</div>
-            <div class="worker-role">Drone Pilot</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Aerial survey · Zones A–C</div>
-          </div>
-          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">NB</div>
-          <div>
-            <div class="worker-name">Nora Benali</div>
-            <div class="worker-role">Irrigation Specialist</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Drip system check · North Grid</div>
-          </div>
-          <span class="shift-chip shift-night">◑ Night</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">AM</div>
-          <div>
-            <div class="worker-name">Amine Mansouri</div>
-            <div class="worker-role">Harvest Coordinator</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Broccoli harvest prep · Zone B</div>
-          </div>
-          <span class="shift-chip shift-morning">☀ Morning</span>
-        </div>
-        <div class="worker-row glass-card">
-          <div class="worker-avatar">FS</div>
-          <div>
-            <div class="worker-name">Fatima Saidi</div>
-            <div class="worker-role">Quality Control</div>
-          </div>
-          <div class="worker-task">
-            <div class="task-label">Current Task</div>
-            <div class="task-val">Tomato grading · Packing Station</div>
-          </div>
-          <span class="shift-chip shift-afternoon">⊙ Afternoon</span>
-        </div>
+
+      <div class="team-grid" id="worker-container">
+        <!-- Workers populated via JS -->
       </div>
+
+      <style>
+        .team-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1.5rem;
+        }
+        .worker-card { border-radius: 20px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; position: relative; }
+        .worker-avatar {
+          width: 50px; height: 50px; border-radius: 12px;
+          background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+          font-size: 1.2rem; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .worker-role-tag { 
+          font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; 
+          background: rgba(16, 185, 129, 0.1); color: #10b981;
+          padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block;
+          margin-top: 0.3rem;
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.5); position: absolute; top: 1rem; right: 1rem; }
+        .status-active { background: #10b981; box-shadow: 0 0 8px #10b981; }
+      </style>
     </section>
 
     <!-- ════ SETTINGS ════ -->
@@ -1480,7 +1408,61 @@
       </form>
     </div>
   </div>
+  </div>
 </div><!-- /app -->
+
+<!-- ════ WORKER MODAL ════ -->
+<div class="modal-overlay" id="worker-modal">
+  <div class="modal-box glass-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:700;">Hire Staff</h2>
+      <span style="cursor:pointer;opacity:0.5;" onclick="closeWorkerModal()">✕</span>
+    </div>
+    <form onsubmit="saveWorker(event)">
+      <div class="form-grid">
+        <div class="form-group"><label>First Name</label><input type="text" id="w-fn" placeholder="e.g. Salim" required></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="w-ln" placeholder="e.g. Brahimi" required></div>
+        <div class="form-group"><label>Phone</label><input type="text" id="w-phone" placeholder="0555..." required></div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="w-role" class="settings-select" style="width:100%;background:rgba(0,0,0,0.2);">
+            <option value="field_worker">Field Worker</option>
+            <option value="irrigation_worker">Irrigation Worker</option>
+            <option value="equipment_operator">Equipment Operator</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Zone</label><input type="text" id="w-zone" placeholder="North Block"></div>
+        <div class="form-group"><label>Hire Date</label><input type="date" id="w-date" value="2024-04-26"></div>
+      </div>
+      <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Confirm Hire</button>
+    </form>
+  </div>
+</div>
+
+<!-- ════ TASK MODAL ════ -->
+<div class="modal-overlay" id="task-modal">
+  <div class="modal-box glass-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:700;">Assign Task</h2>
+      <span style="cursor:pointer;opacity:0.5;" onclick="closeTaskModal()">✕</span>
+    </div>
+    <form onsubmit="submitTask(event)">
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Assign To</label>
+        <select id="t-worker" class="settings-select" style="width:100%;background:rgba(0,0,0,0.2);"></select>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Job Description</label>
+        <textarea id="t-desc" placeholder="Details of the job..." required style="width:100%;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem;color:white;"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Date</label><input type="date" id="t-date" value="2024-04-26"></div>
+        <div class="form-group"><label>Land ID</label><input type="number" id="t-land" placeholder="1"></div>
+      </div>
+      <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Assign Job</button>
+    </form>
+  </div>
+</div>
 
 <!-- ─── MOBILE NAV ─── -->
 <nav class="mobile-nav">
@@ -1507,7 +1489,8 @@
 <script>
   // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
   const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
-  const CULTURES_API_URL = "http://localhost:8001/api/cultures";
+  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
+  const WORKERS_API_URL = "https://worker-service-hzwi.onrender.com/api";
 
   async function handleLogin() {
     const user = document.getElementById('login-user').value.trim();
@@ -1573,7 +1556,9 @@
             addBtn.style.display = (user.role === 'admin' || user.role === 'farm_manager') ? 'block' : 'none';
           }
 
-          loadCultures(); // Load dynamic data
+          loadCultures();
+          loadWorkers();
+          loadTasks();
           return true;
       } catch (e) {
           console.error(e);
@@ -1793,6 +1778,133 @@
 
     navigate('culture-details');
   }
+
+  /* ─── WORKER SERVICE LOGIC ─── */
+  async function loadWorkers() {
+    const container = document.getElementById('worker-container');
+    if (!container) return;
+
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Could not fetch workers");
+      
+      const data = await res.json();
+      const workers = data.results || data; // Handle both paginated and non-paginated
+      
+      container.innerHTML = workers.map(w => `
+        <div class="worker-card glass-card">
+          <div class="status-dot ${w.status === 'active' ? 'status-active' : ''}"></div>
+          <div class="worker-avatar">${w.first_name[0]}${w.last_name[0]}</div>
+          <div class="worker-info">
+            <div class="worker-name">${w.first_name} ${w.last_name}</div>
+            <div class="worker-role-tag">${w.worker_type.replace('_', ' ')}</div>
+            <div class="worker-zone">📍 ${w.zone || 'Unassigned'}</div>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      container.innerHTML = `<p style="color:#ef4444;padding:1rem;">Error: ${e.message}</p>`;
+    }
+  }
+
+  async function loadTasks() {
+    const taskList = document.querySelector('.activity-list');
+    if (!taskList) return;
+
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/tasks/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Could not fetch tasks");
+      
+      const data = await res.json();
+      const tasks = data.results || data;
+      
+      if (tasks.length === 0) {
+        taskList.innerHTML = '<p style="color:var(--text-muted);padding:1rem;">No active tasks today.</p>';
+        return;
+      }
+
+      taskList.innerHTML = tasks.map(t => `
+        <div class="activity-item glass-card" style="margin-bottom:0.75rem;">
+          <div class="activity-icon ${t.status === 'done' ? 'success' : 'pending'}">
+            ${t.status === 'done' ? '✓' : '⧖'}
+          </div>
+          <div class="activity-info">
+            <div class="activity-type">${t.description}</div>
+            <div class="activity-time">Assigned to Worker #${t.worker} · ${t.date}</div>
+          </div>
+          <div class="activity-status status-${t.status}">${t.status}</div>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.warn("Task load failed:", e);
+    }
+  }
+
+  function openWorkerModal() { document.getElementById('worker-modal').style.display = 'flex'; }
+  function closeWorkerModal() { document.getElementById('worker-modal').style.display = 'none'; }
+  
+  async function openTaskModal() { 
+    // Load workers into the select dropdown first
+    const select = document.getElementById('t-worker');
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const data = await res.json();
+      const workers = data.results || data;
+      select.innerHTML = workers.map(w => `<option value="${w.id}">${w.first_name} ${w.last_name}</option>`).join('');
+      document.getElementById('task-modal').style.display = 'flex';
+    } catch (e) { alert("Could not load workers list"); }
+  }
+  function closeTaskModal() { document.getElementById('task-modal').style.display = 'none'; }
+
+  async function saveWorker(e) {
+    e.preventDefault();
+    const data = {
+      first_name: document.getElementById('w-fn').value,
+      last_name: document.getElementById('w-ln').value,
+      phone: document.getElementById('w-phone').value,
+      worker_type: document.getElementById('w-role').value,
+      zone: document.getElementById('w-zone').value,
+      hire_date: document.getElementById('w-date').value
+    };
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Hire failed");
+      closeWorkerModal();
+      loadWorkers();
+    } catch (e) { alert(e.message); }
+  }
+
+  async function submitTask(e) {
+    e.preventDefault();
+    const data = {
+      worker: parseInt(document.getElementById('t-worker').value),
+      description: document.getElementById('t-desc').value,
+      date: document.getElementById('t-date').value,
+      land_id: parseInt(document.getElementById('t-land').value) || 1
+    };
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/tasks/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Task assignment failed");
+      closeTaskModal();
+      loadTasks();
+    } catch (e) { alert(e.message); }
+  }
+
+  function openSalaryModal() { alert("Salary Calculation Hub: Coming soon with payroll export!"); }
 
   /* ─── ANIMATE PROGRESS BARS ON LOAD ─── */
   function animateBars() {

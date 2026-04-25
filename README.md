@@ -8,7 +8,7 @@ A modern, high-end agricultural management platform built using a microservices 
 | :--- | :--- | :--- | :--- | :--- |
 | **`auth_service`** | Identity, JWT & RBAC | Neon (Postgres) | Vercel | ✅ Live |
 | **`worker_service`** | HR, Tasks & Payroll | Neon (Postgres) | TBD | 🚧 Dev |
-| **`cultures_service`**| Crop Growth & Health | Firebase (Firestore)| Koyeb | 🏗 Building |
+| **`cultures_service`**| Crop Growth & Health | Firebase (Firestore)| Render | ✅ Live |
 | **`terre_service`** | Land & Parcel GIS | TBD | TBD | ⏳ Backlog |
 | **`equipment_service`**| Machinery Inventory | TBD | TBD | ⏳ Backlog |
 | **`frontend`** | Agritecture UI | Django (Statics) | Local/Vercel | ✅ Live |
