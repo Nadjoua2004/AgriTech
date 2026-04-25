@@ -12,8 +12,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    # ONLY ADMINS CAN CREATE NEW USER ACCOUNTS
-    permission_classes = (permissions.IsAdminUser,)
+    # TEMPORARILY ALLOW ANY FOR SETUP
+    permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
 
 
