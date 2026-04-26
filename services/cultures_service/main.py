@@ -37,9 +37,14 @@ try:
         USE_FIREBASE = False
         mock_db = [] 
 except Exception as e:
-    print(f"Firebase Init Error: {e}")
+    print(f"❌ Firebase Init Error: {e}")
     USE_FIREBASE = False
     mock_db = []
+
+if USE_FIREBASE:
+    print("✅ Database Connected: Firebase Firestore is active.")
+else:
+    print("⚠️ Database Warning: Running in Mock Mode (No Firebase).")
 
 app = FastAPI(title="AgriTech Cultures Service")
 
@@ -152,9 +157,13 @@ async def delete_culture(culture_id: str, user_data=Depends(require_roles(["admi
     mock_db = [c for c in mock_db if c["id"] != culture_id]
     return {"status": "deleted"}
 
-@app.get("/health")
-async def health_check():
-    return {"status": "online", "database": "firebase" if USE_FIREBASE else "mock"}
+@app.get("/api/debug/auth")
+async def debug_auth(user_data=Depends(get_user_data)):
+    return {
+        "status": "Authenticated",
+        "user": user_data,
+        "firebase_connected": USE_FIREBASE
+    }
 
 if __name__ == "__main__":
     import uvicorn
