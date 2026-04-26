@@ -305,6 +305,26 @@
     .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
     .user-role { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.1em; }
 
+    /* ─── MODALS ─── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+      display: none; align-items: center; justify-content: center; z-index: 10000;
+    }
+    .modal-box { 
+      width: 90%; max-width: 500px; padding: 2rem; position: relative; 
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+    .form-group input, .form-group select, .form-group textarea { 
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+      padding: 0.75rem; border-radius: 10px; color: white; font-size: 0.9rem;
+    }
+
 
     .main-content { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; min-width: 0; }
     .page-header {
@@ -712,7 +732,20 @@
       .metrics-grid { grid-template-columns: 1fr 1fr; }
       .cultures-grid { grid-template-columns: 1fr; }
       .page-title { font-size: 1.4rem; }
+    /* ─── ROLE-BASED ACCESS CONTROL (CSS) ─── */
+    body.role-agronomist .nav-item[onclick*="page-workers"],
+    body.role-agronomist .mob-nav-item[onclick*="page-workers"],
+    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("worker")),
+    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("task")),
+    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("health")) {
+        display: none !important;
     }
+    
+    /* Fallback for browsers not supporting :has() and :contains() */
+    body.role-agronomist .hide-agronomist { display: none !important; }
+
+    /* Custom CSS to target by text content via attribute or similar if needed, 
+       but we will mark them with classes for reliability */
   </style>
 </head>
 <body>
@@ -753,7 +786,8 @@
       <label>Access Key</label>
       <div style="position:relative;">
         <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <input id="login-pass" type="password" class="field-input" placeholder="••••••••••••" autocomplete="current-password" />
+        <input id="login-pass" type="password" class="field-input" placeholder="••••••••••••" autocomplete="current-password" style="padding-right: 40px;" />
+        <span id="pass-toggle" onclick="togglePass()" style="position:absolute; right:12px; top:11px; cursor:pointer; opacity:0.6; font-size:1.1rem; filter: grayscale(1) brightness(2);">👁️</span>
       </div>
       <div id="login-error" class="error-msg">⚠ Invalid credentials. Please try again.</div>
     </div>
@@ -853,7 +887,7 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="user-pill">
+      <div class="user-pill" onclick="handleLogout()" title="Click to Logout">
         <div class="user-avatar" id="ui-avatar">AG</div>
         <div>
           <div class="user-name" id="ui-name">Admin User</div>
@@ -1092,122 +1126,86 @@
     <section id="page-terre" class="page-section">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Terre</h1>
-          <p class="page-subtitle">Land health · Soil composition · 4 active plots</p>
+          <h1 class="page-title">Terre Hub</h1>
+          <p class="page-subtitle" id="terre-subtitle">Analyzing soil health across active plots</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" id="terre-admin-actions" style="display:none;">
           <button class="btn-sm btn-outline">Run Analysis</button>
           <button class="btn-sm btn-filled">+ Add Plot</button>
         </div>
       </div>
-      <div class="terre-grid">
-        <div class="plot-card glass-card">
+      
+      <!-- 📋 AGRONOMIST VIEW: Soil Management Table -->
+      <div id="terre-agronomist-view" class="glass-card" style="display:none; padding:2rem; margin-top:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h3 style="margin:0; font-family:'Syne',sans-serif;">Soil & Culture Mapping</h3>
+          <span class="health-badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Agronomist Access</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>Plot ID</th>
+                <th>Surface</th>
+                <th>Soil Type</th>
+                <th>pH</th>
+                <th>Nitrogen</th>
+                <th>Moisture</th>
+                <th>Culture</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="terre-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="terre-grid" id="terre-container" style="margin-top:2rem;">
+        <!-- Plots with First Design (Gradients & Mono IDs) -->
+        <div class="plot-card glass-card" onclick="showTerreDetails({id:1, name:'Alpha Field — North', surface:2.4, soil_type:'Silt Loam', crop_planted:'Strawberries'})">
           <div class="plot-id">PLOT · Z-ALPHA · 2.4 HA</div>
           <div class="plot-name">Alpha Field — North</div>
           <div class="soil-metrics">
             <div class="soil-metric">
-              <div class="soil-metric-name">pH Level</div>
-              <div class="soil-metric-val">6.8</div>
+              <div class="soil-metric-header"><span>pH Level</span><span>6.8</span></div>
               <div class="soil-bar"><div class="soil-bar-fill" style="width:68%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
             </div>
             <div class="soil-metric">
-              <div class="soil-metric-name">Nitrogen</div>
-              <div class="soil-metric-val">42 mg/kg</div>
+              <div class="soil-metric-header"><span>Nitrogen</span><span>42 mg/kg</span></div>
               <div class="soil-bar"><div class="soil-bar-fill" style="width:55%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
             </div>
             <div class="soil-metric">
-              <div class="soil-metric-name">Phosphorus</div>
-              <div class="soil-metric-val">18 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:38%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Moisture</div>
-              <div class="soil-metric-val">71%</div>
+              <div class="soil-metric-header"><span>Moisture</span><span>71%</span></div>
               <div class="soil-bar"><div class="soil-bar-fill" style="width:71%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
             </div>
           </div>
-          <div style="margin-top:1rem;"><span class="health-badge health-excellent">⬤ Optimal Composition</span></div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-excellent">⬤ Optimal</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">STRAWBERRIES</span>
+          </div>
         </div>
-        <div class="plot-card glass-card">
+
+        <div class="plot-card glass-card" onclick="showTerreDetails({id:2, name:'Beta Field — East Wing', surface:1.8, soil_type:'Clay', crop_planted:'Tomatoes'})">
           <div class="plot-id">PLOT · Z-BETA · 1.8 HA</div>
           <div class="plot-name">Beta Field — East Wing</div>
           <div class="soil-metrics">
             <div class="soil-metric">
-              <div class="soil-metric-name">pH Level</div>
-              <div class="soil-metric-val">5.9</div>
+              <div class="soil-metric-header"><span>pH Level</span><span>5.9</span></div>
               <div class="soil-bar"><div class="soil-bar-fill" style="width:52%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
             </div>
             <div class="soil-metric">
-              <div class="soil-metric-name">Nitrogen</div>
-              <div class="soil-metric-val">29 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:35%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
+              <div class="soil-metric-header"><span>Nitrogen</span><span>29 mg/kg</span></div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:40%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
             </div>
             <div class="soil-metric">
-              <div class="soil-metric-name">Phosphorus</div>
-              <div class="soil-metric-val">24 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:52%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Moisture</div>
-              <div class="soil-metric-val">58%</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:58%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
+              <div class="soil-metric-header"><span>Moisture</span><span>44%</span></div>
+              <div class="soil-bar"><div class="soil-bar-fill" style="width:44%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
             </div>
           </div>
-          <div style="margin-top:1rem;"><span class="health-badge health-warning">⬤ pH Adjustment Needed</span></div>
-        </div>
-        <div class="plot-card glass-card">
-          <div class="plot-id">PLOT · Z-GAMMA · 3.1 HA</div>
-          <div class="plot-name">Gamma Greenhouse Complex</div>
-          <div class="soil-metrics">
-            <div class="soil-metric">
-              <div class="soil-metric-name">pH Level</div>
-              <div class="soil-metric-val">7.1</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:74%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Nitrogen</div>
-              <div class="soil-metric-val">61 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:78%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Potassium</div>
-              <div class="soil-metric-val">180 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:82%;background:linear-gradient(90deg,#7c3aed,#8b5cf6);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Moisture</div>
-              <div class="soil-metric-val">79%</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:79%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
-            </div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-warning">⬤ Needs Care</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">TOMATOES</span>
           </div>
-          <div style="margin-top:1rem;"><span class="health-badge health-excellent">⬤ Excellent Fertility</span></div>
-        </div>
-        <div class="plot-card glass-card">
-          <div class="plot-id">PLOT · Z-DELTA · 0.9 HA</div>
-          <div class="plot-name">Delta Nursery Zone</div>
-          <div class="soil-metrics">
-            <div class="soil-metric">
-              <div class="soil-metric-name">pH Level</div>
-              <div class="soil-metric-val">6.2</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:60%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Nitrogen</div>
-              <div class="soil-metric-val">38 mg/kg</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:48%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Organic Matter</div>
-              <div class="soil-metric-val">4.2%</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:64%;background:linear-gradient(90deg,#78350f,#92400e);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-name">Moisture</div>
-              <div class="soil-metric-val">65%</div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:65%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
-            </div>
-          </div>
-          <div style="margin-top:1rem;"><span class="health-badge health-good">⬤ Stable · Monitor N levels</span></div>
         </div>
       </div>
     </section>
@@ -1219,36 +1217,49 @@
           <h1 class="page-title">AgriTech Team</h1>
           <p class="page-subtitle">Manage workforce, assignments, and payroll</p>
         </div>
-        <div class="header-actions">
-          <button class="btn-sm btn-outline" id="salary-hub-btn">Salary Hub</button>
-          <button class="btn-sm btn-filled" id="add-worker-btn">+ Add Worker</button>
+        <div style="display:flex; gap:1rem;">
+          <button class="btn-sm btn-outline" id="salary-hub-btn" onclick="openSalaryModal()">Salary Hub</button>
+          <button class="btn-sm btn-outline" onclick="openTaskModal()">Assign Job</button>
+          <button class="btn-sm btn-filled" id="add-worker-btn" onclick="openWorkerModal()">+ Add Worker</button>
         </div>
       </div>
 
-      <div class="team-grid" id="worker-container">
-        <!-- Workers populated via JS -->
+      <div class="worker-tile-list" id="worker-container">
+        <!-- Full-width premium worker tiles populated via JS -->
       </div>
 
       <style>
-        .team-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 1.5rem;
+        .worker-tile-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          margin-top: 2rem;
+          width: 100%;
         }
-        .worker-card { border-radius: 20px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; position: relative; }
-        .worker-avatar {
-          width: 50px; height: 50px; border-radius: 12px;
-          background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-          font-size: 1.2rem; border: 1px solid rgba(255,255,255,0.1);
+        .worker-tile {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1.5rem 2.5rem;
+          background: rgba(2, 44, 34, 0.3);
+          border: 1px solid rgba(52, 211, 153, 0.15);
+          border-radius: 24px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          width: 100%;
         }
-        .worker-role-tag { 
-          font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; 
-          background: rgba(16, 185, 129, 0.1); color: #10b981;
-          padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block;
-          margin-top: 0.3rem;
+        .worker-tile:hover {
+          background: rgba(16, 185, 129, 0.12);
+          border-color: var(--emerald-glow);
+          transform: scale(1.005) translateX(5px);
+          box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4);
         }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.5); position: absolute; top: 1rem; right: 1rem; }
-        .status-active { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .worker-tile-main { display: flex; align-items: center; gap: 2.5rem; flex: 1; }
+        .worker-tile-stats { display: flex; align-items: center; gap: 5rem; }
+        
+        .tile-stat { text-align: right; min-width: 120px; }
+        .tile-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 0.15em; }
+        .tile-val { font-family: 'Cabinet Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
       </style>
     </section>
 
@@ -1411,6 +1422,56 @@
   </div>
 </div><!-- /app -->
 
+<!-- 🏛️ WORKER DETAILS MODAL (Mirrors Culture Modal) -->
+<div class="modal-overlay" id="worker-det-modal">
+  <div class="modal-content glass-strong" style="max-width:600px; padding:0; overflow:hidden; border-radius:28px;">
+    <!-- Top Banner -->
+    <div style="height:120px; background:linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); position:relative; display:flex; align-items:flex-end; padding:1.5rem 2.5rem;">
+      <div id="wd-avatar" class="user-avatar" style="width:80px; height:80px; font-size:2rem; border:4px solid var(--bg-dark); box-shadow:0 10px 25px rgba(0,0,0,0.3); position:absolute; bottom:-40px; left:2.5rem;">AB</div>
+      <div style="margin-left:90px; margin-bottom:0.5rem;">
+        <h2 id="wd-name" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; letter-spacing:-0.03em;">Staff Name</h2>
+        <p id="wd-role" style="margin:0; font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--emerald-glow); text-transform:uppercase; letter-spacing:0.1em;">FIELD WORKER</p>
+      </div>
+      <button onclick="closeWorkerDetModal()" style="position:absolute; top:1.5rem; right:1.5rem; background:rgba(0,0,0,0.3); border:none; color:white; width:32px; height:32px; border-radius:50%; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Content Area -->
+    <div style="padding:3rem 2.5rem 2rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+      <!-- Details Column -->
+      <div>
+        <div class="tile-label">Identity & Access</div>
+        <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.8rem;">
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Username</span> <span id="wd-user" style="font-weight:600;">ali_ben</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Phone</span> <span id="wd-phone" style="font-weight:600;">0555123456</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Zone</span> <span id="wd-zone" style="font-weight:600;">North Block</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Access Key</span> <span style="font-family:'DM Mono',monospace; color:var(--emerald-glow);">••••••••</span></div>
+        </div>
+      </div>
+
+      <!-- Financials Column -->
+      <div>
+        <div class="tile-label">Payroll Summary</div>
+        <div id="wd-salary" style="margin-top:0.75rem; padding:1rem; background:rgba(0,0,0,0.2); border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Tasks Row (Full Width) -->
+      <div style="grid-column: 1 / -1;">
+        <div class="tile-label">Recent Activity</div>
+        <div id="wd-tasks" class="tasks-list" style="margin-top:1rem; max-height:150px; overflow-y:auto; padding-right:0.5rem;">
+          Loading tasks...
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Footer -->
+    <div id="wd-actions" style="padding:1.5rem 2.5rem; background:rgba(255,255,255,0.03); border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:1rem; justify-content:flex-end;">
+      <!-- Buttons populated via JS -->
+    </div>
+  </div>
+</div>
+
 <!-- ════ WORKER MODAL ════ -->
 <div class="modal-overlay" id="worker-modal">
   <div class="modal-box glass-card">
@@ -1422,6 +1483,9 @@
       <div class="form-grid">
         <div class="form-group"><label>First Name</label><input type="text" id="w-fn" placeholder="e.g. Salim" required></div>
         <div class="form-group"><label>Last Name</label><input type="text" id="w-ln" placeholder="e.g. Brahimi" required></div>
+        <div class="form-group" style="grid-column: 1 / -1;"><label>Email</label><input type="email" id="w-email" placeholder="salim@agritech.com" required></div>
+        <div class="form-group"><label>Username</label><input type="text" id="w-user" placeholder="salim_b" required></div>
+        <div class="form-group"><label>Security Key (Pass)</label><input type="password" id="w-pass" placeholder="••••••••" required></div>
         <div class="form-group"><label>Phone</label><input type="text" id="w-phone" placeholder="0555..." required></div>
         <div class="form-group">
           <label>Role</label>
@@ -1429,13 +1493,47 @@
             <option value="field_worker">Field Worker</option>
             <option value="irrigation_worker">Irrigation Worker</option>
             <option value="equipment_operator">Equipment Operator</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="agronomist">Agronomist</option>
           </select>
         </div>
         <div class="form-group"><label>Zone</label><input type="text" id="w-zone" placeholder="North Block"></div>
         <div class="form-group"><label>Hire Date</label><input type="date" id="w-date" value="2024-04-26"></div>
       </div>
-      <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Confirm Hire</button>
+      <button type="submit" id="hire-confirm-btn" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Confirm Hire & Create Account</button>
     </form>
+  </div>
+</div>
+<!-- 💰 SALARY HUB MODAL -->
+<div class="modal-overlay" id="salary-modal">
+  <div class="modal-box glass-strong">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;">Salary Hub</h2>
+      <button onclick="closeSalaryModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div class="form-group"><label>Worker</label><select id="sal-worker" style="width:100%;"></select></div>
+    <div class="form-group"><label>Month</label><input type="month" id="sal-month" value="2024-04"></div>
+    <button onclick="calculateSalary()" class="btn-filled" style="width:100%; margin-top:1rem; padding:0.8rem;">Calculate & Review</button>
+    <div id="salary-result" style="margin-top:1.5rem; padding:1.25rem; background:rgba(0,0,0,0.2); border-radius:12px; display:none;">
+      <!-- Result will appear here -->
+    </div>
+  </div>
+</div>
+
+<!-- ⏱️ LOG HOURS MODAL -->
+<div class="modal-overlay" id="hours-modal">
+  <div class="modal-box glass-strong">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;">Log Work Session</h2>
+      <button onclick="closeHoursModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Hours Worked</label><input type="number" id="h-hours" value="8" step="0.5"></div>
+      <div class="form-group"><label>Overtime</label><input type="number" id="h-over" value="0" step="0.5"></div>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" id="h-date" value="2024-04-26"></div>
+    <div class="form-group"><label>Notes</label><textarea id="h-notes" placeholder="e.g. Irrigation maintenance"></textarea></div>
+    <button onclick="submitHours()" class="btn-filled" style="width:100%; margin-top:1rem; padding:0.8rem;">Submit Timesheet</button>
   </div>
 </div>
 
@@ -1491,6 +1589,19 @@
   const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
   const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
   const WORKERS_API_URL = "https://worker-service-hzwi.onrender.com/api";
+  const LANDS_API_URL = `${WORKERS_API_URL}/mock/lands/`;
+
+  function togglePass() {
+    const p = document.getElementById('login-pass');
+    const t = document.getElementById('pass-toggle');
+    if (p.type === 'password') {
+      p.type = 'text';
+      t.textContent = '🔒';
+    } else {
+      p.type = 'password';
+      t.textContent = '👁️';
+    }
+  }
 
   async function handleLogin() {
     const user = document.getElementById('login-user').value.trim();
@@ -1550,15 +1661,43 @@
           document.getElementById('ui-role').textContent = user.role.replace('_', ' ').toUpperCase();
           document.getElementById('ui-avatar').textContent = user.username.substring(0,2).toUpperCase();
           
-          // RBAC: Toggle "Add Culture" button
-          const addBtn = document.querySelector('#page-cultures .btn-filled');
-          if (addBtn) {
-            addBtn.style.display = (user.role === 'admin' || user.role === 'farm_manager') ? 'block' : 'none';
+          // RBAC: Toggle Action Buttons
+          const isMgmt = user.role === 'admin' || user.role === 'farm_manager';
+          
+          const cultBtn = document.querySelector('#page-cultures .btn-filled');
+          if (cultBtn) cultBtn.style.display = isMgmt ? 'block' : 'none';
+
+          const addWorkBtn = document.getElementById('add-worker-btn');
+          if (addWorkBtn) addWorkBtn.style.display = isMgmt ? 'block' : 'none';
+
+          const salBtn = document.getElementById('salary-hub-btn');
+          if (salBtn) salBtn.style.display = isMgmt ? 'block' : 'none';
+
+          const isAgro = user.role === 'agronomist';
+          document.body.className = isAgro ? 'role-agronomist' : (user.role === 'admin' ? 'role-admin' : '');
+          
+          if (isAgro) {
+              // Personalized Greeting
+              const dashTitle = document.querySelector('#page-dashboard .page-title');
+              if (dashTitle) dashTitle.textContent = "Good Morning, Agronomist";
+              
+              // Tag stats for CSS hiding (reliable fallback)
+              document.querySelectorAll('.stat-card').forEach(card => {
+                  const label = card.querySelector('.stat-label')?.textContent.toLowerCase();
+                  if (label && (label.includes('task') || label.includes('worker') || label.includes('health'))) {
+                      card.classList.add('hide-agronomist');
+                  }
+              });
+              
+              // Hide Add Equipment Button
+              const addEquipBtn = document.querySelector('#page-equipment .btn-filled');
+              if (addEquipBtn) addEquipBtn.style.display = 'none';
           }
 
           loadCultures();
           loadWorkers();
           loadTasks();
+          loadTerre();
           return true;
       } catch (e) {
           console.error(e);
@@ -1753,28 +1892,23 @@
     document.getElementById('det-variety').textContent = crop.variety;
     document.getElementById('det-emoji').textContent = crop.emoji;
     document.getElementById('det-health').textContent = `⬤ ${crop.health}`;
+    
+    const actions = document.getElementById('det-actions');
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const isMgmt = userData.role === 'admin' || userData.role === 'farm_manager';
+    
+    actions.innerHTML = isMgmt ? `
+      <button class="btn-sm btn-outline" onclick='editCulture("${crop.id}", activeCultureData)'>Edit Culture</button>
+      <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="confirmDelete('${crop.id}')">Delete</button>
+    ` : `
+      <span class="health-badge health-good">⬤ Read Only Access</span>
+    `;
+
     document.getElementById('det-health').className = `health-badge health-${crop.health.toLowerCase()}`;
     document.getElementById('det-growth').textContent = `${crop.growth}%`;
     document.getElementById('det-days').textContent = crop.days_left;
     document.getElementById('det-yield').textContent = crop.yield_est;
     document.getElementById('det-zone').textContent = crop.zone;
-
-    // Actions based on role
-    const actionsCont = document.getElementById('det-actions');
-    const role = localStorage.getItem('user_role'); 
-    
-    // Check role for buttons
-    const user = JSON.parse(localStorage.getItem('user'));
-    const isManager = user && (user.role === 'admin' || user.role === 'farm_manager');
-    
-    if (isManager) {
-      actionsCont.innerHTML = `
-        <button class="btn-sm btn-outline" onclick="editCulture('${crop.id}', activeCultureData)">Edit Culture</button>
-        <button class="btn-sm btn-filled" style="background:#ef4444;" onclick="confirmDelete('${crop.id}')">Delete</button>
-      `;
-    } else {
-      actionsCont.innerHTML = '';
-    }
 
     navigate('culture-details');
   }
@@ -1794,13 +1928,31 @@
       const workers = data.results || data; // Handle both paginated and non-paginated
       
       container.innerHTML = workers.map(w => `
-        <div class="worker-card glass-card">
-          <div class="status-dot ${w.status === 'active' ? 'status-active' : ''}"></div>
-          <div class="worker-avatar">${w.first_name[0]}${w.last_name[0]}</div>
-          <div class="worker-info">
-            <div class="worker-name">${w.first_name} ${w.last_name}</div>
-            <div class="worker-role-tag">${w.worker_type.replace('_', ' ')}</div>
-            <div class="worker-zone">📍 ${w.zone || 'Unassigned'}</div>
+        <div class="worker-tile glass-card" onclick="showWorkerProfile(${w.id})">
+          <div class="worker-tile-main">
+            <div class="user-avatar" style="width:56px; height:56px; font-size:1.2rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2);">
+              ${w.first_name[0]}${w.last_name[0]}
+            </div>
+            <div>
+              <div style="font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:800; color:var(--text-primary);">${w.first_name} ${w.last_name}</div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; color:var(--emerald-glow); text-transform:uppercase; margin-top:0.25rem;">
+                ${w.worker_type.replace('_', ' ')}
+              </div>
+            </div>
+          </div>
+          <div class="worker-tile-stats">
+            <div class="tile-stat">
+              <div class="tile-label">Zone</div>
+              <div class="tile-val">${w.zone || 'Global'}</div>
+            </div>
+            <div class="tile-stat">
+              <div class="tile-label">Status</div>
+              <div class="tile-val emerald">⬤ Active</div>
+            </div>
+            <div class="tile-stat">
+              <div class="tile-label">Hired</div>
+              <div class="tile-val" style="font-family:'DM Mono',monospace; font-size:0.8rem;">${w.hire_date || '2024-04-01'}</div>
+            </div>
           </div>
         </div>
       `).join('');
@@ -1812,43 +1964,195 @@
   async function loadTasks() {
     const taskList = document.querySelector('.activity-list');
     if (!taskList) return;
-
     try {
       const res = await fetch(`${WORKERS_API_URL}/tasks/`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
       });
-      if (!res.ok) throw new Error("Could not fetch tasks");
-      
       const data = await res.json();
       const tasks = data.results || data;
       
-      if (tasks.length === 0) {
-        taskList.innerHTML = '<p style="color:var(--text-muted);padding:1rem;">No active tasks today.</p>';
-        return;
-      }
-
-      taskList.innerHTML = tasks.map(t => `
-        <div class="activity-item glass-card" style="margin-bottom:0.75rem;">
-          <div class="activity-icon ${t.status === 'done' ? 'success' : 'pending'}">
-            ${t.status === 'done' ? '✓' : '⧖'}
+      taskList.innerHTML = tasks.length ? tasks.map(t => `
+        <div class="task-item glass-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem; margin-bottom:0.75rem; border-radius:16px;">
+          <div style="display:flex; align-items:center; gap:1.25rem;">
+            <div style="width:36px; height:36px; border-radius:10px; background:rgba(52,211,153,0.1); display:flex; align-items:center; justify-content:center; color:var(--emerald-glow);">⚡</div>
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">${t.description}</div>
+              <div style="font-size:0.7rem; color:var(--text-muted);">Worker ID #${t.worker} · ${t.date}</div>
+            </div>
           </div>
-          <div class="activity-info">
-            <div class="activity-type">${t.description}</div>
-            <div class="activity-time">Assigned to Worker #${t.worker} · ${t.date}</div>
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="task-status-btn ${t.status === 'done' ? 'status-done' : 'status-pending'}" 
+                  onclick="toggleTaskStatus(${t.id}, '${t.status}')" style="padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; cursor:pointer; border:1px solid transparent;">
+              ${t.status === 'done' ? '✓ Done' : '⌛ Pending'}
+            </span>
           </div>
-          <div class="activity-status status-${t.status}">${t.status}</div>
         </div>
-      `).join('');
-    } catch (e) {
-      console.warn("Task load failed:", e);
-    }
+      `).join('') : '<div style="color:var(--text-muted); text-align:center;">No active tasks assigned</div>';
+    } catch (e) { console.error("Task load error", e); }
+  }
+
+  async function toggleTaskStatus(id, currentStatus) {
+    const newStatus = currentStatus === 'done' ? 'pending' : 'done';
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/tasks/${id}/status/`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) loadTasks();
+    } catch (e) { alert("Status update failed"); }
+  }
+
+  // MODAL LOGIC
+  function openSalaryModal() { 
+    document.getElementById('salary-modal').style.display = 'flex'; 
+    loadWorkerSelect('sal-worker');
+  }
+  function closeSalaryModal() { document.getElementById('salary-modal').style.display = 'none'; }
+  
+  function openHoursModal(workerId, name) { 
+    if (!workerId) return;
+    activeWorkerId = workerId;
+    document.getElementById('hours-modal').style.display = 'flex';
+  }
+  function closeHoursModal() { document.getElementById('hours-modal').style.display = 'none'; }
+
+  let activeWorkerId = null;
+
+  async function loadWorkerSelect(selectId) {
+    const select = document.getElementById(selectId);
+    const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+    });
+    const data = await res.json();
+    const workers = data.results || data;
+    select.innerHTML = workers.map(w => `<option value="${w.id}">${w.first_name} ${w.last_name}</option>`).join('');
+  }
+
+  async function showWorkerProfile(workerId) {
+    const modal = document.getElementById('worker-det-modal');
+    modal.style.display = 'flex';
+    
+    const nameEl = document.getElementById('wd-name');
+    const tasksEl = document.getElementById('wd-tasks');
+    const salEl = document.getElementById('wd-salary');
+    const actionsEl = document.getElementById('wd-actions');
+    
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/${workerId}/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const w = await res.json();
+      
+      nameEl.textContent = `${w.first_name} ${w.last_name}`;
+      document.getElementById('wd-avatar').textContent = `${w.first_name[0]}${w.last_name[0]}`;
+      document.getElementById('wd-role').textContent = w.worker_type.replace('_', ' ').toUpperCase();
+      document.getElementById('wd-zone').textContent = w.zone || 'Unassigned';
+      document.getElementById('wd-phone').textContent = w.phone;
+      document.getElementById('wd-user').textContent = w.first_name.toLowerCase() + '_' + w.id;
+
+      // Tasks
+      const taskRes = await fetch(`${WORKERS_API_URL}/tasks/?worker=${workerId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const tasks = (await taskRes.json()).results || [];
+      tasksEl.innerHTML = tasks.length ? tasks.map(t => `
+        <div style="padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:10px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:0.8rem; font-weight:600;">${t.description}</div>
+          <span class="task-status-btn ${t.status === 'done' ? 'status-done' : 'status-pending'}" style="padding:0.2rem 0.5rem; font-size:0.6rem;">${t.status}</span>
+        </div>
+      `).join('') : '<p style="color:var(--text-muted); font-size:0.8rem;">No tasks assigned.</p>';
+
+      // Salary
+      const salRes = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+        body: JSON.stringify({ worker_id: parseInt(workerId), month: '2024-04' })
+      });
+      const s = await salRes.json();
+      salEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Base Salary</span>
+          <span style="font-weight:700;">${s.base_salary} DZD</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">Overtime</span>
+          <span style="color:var(--emerald-glow);">+ ${s.overtime_pay} DZD</span>
+        </div>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:1rem 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800; color:var(--emerald-vivid);">
+          <span>Total Pay</span>
+          <span>${s.total_salary} DZD</span>
+        </div>
+      `;
+    } catch (e) { console.error("Profile load error", e); }
+  }
+
+  async function calculateSalary() {
+    const resDiv = document.getElementById('salary-result');
+    const workerId = document.getElementById('sal-worker').value;
+    const month = document.getElementById('sal-month').value;
+    
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify({ worker_id: parseInt(workerId), month: month })
+      });
+      const data = await res.json();
+      resDiv.style.display = 'block';
+      resDiv.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Base Salary</span>
+          <span style="font-weight:700;">${data.base_salary} DZD</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Overtime Pay</span>
+          <span style="color:var(--emerald-glow);">+ ${data.overtime_pay} DZD</span>
+        </div>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:0.8rem 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:1.1rem;">
+          <span style="font-weight:800;">TOTAL</span>
+          <span style="font-weight:800; color:var(--emerald-vivid);">${data.total_salary} DZD</span>
+        </div>
+      `;
+    } catch (e) { alert("Salary calculation failed"); }
+  }
+
+  async function submitHours() {
+    const data = {
+      worker: parseInt(activeWorkerId),
+      date: document.getElementById('h-date').value,
+      hours_worked: document.getElementById('h-hours').value,
+      overtime: document.getElementById('h-over').value,
+      notes: document.getElementById('h-notes').value
+    };
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/hours/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        alert("Hours logged successfully!");
+        closeHoursModal();
+      }
+    } catch (e) { alert("Logging failed"); }
   }
 
   function openWorkerModal() { document.getElementById('worker-modal').style.display = 'flex'; }
   function closeWorkerModal() { document.getElementById('worker-modal').style.display = 'none'; }
   
   async function openTaskModal() { 
-    // Load workers into the select dropdown first
     const select = document.getElementById('t-worker');
     try {
       const res = await fetch(`${WORKERS_API_URL}/workers/`, {
@@ -1864,24 +2168,70 @@
 
   async function saveWorker(e) {
     e.preventDefault();
-    const data = {
-      first_name: document.getElementById('w-fn').value,
-      last_name: document.getElementById('w-ln').value,
-      phone: document.getElementById('w-phone').value,
-      worker_type: document.getElementById('w-role').value,
-      zone: document.getElementById('w-zone').value,
-      hire_date: document.getElementById('w-date').value
-    };
+    const btn = document.getElementById('hire-confirm-btn');
+    const oldText = btn.textContent;
+    btn.textContent = 'Creating Account...';
+    btn.disabled = true;
+
     try {
-      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+      // 1. Register in AUTH SERVICE
+      const authData = {
+        username: document.getElementById('w-user').value,
+        password: document.getElementById('w-pass').value,
+        email: document.getElementById('w-email').value,
+        role: document.getElementById('w-role').value,
+        first_name: document.getElementById('w-fn').value,
+        last_name: document.getElementById('w-ln').value
+      };
+
+      const authRes = await fetch(`${AUTH_API_URL}/register/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
-        body: JSON.stringify(data)
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(authData)
       });
-      if (!res.ok) throw new Error("Hire failed");
+
+      if (!authRes.ok) {
+        const err = await authRes.json();
+        throw new Error(err.username || err.detail || "Auth registration failed");
+      }
+
+      const newUser = await authRes.json();
+      const userId = newUser.id;
+
+      // 2. Create Profile in WORKER SERVICE
+      const workerData = {
+        user_id: userId,
+        first_name: authData.first_name,
+        last_name: authData.last_name,
+        phone: document.getElementById('w-phone').value,
+        worker_type: authData.role,
+        zone: document.getElementById('w-zone').value,
+        hire_date: document.getElementById('w-date').value
+      };
+
+      const workerRes = await fetch(`${WORKERS_API_URL}/workers/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(workerData)
+      });
+
+      if (!workerRes.ok) throw new Error("Staff profile creation failed");
+
+      console.log(`Success! ${authData.username} has been hired.`);
       closeWorkerModal();
       loadWorkers();
-    } catch (e) { alert(e.message); }
+    } catch (e) { 
+      alert("Hiring Error: " + e.message); 
+    } finally {
+      btn.textContent = oldText;
+      btn.disabled = false;
+    }
   }
 
   async function submitTask(e) {
@@ -1935,7 +2285,240 @@
         }
     }
   });
+
+  /* ─── TERRE LOGIC ─── */
+  async function loadTerre() {
+    const container = document.getElementById('terre-container');
+    const tableBody = document.getElementById('terre-table-body');
+    const agronomistView = document.getElementById('terre-agronomist-view');
+    const adminActions = document.getElementById('terre-admin-actions');
+    
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAgro = user.role === 'agronomist';
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    const canAddEdit = isAdmin || isAgro;
+    
+    if (isAgro && agronomistView) agronomistView.style.display = 'block';
+    if (canAddEdit && adminActions) adminActions.style.display = 'flex';
+    
+    try {
+      const res = await fetch(LANDS_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("API Unavailable");
+      const lands = await res.json();
+      
+      let cultureOptions = '<option value="">None</option>';
+      try {
+        const cRes = await fetch(CULTURES_API_URL, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        const cultures = await cRes.json();
+        cultureOptions += cultures.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+      } catch (e) { console.warn("Could not fetch cultures"); }
+      
+      if (!lands || lands.length === 0) return; // Keep fallbacks if no data
+
+      // 📋 Populate Agronomist Table
+      if (isAgro && tableBody) {
+        tableBody.innerHTML = lands.map(l => `
+          <tr>
+            <td><span style="font-family:'DM Mono',monospace;">${l.name}</span></td>
+            <td>${l.surface} HA</td>
+            <td><input type="text" class="terre-input" value="${l.soil_type || ''}" onchange="updateSoil(${l.id}, 'soil_type', this.value)"></td>
+            <td><input type="number" step="0.1" class="terre-input" style="width:70px;" value="6.8" onchange="updateSoil(${l.id}, 'ph', this.value)"></td>
+            <td><input type="number" class="terre-input" style="width:70px;" value="42" onchange="updateSoil(${l.id}, 'nitrogen', this.value)"></td>
+            <td><input type="number" class="terre-input" style="width:70px;" value="71" onchange="updateSoil(${l.id}, 'moisture', this.value)"></td>
+            <td>
+              <select class="terre-select" onchange="updateSoil(${l.id}, 'crop_planted', this.value)">
+                ${cultureOptions.replace(`value="${l.crop_planted}"`, `value="${l.crop_planted}" selected`)}
+              </select>
+            </td>
+            <td><button class="btn-sm btn-outline" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button></td>
+          </tr>
+        `).join('');
+      }
+
+      // 🗺️ Update Cards with Live Data
+      container.innerHTML = lands.map(l => `
+        <div class="plot-card glass-card" onclick="showTerreDetails(${JSON.stringify(l).replace(/"/g, '&quot;')})">
+          <div class="plot-id">PLOT · ${l.id} · ${l.surface} HA</div>
+          <div class="plot-name">${l.name}</div>
+          <div class="soil-metrics">
+            ${renderSoilBar('pH Level', 6.8, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
+            ${renderSoilBar('Nitrogen', 42, 'linear-gradient(90deg,#059669,#10b981)')}
+            ${renderSoilBar('Moisture', 71, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
+          </div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-excellent" style="font-size:0.65rem;">⬤ Optimal</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono'; text-transform:uppercase;">${l.crop_planted || 'Unplanted'}</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) { 
+      console.warn("Using fallback Terre data:", e.message); 
+    }
+  }
+
+  function renderSoilBar(label, val, color) {
+    return `
+      <div class="soil-metric">
+        <div class="soil-metric-header"><span>${label}</span><span>${val}</span></div>
+        <div class="soil-bar"><div class="soil-bar-fill" style="width:${val}%; background:${color};"></div></div>
+      </div>
+    `;
+  }
+
+  function showTerreDetails(l) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    
+    document.getElementById('td-title').textContent = l.name;
+    document.getElementById('td-id').textContent = `PLOT ${l.id} · ${l.surface} HA`;
+    document.getElementById('td-crop').textContent = l.crop_planted || 'Unplanted';
+    document.getElementById('td-type').textContent = l.soil_type || 'Unknown';
+    
+    document.getElementById('td-soil-stats').innerHTML = `
+       ${renderSoilBar('Soil pH', 6.8, '#fbbf24')}
+       ${renderSoilBar('Nitrogen (N)', 42, '#10b981')}
+       ${renderSoilBar('Phosphorus (P)', 18, '#3b82f6')}
+       ${renderSoilBar('Moisture', 71, '#06b6d4')}
+    `;
+
+    const actions = document.getElementById('td-actions');
+    let btnHtml = '';
+    if (isAdmin) {
+      btnHtml = `
+        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot(${l.id})">Delete Plot</button>
+        <button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>
+      `;
+    } else if (isAgro) {
+      btnHtml = `<button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>`;
+    } else {
+      btnHtml = `<span class="health-badge health-good">⬤ Operational Plot</span>`;
+    }
+    actions.innerHTML = btnHtml;
+
+    document.getElementById('terre-det-modal').style.display = 'flex';
+  }
+
+  function closeTerreModal() { document.getElementById('terre-det-modal').style.display = 'none'; }
+
+  /* ─── ADD PLOT LOGIC ─── */
+  function openLandModal() {
+    document.getElementById('land-modal').style.display = 'flex';
+  }
+
+  function closeLandModal() {
+    document.getElementById('land-modal').style.display = 'none';
+  }
+
+  function saveLand(e) {
+    e.preventDefault();
+    const name = document.getElementById('l-name').value;
+    const surface = document.getElementById('l-surface').value;
+    const type = document.getElementById('l-type').value;
+    
+    const container = document.getElementById('terre-container');
+    const newId = `Z-${Math.random().toString(36).substring(7).toUpperCase()}`;
+    
+    const newCard = document.createElement('div');
+    newCard.className = 'plot-card glass-card';
+    newCard.onclick = () => showTerreDetails({id: newId, name, surface, soil_type: type});
+    newCard.innerHTML = `
+      <div class="plot-id">PLOT · ${newId} · ${surface} HA</div>
+      <div class="plot-name">${name}</div>
+      <div class="soil-metrics">
+        ${renderSoilBar('pH Level', 7.0, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
+        ${renderSoilBar('Nitrogen', 45, 'linear-gradient(90deg,#059669,#10b981)')}
+        ${renderSoilBar('Moisture', 65, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
+      </div>
+      <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+         <span class="health-badge health-excellent">⬤ New</span>
+         <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">UNPLANTED</span>
+      </div>
+    `;
+    
+    container.appendChild(newCard);
+    closeLandModal();
+    document.getElementById('land-form').reset();
+    
+    // Update subtitle count
+    const count = container.querySelectorAll('.plot-card').length;
+    document.getElementById('terre-subtitle').textContent = `Analyzing soil health across ${count} active plots`;
+  }
+
+  async function updateSoil(id, field, value) {
+    console.log(`Updating land ${id}: ${field} = ${value}`);
+  }
 </script>
+
+    <!-- 🏛️ TERRE DETAILS MODAL -->
+    <div class="modal-overlay" id="terre-det-modal">
+      <div class="modal-content glass-strong" style="max-width:700px; border-radius:32px; overflow:hidden; padding:0;">
+        <div style="height:150px; background:linear-gradient(135deg, #065f46 0%, #064e3b 100%); padding:2rem; position:relative;">
+          <h2 id="td-title" style="margin:0; font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800;">Plot Alpha</h2>
+          <p id="td-id" style="margin:0; font-family:'DM Mono',monospace; opacity:0.6; font-size:0.8rem;">Z-ALPHA · 2.4 HA</p>
+          <button onclick="closeTerreModal()" style="position:absolute; top:1.5rem; right:1.5rem; background:rgba(0,0,0,0.2); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer;">✕</button>
+        </div>
+        <div style="padding:2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+          <div>
+            <div class="tile-label">Soil Composition</div>
+            <div id="td-soil-stats" style="margin-top:1rem;">
+              <!-- Dynamic Bars -->
+            </div>
+          </div>
+          <div>
+            <div class="tile-label">Current Status</div>
+            <div style="margin-top:1rem; padding:1.5rem; background:rgba(0,0,0,0.2); border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+              <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.8rem;">Crop:</span> <span id="td-crop" style="font-weight:700;margin-left:0.5rem;">Strawberries</span></div>
+              <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.8rem;">Soil Type:</span> <span id="td-type" style="font-weight:700;margin-left:0.5rem;">Silt Loam</span></div>
+              <div id="td-health-badge"></div>
+            </div>
+          </div>
+        </div>
+        <div id="td-actions" style="padding:1.5rem 2.5rem; background:rgba(255,255,255,0.02); border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:flex-end; gap:1rem;">
+          <!-- Action buttons for Admin -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 🏗️ ADD LAND MODAL -->
+    <div class="modal-overlay" id="land-modal">
+      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
+          <button onclick="closeLandModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <form id="land-form" onsubmit="saveLand(event)">
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Plot Name</label>
+            <input type="text" id="l-name" class="terre-input" placeholder="e.g. North Sector" required style="margin-top:0.5rem;">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div>
+              <label class="tile-label">Surface (HA)</label>
+              <input type="number" step="0.1" id="l-surface" class="terre-input" placeholder="2.4" required style="margin-top:0.5rem;">
+            </div>
+            <div>
+              <label class="tile-label">Soil Type</label>
+              <select id="l-type" class="terre-select" style="margin-top:0.5rem;">
+                <option value="Silt Loam">Silt Loam</option>
+                <option value="Clay">Clay</option>
+                <option value="Sandy">Sandy</option>
+                <option value="Peaty">Peaty</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeLandModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled">Save Plot</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
 </body>
 </html>
