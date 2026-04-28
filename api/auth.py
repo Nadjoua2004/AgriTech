@@ -1,8 +1,7 @@
 import os
 import sys
 
-# Add the current directory to path so that auth_service package can be found
-sys.path.append(os.path.dirname(__file__))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'services', 'auth_service'))
 
 from django.core.wsgi import get_wsgi_application
 

@@ -1,57 +1,25 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/vercel_app.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "services/auth_service/vercel_app.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "services/cultures_service/main.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "services/equipment_service/vercel_app.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "services/terre_service/vercel_app.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "services/worker_service/vercel_app.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/auth/(.*)",
-      "destination": "services/auth_service/vercel_app.py"
+      "destination": "/api/auth.py"
     },
     {
       "source": "/api/cultures/(.*)",
-      "destination": "services/cultures_service/main.py"
+      "destination": "/api/cultures.py"
     },
     {
       "source": "/api/equipment/(.*)",
-      "destination": "services/equipment_service/vercel_app.py"
+      "destination": "/api/equipment.py"
     },
     {
       "source": "/api/terre/(.*)",
-      "destination": "services/terre_service/vercel_app.py"
+      "destination": "/api/terre.py"
     },
     {
       "source": "/api/worker/(.*)",
-      "destination": "services/worker_service/vercel_app.py"
+      "destination": "/api/worker.py"
     },
     {
       "source": "/static/(.*)",
@@ -59,7 +27,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "frontend/vercel_app.py"
+      "destination": "/api/index.py"
     }
   ]
 }
