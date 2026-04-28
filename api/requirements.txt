@@ -14,3 +14,7 @@ fastapi
 uvicorn
 firebase-admin
 PyJWT
+python-jose[cryptography]
+uvloop
+httptools
+python-multipart
