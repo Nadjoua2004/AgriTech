@@ -2,8 +2,10 @@ import os
 import sys
 import traceback
 
-# Add the project root to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# Force absolute path resolution for Vercel
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 try:
     from django.core.wsgi import get_wsgi_application

@@ -1,8 +1,10 @@
 import os
 import sys
 
-# Add project root to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# Force absolute path resolution for Vercel
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 # Import using full package path
 from services.cultures_service.main import app
