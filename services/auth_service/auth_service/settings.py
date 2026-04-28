@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'auth_service.urls'
+ROOT_URLCONF = 'services.auth_service.auth_service.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [

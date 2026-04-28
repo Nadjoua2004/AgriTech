@@ -1,6 +1,8 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'services', 'cultures_service'))
+# Add project root to path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from main import app
+# Import using full package path
+from services.cultures_service.main import app
