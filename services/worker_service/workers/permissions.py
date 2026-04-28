@@ -24,7 +24,7 @@ def decode_jwt_from_request(request):
          
     try:
         # Fallback to local decode
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
         return {'user_id': payload.get('user_id'), 'role': payload.get('role')}
     except jwt.PyJWTError:
         return None

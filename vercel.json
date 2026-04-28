@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "services/auth_service/auth_service/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "services/cultures_service/main.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "services/equipment_service/equipment_service/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "services/terre_service/terre_service/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    },
+    {
+      "src": "services/worker_service/worker_service/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/auth/(.*)",
+      "destination": "services/auth_service/auth_service/wsgi.py"
+    },
+    {
+      "source": "/api/cultures/(.*)",
+      "destination": "services/cultures_service/main.py"
+    },
+    {
+      "source": "/api/equipment/(.*)",
+      "destination": "services/equipment_service/equipment_service/wsgi.py"
+    },
+    {
+      "source": "/api/terre/(.*)",
+      "destination": "services/terre_service/terre_service/wsgi.py"
+    },
+    {
+      "source": "/api/worker/(.*)",
+      "destination": "services/worker_service/worker_service/wsgi.py"
+    },
+    {
+      "source": "/static/(.*)",
+      "destination": "frontend/static/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "frontend/wsgi.py"
+    }
+  ]
+}

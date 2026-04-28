@@ -1829,16 +1829,16 @@
 <script>
   // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
   const USE_MOCK = false;
-  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
-  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
-  const WORKER_SERVICE_BASE = "https://worker-service-hzwi.onrender.com";
-  const WORKERS_API_URL = `${WORKER_SERVICE_BASE}/api`;
-  const LANDS_API_URL = "https://agritech-production-639b.up.railway.app/api/parcelles/";
-  const EQUIPMENT_API_URL = "https://equipment-service-v67j.onrender.com/api/equipements/";
+  const AUTH_API_URL = "/api/auth";
+  const CULTURES_API_URL = "/api/cultures";
+  const WORKER_SERVICE_BASE = "/api/worker";
+  const WORKERS_API_URL = `${WORKER_SERVICE_BASE}`;
+  const LANDS_API_URL = "/api/terre/api/parcelles/";
+  const EQUIPMENT_API_URL = "/api/equipment/api/equipements/";
   const EQUIPMENT_MOCK_URL = `${WORKER_SERVICE_BASE}/mock/equipments/`;
 
   // TODO: move to .env before deployment
-  const MAPBOX_TOKEN = "pk.eyJ1IjoibmFkam91YTEiLCJhIjoiY21kM20zbWtmMDVmOTJqc2RlZHU1bGc5bCJ9.M6PUG-qrsg_tTU1XY7vWhQ";
+  const MAPBOX_TOKEN = "{{ MAPBOX_TOKEN }}";
   if (!MAPBOX_TOKEN) {
     console.error("Mapbox token missing");
   } else {
