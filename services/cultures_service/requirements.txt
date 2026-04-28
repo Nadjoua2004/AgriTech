@@ -1,9 +1,16 @@
-fastapi==0.115.0
-uvicorn==0.30.6
-firebase-admin==6.5.0
-python-jose[cryptography]==3.3.0
-python-dotenv==1.0.1
-PyJWT==2.10.1
-gunicorn==20.1.0
-uvloop==0.21.0
-httptools==0.6.1
+# Root requirements.txt for Vercel Monorepo
+Django>=5.1
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+gunicorn
+dj-database-url
+psycopg2-binary
+whitenoise
+python-dotenv
+requests
+pika
+fastapi
+uvicorn
+firebase-admin
+PyJWT

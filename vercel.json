@@ -2,40 +2,40 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/wsgi.py",
+      "src": "frontend/vercel_app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
     {
-      "src": "services/auth_service/auth_service/wsgi.py",
+      "src": "services/auth_service/vercel_app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
     {
       "src": "services/cultures_service/main.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
     {
-      "src": "services/equipment_service/equipment_service/wsgi.py",
+      "src": "services/equipment_service/vercel_app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
     {
-      "src": "services/terre_service/terre_service/wsgi.py",
+      "src": "services/terre_service/vercel_app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
     {
-      "src": "services/worker_service/worker_service/wsgi.py",
+      "src": "services/worker_service/vercel_app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }
   ],
   "rewrites": [
     {
       "source": "/api/auth/(.*)",
-      "destination": "services/auth_service/auth_service/wsgi.py"
+      "destination": "services/auth_service/vercel_app.py"
     },
     {
       "source": "/api/cultures/(.*)",
@@ -43,15 +43,15 @@
     },
     {
       "source": "/api/equipment/(.*)",
-      "destination": "services/equipment_service/equipment_service/wsgi.py"
+      "destination": "services/equipment_service/vercel_app.py"
     },
     {
       "source": "/api/terre/(.*)",
-      "destination": "services/terre_service/terre_service/wsgi.py"
+      "destination": "services/terre_service/vercel_app.py"
     },
     {
       "source": "/api/worker/(.*)",
-      "destination": "services/worker_service/worker_service/wsgi.py"
+      "destination": "services/worker_service/vercel_app.py"
     },
     {
       "source": "/static/(.*)",
@@ -59,7 +59,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "frontend/wsgi.py"
+      "destination": "frontend/vercel_app.py"
     }
   ]
 }
