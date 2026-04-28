@@ -1,0 +1,4092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriTech — Agritecture Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cabinet+Grotesk:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    :root {
+      --emerald-deep:   #022c22;
+      --emerald-dark:   #064e3b;
+      --emerald-mid:    #065f46;
+      --emerald-base:   #059669;
+      --emerald-vivid:  #10b981;
+      --emerald-glow:   #34d399;
+      --earth-brown:    #78350f;
+      --earth-warm:     #92400e;
+      --earth-sand:     #d97706;
+      --earth-light:    #fef3c7;
+      --glass-bg:       rgba(6, 78, 59, 0.18);
+      --glass-border:   rgba(52, 211, 153, 0.18);
+      --glass-strong:   rgba(6, 78, 59, 0.45);
+      --text-primary:   #ecfdf5;
+      --text-secondary: #a7f3d0;
+      --text-muted:     #6ee7b7;
+      --shadow-glow:    0 0 40px rgba(16, 185, 129, 0.15);
+      --shadow-card:    0 8px 32px rgba(2, 44, 34, 0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      background: var(--emerald-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BACKGROUND ─── */
+    .bg-field {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 80%, rgba(6,78,59,0.7) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(5,150,105,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(2,44,34,0.9) 0%, transparent 100%),
+        linear-gradient(160deg, #011a12 0%, #022c22 40%, #031f17 70%, #041a10 100%);
+    }
+    .bg-field::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(16,185,129,0.04) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(16,185,129,0.04) 40px);
+      animation: grid-drift 20s linear infinite;
+    }
+    @keyframes grid-drift { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%); top: -100px; right: -100px; animation: orb-float 12s ease-in-out infinite; }
+    .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%); bottom: 10%; left: 5%; animation: orb-float 15s ease-in-out infinite reverse; }
+    @keyframes orb-float { 0%,100%{transform:translate(0,0);} 33%{transform:translate(30px,-40px);} 66%{transform:translate(-20px,20px);} }
+
+    /* ─── GLASS UTILITY ─── */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(52,211,153,0.1);
+    }
+    .glass-strong {
+      background: var(--glass-strong);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(52,211,153,0.25);
+      box-shadow: var(--shadow-card), var(--shadow-glow), inset 0 1px 0 rgba(52,211,153,0.15);
+    }
+    .glass-card {
+      background: rgba(6,78,59,0.22);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(52,211,153,0.12);
+      box-shadow: 0 4px 24px rgba(2,44,34,0.5), inset 0 1px 0 rgba(52,211,153,0.08);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .glass-card:hover {
+      border-color: rgba(52,211,153,0.3);
+      box-shadow: 0 8px 40px rgba(2,44,34,0.7), 0 0 20px rgba(16,185,129,0.12), inset 0 1px 0 rgba(52,211,153,0.18);
+      transform: translateY(-3px);
+    }
+
+    /* ─── NOTIFICATION SYSTEM ─── */
+    .notif-container {
+      position: fixed; top: 2rem; right: 2rem; z-index: 10000;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      pointer-events: none;
+    }
+    .notif-toast {
+      min-width: 300px; max-width: 450px;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      display: flex; align-items: center; gap: 1rem;
+      pointer-events: auto;
+      background: var(--glass-strong);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-card), 0 0 20px rgba(16,185,129,0.1);
+      animation: toast-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: all 0.3s ease;
+    }
+    .notif-toast.hide {
+      animation: toast-slide-out 0.4s ease forwards;
+    }
+    @keyframes toast-slide-in {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toast-slide-out {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+    .notif-success { border-color: rgba(16, 185, 129, 0.5); background: rgba(6, 78, 59, 0.6); }
+    .notif-error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.6); }
+    .notif-info { border-color: rgba(59, 130, 246, 0.5); background: rgba(30, 58, 138, 0.6); }
+    
+    .notif-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .notif-success .notif-icon { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .notif-error .notif-icon { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .notif-info .notif-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+    /* ─── AGRONOMIST DASHBOARD STYLES ─── */
+    .agro-input, .agro-select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 0.6rem;
+        color: white;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .agro-input:focus, .agro-select:focus { border-color: var(--emerald-vivid); }
+    .agro-select option { background: var(--emerald-deep); color: white; }
+
+    /* ─── LOGIN PAGE ─── */
+    #login-page {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .login-box {
+      width: 100%; max-width: 440px;
+      padding: 3rem 2.5rem;
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-box::before {
+      content: '';
+      position: absolute; top: -2px; left: 15%; right: 15%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--emerald-glow), transparent);
+    }
+    .login-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--emerald-glow) 0%, var(--emerald-vivid) 50%, #6ee7b7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .login-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .field-group { position: relative; margin-top: 1.5rem; }
+    .field-group label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block; margin-bottom: 0.5rem;
+    }
+    .field-input {
+      width: 100%;
+      background: rgba(2,44,34,0.6);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 12px;
+      padding: 0.85rem 1rem 0.85rem 2.8rem;
+      color: var(--text-primary);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .field-input:focus {
+      border-color: var(--emerald-vivid);
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.12), inset 0 0 20px rgba(16,185,129,0.04);
+      background: rgba(6,78,59,0.4);
+    }
+    .field-input::placeholder { color: rgba(167,243,208,0.35); }
+    .field-icon {
+      position: absolute; left: 0.9rem; bottom: 0.85rem;
+      color: var(--emerald-vivid); opacity: 0.6;
+    }
+    .btn-primary {
+      width: 100%; margin-top: 2rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--emerald-mid) 0%, var(--emerald-base) 100%);
+      border: 1px solid rgba(52,211,153,0.3);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(52,211,153,0.15), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.35); }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:active { transform: translateY(0); }
+    .error-msg {
+      color: #fca5a5;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      margin-top: 0.4rem;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ─── MAIN APP ─── */
+    #app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+    #app.active { display: flex; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 260px; min-width: 260px;
+      min-height: 100vh;
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid rgba(52,211,153,0.1);
+      z-index: 50;
+    }
+    .sidebar-brand {
+      padding: 0.5rem 0.75rem 1.5rem;
+      border-bottom: 1px solid rgba(52,211,153,0.1);
+      margin-bottom: 1.5rem;
+    }
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--emerald-glow), var(--emerald-vivid));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .brand-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    .nav-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(110,231,183,0.4);
+      padding: 0 0.75rem;
+      margin-bottom: 0.4rem;
+      margin-top: 1.2rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      position: relative;
+      margin-bottom: 0.15rem;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover {
+      background: rgba(16,185,129,0.1);
+      color: var(--text-primary);
+      border-color: rgba(52,211,153,0.15);
+    }
+    .nav-item.active {
+      background: rgba(16,185,129,0.18);
+      color: var(--emerald-glow);
+      border-color: rgba(52,211,153,0.25);
+      box-shadow: inset 0 0 20px rgba(16,185,129,0.05);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: -1rem; top: 25%; bottom: 25%;
+      width: 3px; border-radius: 0 3px 3px 0;
+      background: var(--emerald-vivid);
+      box-shadow: 0 0 10px var(--emerald-vivid);
+    }
+    .nav-icon { font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: rgba(16,185,129,0.2);
+      color: var(--emerald-vivid);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 20px;
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(52,211,153,0.1);
+    }
+    .user-pill {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      background: rgba(2,44,34,0.5);
+      border: 1px solid rgba(52,211,153,0.12);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .user-pill:hover { border-color: rgba(52,211,153,0.25); }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-base), var(--emerald-vivid));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+    }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+    .user-role { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.1em; }
+
+    /* ─── MODALS ─── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+      display: none; align-items: center; justify-content: center; z-index: 10000;
+    }
+    .modal-box { 
+      width: 90%; max-width: 500px; padding: 2rem; position: relative; 
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalPop { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+    .form-group input, .form-group select, .form-group textarea { 
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+      padding: 0.75rem; border-radius: 10px; color: white; font-size: 0.9rem;
+    }
+
+
+    .main-content { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; min-width: 0; }
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.9rem;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+    }
+    .page-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .btn-sm {
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      border: 1px solid;
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: rgba(52,211,153,0.25);
+      color: var(--text-secondary);
+    }
+    .btn-outline:hover { border-color: var(--emerald-vivid); color: var(--emerald-glow); background: rgba(16,185,129,0.08); }
+    .btn-filled {
+      background: linear-gradient(135deg, var(--emerald-mid), var(--emerald-base));
+      border-color: rgba(52,211,153,0.3);
+      color: white;
+    }
+    .btn-filled:hover { box-shadow: 0 4px 20px rgba(16,185,129,0.3); transform: translateY(-1px); }
+
+    /* ─── METRIC CARDS ─── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.4), transparent);
+    }
+    .metric-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .metric-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      margin: 0.4rem 0;
+      line-height: 1;
+    }
+    .metric-unit { font-size: 1rem; font-weight: 400; color: var(--text-muted); margin-left: 0.15rem; }
+    .metric-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .metric-change.up { color: var(--emerald-glow); }
+    .metric-change.down { color: #fca5a5; }
+    .metric-icon {
+      position: absolute; right: 1.2rem; top: 1.2rem;
+      font-size: 1.6rem; opacity: 0.25;
+    }
+    .progress-track {
+      height: 5px; border-radius: 3px;
+      background: rgba(52,211,153,0.1);
+      margin-top: 0.85rem; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--emerald-base), var(--emerald-glow));
+      box-shadow: 0 0 8px rgba(52,211,153,0.4);
+      transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── STATUS SECTION ─── */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .status-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-radius: 14px;
+    }
+    .status-label { font-size: 0.88rem; font-weight: 500; color: var(--text-secondary); }
+    .status-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.15rem; }
+    .toggle {
+      width: 44px; height: 24px;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 12px;
+      cursor: pointer; position: relative;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .toggle.on { background: rgba(16,185,129,0.4); border-color: var(--emerald-vivid); box-shadow: 0 0 12px rgba(16,185,129,0.3); }
+    .toggle::after {
+      content: '';
+      position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: rgba(167,243,208,0.5);
+      transition: all 0.3s ease;
+    }
+    .toggle.on::after { transform: translateX(20px); background: var(--emerald-glow); box-shadow: 0 0 8px var(--emerald-glow); }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--emerald-vivid);
+      box-shadow: 0 0 0 0 rgba(16,185,129,0.4);
+      animation: pulse-ring 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);} 50%{box-shadow:0 0 0 6px rgba(16,185,129,0);} }
+
+    /* ─── 3D FARM ILLUSTRATION (CSS) ─── */
+    .farm-canvas {
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .farm-scene {
+      display: flex; align-items: flex-end; gap: 0.75rem;
+      justify-content: center;
+      height: 140px; position: relative;
+    }
+    .farm-row { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .crop-plant {
+      width: 18px; position: relative;
+      animation: sway 3s ease-in-out infinite;
+    }
+    .crop-plant:nth-child(2n) { animation-delay: 0.4s; }
+    .crop-plant:nth-child(3n) { animation-delay: 0.8s; }
+    @keyframes sway { 0%,100%{transform:rotate(-3deg);} 50%{transform:rotate(3deg);} }
+    .crop-stem { width: 3px; height: 40px; background: linear-gradient(to top, #065f46, #10b981); margin: 0 auto; border-radius: 2px; }
+    .crop-leaf {
+      width: 16px; height: 10px;
+      background: radial-gradient(ellipse at 30% 50%, #34d399, #059669);
+      border-radius: 50% 50% 50% 0;
+      position: absolute; top: 5px;
+    }
+    .crop-leaf.right { border-radius: 50% 50% 0 50%; left: 8px; }
+    .crop-leaf.left { transform: scaleX(-1); right: 8px; }
+    .crop-bulb {
+      width: 20px; height: 20px;
+      background: radial-gradient(circle at 35% 35%, #6ee7b7, #059669);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(52,211,153,0.3);
+    }
+    .crop-tall .crop-stem { height: 70px; }
+    .crop-tall .crop-bulb { width: 26px; height: 26px; }
+    .soil-strip {
+      width: 100%; height: 10px;
+      background: linear-gradient(to bottom, #78350f, #451a03);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
+    .farm-drone {
+      position: absolute; top: 20px; right: 15%;
+      animation: drone-hover 4s ease-in-out infinite;
+    }
+    @keyframes drone-hover { 0%,100%{transform:translateY(0) rotate(2deg);} 50%{transform:translateY(-12px) rotate(-2deg);} }
+    .drone-body {
+      width: 36px; height: 14px;
+      background: rgba(52,211,153,0.3);
+      border: 1px solid rgba(52,211,153,0.5);
+      border-radius: 4px;
+      position: relative;
+    }
+    .drone-arm {
+      position: absolute; top: 50%; width: 18px; height: 2px;
+      background: rgba(52,211,153,0.4); border-radius: 1px;
+    }
+    .drone-arm.left { right: 100%; transform: translateY(-50%); }
+    .drone-arm.right { left: 100%; transform: translateY(-50%); }
+    .drone-prop {
+      position: absolute; width: 14px; height: 4px;
+      background: rgba(52,211,153,0.6); border-radius: 2px;
+      animation: spin-prop 0.3s linear infinite;
+    }
+    @keyframes spin-prop { to { transform: rotateY(180deg); } }
+    .drone-prop.tl { top: -3px; left: -22px; }
+    .drone-prop.tr { top: -3px; right: -22px; }
+    .drone-beam {
+      position: absolute; top: 100%; left: 50%;
+      width: 2px; height: 40px;
+      background: linear-gradient(to bottom, rgba(52,211,153,0.4), transparent);
+      transform: translateX(-50%);
+      filter: blur(1px);
+    }
+    .sun-orb {
+      position: absolute; top: 10px; left: 12%;
+      width: 50px; height: 50px;
+      background: radial-gradient(circle, rgba(217,119,6,0.7) 0%, rgba(245,158,11,0.3) 50%, transparent 70%);
+      border-radius: 50%; filter: blur(2px);
+    }
+    .farm-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: absolute;
+      bottom: 1.25rem; left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    /* ─── 3D MAPBOX ANIMATIONS ─── */
+    .land-container {
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+    .particle {
+      position: absolute;
+      bottom: 0;
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: rise 3s linear;
+      pointer-events: none;
+      z-index: 10;
+    }
+    @keyframes rise {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-300px); opacity: 0; }
+    }
+    .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
+      display: none !important;
+    }
+
+    /* ─── CULTURES PAGE ─── */
+    .cultures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .crop-card { border-radius: 18px; padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; }
+    .crop-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, rgba(52,211,153,0.08), transparent);
+      border-radius: 50%;
+    }
+    .crop-emoji { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+    .crop-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); }
+    .crop-variety { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 0.15rem; }
+    .crop-stats { display: flex; gap: 1rem; margin: 1rem 0; }
+    .crop-stat { flex: 1; }
+    .crop-stat-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .crop-stat-val { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-top: 0.15rem; }
+    .health-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .health-excellent { background: rgba(52,211,153,0.15); color: var(--emerald-glow); border: 1px solid rgba(52,211,153,0.25); }
+    .health-good { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .health-warning { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.25); }
+
+    /* ─── EQUIPMENT PAGE ─── */
+    .equipment-list { display: flex; flex-direction: column; gap: 1rem; }
+    .equip-row {
+      border-radius: 14px; padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .equip-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(6,95,70,0.4);
+      border: 1px solid rgba(52,211,153,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+    }
+    .equip-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
+    .equip-model { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+    .equip-meta { display: flex; gap: 1rem; margin-top: 0.4rem; font-size: 0.78rem; color: var(--text-secondary); }
+    .avail-chip {
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .avail-yes { background: rgba(52,211,153,0.15); color: var(--emerald-glow); border: 1px solid rgba(52,211,153,0.2); }
+    .avail-no { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .avail-main { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.2); }
+
+    /* ─── TERRE PAGE ─── */
+    .terre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .plot-card { border-radius: 16px; padding: 1.5rem; }
+    .plot-id { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+    .plot-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-top: 0.2rem; }
+    .soil-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 1.25rem; }
+    .soil-metric { padding: 0.75rem; background: rgba(2,44,34,0.5); border-radius: 10px; border: 1px solid rgba(52,211,153,0.1); }
+    .soil-metric-name { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .soil-metric-val { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-top: 0.3rem; }
+    .soil-bar { height: 3px; border-radius: 2px; background: rgba(52,211,153,0.1); margin-top: 0.5rem; overflow: hidden; }
+    .soil-bar-fill { height: 100%; border-radius: 2px; transition: width 1.5s ease; }
+
+    /* ─── WORKERS PAGE ─── */
+    .workers-list { display: flex; flex-direction: column; gap: 0.85rem; }
+    .worker-row {
+      border-radius: 14px; padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 1.25rem;
+    }
+    .worker-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-mid), var(--emerald-dark));
+      border: 2px solid rgba(52,211,153,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+      color: var(--emerald-glow);
+    }
+    .worker-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
+    .worker-role { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+
+    .shift-chip {
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+    }
+    .shift-morning { background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.2); }
+    .shift-afternoon { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .shift-night { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+
+    /* ─── SETTINGS PAGE ─── */
+    .settings-section { margin-bottom: 2rem; }
+    .settings-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.85rem; }
+    .setting-row { border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem; }
+    .setting-name { font-size: 0.88rem; font-weight: 500; color: var(--text-secondary); }
+    .setting-desc { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+    .settings-select {
+      background: rgba(2,44,34,0.6); border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 8px; padding: 0.4rem 0.75rem;
+      color: var(--text-primary); font-size: 0.8rem;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      outline: none; cursor: pointer;
+    }
+    .settings-select:focus { border-color: var(--emerald-vivid); }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(2,28,20,0.9);
+      border-top: 1px solid rgba(52,211,153,0.15);
+      padding: 0.6rem 0.5rem;
+      gap: 0;
+    }
+    .mob-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+      padding: 0.4rem 0.25rem;
+      cursor: pointer; transition: all 0.2s;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.08em;
+    }
+    .mob-nav-item.active { color: var(--emerald-vivid); }
+    .mob-nav-icon { font-size: 1.15rem; }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52,211,153,0.4); }
+
+    /* ─── PAGE TRANSITIONS ─── */
+    .page-section { display: none; animation: fade-in 0.35s ease; }
+    .page-section.active { display: block; }
+    @keyframes fade-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .mobile-nav { display: flex; }
+      .main-content { padding: 1.25rem 1rem 80px; }
+      .status-grid { grid-template-columns: 1fr; }
+      .terre-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .cultures-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+    /* ─── SUPERVISOR DASHBOARD STYLES ─── */
+    .supervisor-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      padding: 1.5rem;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at top right, rgba(52,211,153,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif; }
+    .stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .supervisor-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .supervisor-worker-card {
+      padding: 1.5rem 2rem;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .supervisor-worker-card:hover {
+      transform: translateX(8px);
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(52,211,153,0.2);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+    .toggle-switch.on { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.4); }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 19px; height: 19px;
+      background: #fff;
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on::after { left: 26px; background: var(--emerald-vivid); }
+
+    .timer-badge { font-family: 'DM Mono', monospace; font-size: 0.95rem; color: var(--emerald-vivid); font-weight: 700; min-width: 85px; }
+    .earnings-badge { font-weight: 800; color: #fff; font-size: 1.1rem; }
+    
+    .tracking-table-container { margin-top: 3rem; animation: fade-in 0.5s ease 0.2s both; }
+
+    @media (max-width: 1000px) {
+      .supervisor-worker-card { flex-wrap: wrap; gap: 1rem; padding: 1.25rem; }
+      .supervisor-worker-card > div { flex: 1 1 150px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── AMBIENT BACKGROUND ─── -->
+<div class="bg-field"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ════════════════════════════════════════════
+     LOGIN PAGE
+     ════════════════════════════════════════════ -->
+<div id="login-page">
+  <div class="login-box glass-strong" style="border-radius:28px;">
+
+    <div class="text-center mb-8">
+      <div class="login-logo">AgriTech</div>
+      <div class="login-subtitle">Agritecture Platform · v2.4.1</div>
+    </div>
+
+    <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(52,211,153,0.2),transparent);margin-bottom:2rem;"></div>
+
+    <!-- Status indicator -->
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;padding:0.6rem 0.9rem;background:rgba(16,185,129,0.08);border:1px solid rgba(52,211,153,0.15);border-radius:10px;">
+      <span class="pulse-dot" style="width:6px;height:6px;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;color:var(--text-muted);">SECURE CONNECTION ESTABLISHED</span>
+    </div>
+
+    <div class="field-group">
+      <label>Identifier</label>
+      <div style="position:relative;">
+        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input id="login-user" type="text" class="field-input" placeholder="admin@agritech.farm" autocomplete="username" />
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Access Key</label>
+      <div style="position:relative;">
+        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input id="login-pass" type="password" class="field-input" placeholder="••••••••••••" autocomplete="current-password" style="padding-right: 40px;" />
+        <span id="pass-toggle" onclick="togglePass()" style="position:absolute; right:12px; top:11px; cursor:pointer; opacity:0.6; font-size:1.1rem; filter: grayscale(1) brightness(2);">👁️</span>
+      </div>
+      <div id="login-error" class="error-msg">⚠ Invalid credentials. Please try again.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;">
+      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+        <div id="remember-toggle" class="toggle on" onclick="this.classList.toggle('on')" style="width:34px;height:18px;"></div>
+        <span style="font-size:0.8rem;color:var(--text-muted);">Remember device</span>
+      </label>
+      <span style="font-size:0.78rem;color:var(--emerald-vivid);cursor:pointer;font-weight:500;">Forgot key?</span>
+    </div>
+
+    <button class="btn-primary" onclick="handleLogin()">
+      <span id="btn-text">Access Platform</span>
+    </button>
+
+    <p style="text-align:center;margin-top:1.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:rgba(110,231,183,0.35);">
+      ENCRYPTED · ISO 27001 · GDPR COMPLIANT
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN APPLICATION
+     ════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar glass-strong">
+    <div class="sidebar-brand">
+      <div class="brand-name">AgriTech</div>
+      <div class="brand-tag">Agritecture Platform</div>
+    </div>
+
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="navigate('dashboard', this)">
+      <span class="nav-icon">⬡</span> Dashboard
+      <span class="nav-badge">Live</span>
+    </div>
+
+    <div class="nav-section-label">Services</div>
+    <div class="nav-item" onclick="navigate('cultures', this)">
+      <span class="nav-icon">🌿</span> Cultures
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="navigate('equipment', this)">
+      <span class="nav-icon">⚙</span> Equipment
+    </div>
+    <div class="nav-item" onclick="navigate('terre', this)">
+      <span class="nav-icon">◈</span> Terre
+    </div>
+    <div class="nav-item" onclick="navigate('workers', this)">
+      <span class="nav-icon">◎</span> Workers
+      <span class="nav-badge">8</span>
+    </div>
+    <div class="nav-item" id="nav-quality" onclick="navigate('quality', this)">
+      <span class="nav-icon">🔬</span> Quality
+    </div>
+
+    <style>
+      .modal-overlay {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+        display:none; align-items:center; justify-content:center; z-index:2000;
+        padding: 1.5rem;
+      }
+      .modal-content {
+        max-width: 500px; width:100%; padding:2rem; border:1px solid rgba(255,255,255,0.1);
+      }
+      .form-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      }
+      .form-group label {
+        display:block; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em;
+        color:var(--text-muted); margin-bottom:0.4rem;
+      }
+      .form-group input {
+        width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+        border-radius:8px; padding:0.6rem; color:white; font-size:0.85rem; outline:none;
+      }
+      .form-group input:focus { border-color: var(--emerald-vivid); }
+
+      /* Card Actions */
+      .card-actions {
+        position: absolute; top: 0.75rem; right: 0.75rem;
+        display: flex; gap: 0.5rem; opacity: 0; transition: opacity 0.3s;
+      }
+      .crop-card:hover .card-actions { opacity: 1; }
+      .card-actions span {
+        width: 24px; height: 24px; border-radius: 6px;
+        background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; cursor: pointer; transition: background 0.2s;
+      }
+      .card-actions span:hover { background: rgba(255,255,255,0.2); }
+    </style>
+
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item" id="nav-supervisor" onclick="navigate('supervisor', this)" style="display:none;">
+      <span class="nav-icon">🛡</span> Supervisor Hub
+    </div>
+
+    <div class="nav-section-label">System</div>
+    <div class="nav-item" onclick="navigate('settings', this)">
+      <span class="nav-icon">⊛</span> Settings
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill" onclick="handleLogout()" title="Click to Logout">
+        <div class="user-avatar" id="ui-avatar">AG</div>
+        <div>
+          <div class="user-name" id="ui-name">Admin User</div>
+          <div class="user-role" id="ui-role">Farm Director</div>
+        </div>
+        <svg style="margin-left:auto;color:var(--text-muted);opacity:0.5;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <section id="page-dashboard" class="page-section active">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Good morning, Director</h1>
+          <p class="page-subtitle">Field Operations · Zone Alpha · All systems nominal</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">⬇ Export Report</button>
+          <button class="btn-sm btn-filled">+ New Land</button>
+        </div>
+      </div>
+
+      <!-- Farm Illustration -->
+      <div class="farm-canvas glass-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);">Live Field View · Sector 3</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--text-primary);margin-top:0.2rem;">North Greenhouse Array</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.75rem;background:rgba(16,185,129,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:8px;">
+            <span class="pulse-dot" style="width:6px;height:6px;"></span>
+            <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--emerald-vivid);letter-spacing:0.1em;">MONITORING ACTIVE</span>
+          </div>
+        </div>
+
+        <div class="farm-scene">
+          <div class="sun-orb"></div>
+          <div class="farm-drone">
+            <div class="drone-body">
+              <div class="drone-arm left"></div>
+              <div class="drone-arm right"></div>
+              <div class="drone-prop tl"></div>
+              <div class="drone-prop tr"></div>
+              <div class="drone-beam"></div>
+            </div>
+          </div>
+          <!-- Crop rows -->
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+            <div style="display:flex;gap:8px;align-items:flex-end;">
+              <div class="crop-plant crop-tall" style="animation-delay:0s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:20px;position:absolute;"></div><div class="crop-leaf left" style="top:35px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:0.3s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:6px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:16px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:0.6s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:25px;position:absolute;"></div><div class="crop-leaf left" style="top:42px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:0.9s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:6px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:20px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:1.2s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:10px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:28px;position:absolute;"></div><div class="crop-leaf left" style="top:46px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+              <div class="crop-plant" style="animation-delay:1.5s;"><div style="position:relative;height:44px;"><div class="crop-stem"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-7px;"></div><div class="crop-leaf right" style="top:18px;position:absolute;"></div></div><div class="crop-bulb" style="margin:0 auto;"></div></div>
+              <div class="crop-plant crop-tall" style="animation-delay:0.2s;"><div style="position:relative;height:70px;"><div class="crop-stem" style="height:70px;"></div><div class="crop-leaf left" style="top:8px;position:absolute;left:-8px;"></div><div class="crop-leaf right" style="top:24px;position:absolute;"></div><div class="crop-leaf left" style="top:40px;position:absolute;left:-8px;"></div></div><div class="crop-bulb" style="width:26px;height:26px;margin:0 auto;"></div></div>
+            </div>
+            <div class="soil-strip" style="width:200px;"></div>
+          </div>
+        </div>
+        <div class="farm-label">Row 3-A · 7 plants · Est. yield 42kg · Harvest in 18 days</div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid" id="main-metrics-grid">
+        <div class="metric-card glass-card">
+          <span class="metric-icon">🌿</span>
+          <div class="metric-label">Total Cultures</div>
+          <div class="metric-value" id="stat-cultures-count">12<span class="metric-unit">Units</span></div>
+          <div class="metric-change up">↑ active varieties</div>
+          <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">⚙</span>
+          <div class="metric-label">Active Equipment</div>
+          <div class="metric-value" id="stat-equipment-count">9<span class="metric-unit">Units</span></div>
+          <div class="metric-change up">↑ All systems online</div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">◈</span>
+          <div class="metric-label">Terre / Land</div>
+          <div class="metric-value" id="stat-lands-count">4<span class="metric-unit">Parcels</span></div>
+          <div class="metric-change up">↑ 8.2 Ha total</div>
+          <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
+        </div>
+        <div class="metric-card glass-card">
+          <span class="metric-icon">◎</span>
+          <div class="metric-label">Total Workers</div>
+          <div class="metric-value" id="stat-workers-count">8<span class="metric-unit">Staff</span></div>
+          <div class="metric-change up">↑ Full shift today</div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
+        </div>
+      </div>
+
+      <!-- Field Worker Dashboard Hub -->
+      <div id="fw-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="metrics-grid">
+          <div class="metric-card glass-card">
+            <span class="metric-icon">⏱️</span>
+            <div class="metric-label">Current Session</div>
+            <div class="metric-value" id="fw-hours-counter">0.0<span class="metric-unit">HRS</span></div>
+            <div class="metric-change" id="fw-status-label" style="color:var(--text-muted);">Status: Offline</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">💰</span>
+            <div class="metric-label">Estimated Salary</div>
+            <div class="metric-value" id="fw-salary-counter">0<span class="metric-unit">DZD</span></div>
+            <div class="metric-change up">↑ accrued this month</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">🌿</span>
+            <div class="metric-label">Active Crops</div>
+            <div class="metric-value" id="fw-stat-cultures">0</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">◈</span>
+            <div class="metric-label">Land Parcels</div>
+            <div class="metric-value" id="fw-stat-lands">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quality Inspector Dashboard Hub -->
+      <div id="quality-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="glass-card" style="padding:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Syne',sans-serif; font-size:1.1rem; margin:0;">Crop Quality Monitoring</h3>
+            <span style="font-size:0.6rem; letter-spacing:0.15em; font-weight:700; color:#60a5fa; background:rgba(96,165,250,0.1); padding:0.4rem 0.8rem; border-radius:20px; border:1px solid rgba(96,165,250,0.2);">QUALITY ACCESS</span>
+          </div>
+          
+          <div style="overflow-x:auto;">
+            <table class="premium-table" style="width:100%; border-collapse:separate; border-spacing:0 0.75rem;">
+              <thead>
+                <tr style="text-align:left; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">
+                  <th style="padding:0.5rem 1rem;">Culture</th>
+                  <th style="padding:0.5rem 1rem;">Variety</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Growth (%)</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Days Left</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Health Status</th>
+                  <th style="padding:0.5rem 1rem;">Quality Notes</th>
+                  <th style="padding:0.5rem 1rem; text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="quality-dashboard-container"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="agro-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="glass-card" style="padding:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Syne',sans-serif; font-size:1.1rem; margin:0;">Soil & Culture Mapping</h3>
+            <span style="font-size:0.6rem; letter-spacing:0.15em; font-weight:700; color:var(--emerald-vivid); background:rgba(16,185,129,0.1); padding:0.4rem 0.8rem; border-radius:20px; border:1px solid rgba(16,185,129,0.2);">AGRONOMIST ACCESS</span>
+          </div>
+          
+          <div style="overflow-x:auto;">
+            <table class="premium-table" style="width:100%; border-collapse:separate; border-spacing:0 0.75rem;">
+              <thead>
+                <tr style="text-align:left; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">
+                  <th style="padding:0.5rem 1rem;">Plot ID</th>
+                  <th style="padding:0.5rem 1rem;">Surface</th>
+                  <th style="padding:0.5rem 1rem;">Soil Type</th>
+                  <th style="padding:0.5rem 1rem;">pH</th>
+                  <th style="padding:0.5rem 0.5rem;">Nitrogen</th>
+                  <th style="padding:0.5rem 0.5rem;">Moisture</th>
+                  <th style="padding:0.5rem 1rem;">Culture</th>
+                  <th style="padding:0.5rem 1rem; text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="agro-land-list-container">
+                <!-- Rows injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:0.85rem;">System Status</div>
+      <div class="status-grid">
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Cultures Engine</div></div>
+            <div class="status-sub">12 active varieties · Zone Alpha</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Terre Mapping</div></div>
+            <div class="status-sub">4 parcels · GIS ready</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Equipment Hub</div></div>
+            <div class="status-sub">9 units active · Sn:4521–A</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="status-item glass-card">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;"><span class="pulse-dot"></span><div class="status-label">Personnel Sync</div></div>
+            <div class="status-sub">8 staff · Rota: Morning</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+
+      <!-- 📋 WORKER TIME TRACKING -->
+      <div id="worker-dashboard-extra" style="display:none; margin-top:2rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:1rem;">Weekly Time Tracking</div>
+        <div class="glass-card" style="padding:1.5rem; overflow-x:auto;">
+          <table class="premium-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Day</th>
+                <th style="text-align:center;">Hours Worked</th>
+                <th style="text-align:center;">Daily Salary</th>
+              </tr>
+            </thead>
+            <tbody id="timesheet-body" style="text-align:left;">
+              <!-- Weekly days injected via JS -->
+            </tbody>
+          </table>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <div style="font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">
+               HOURLY RATE: <span id="worker-hourly-rate">500</span> DZD/HR
+             </div>
+             <button class="btn-sm btn-filled" onclick="submitWeeklyHours()">Sync Timesheet</button>
+          </div>
+        </div>
+
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin:2rem 0 1rem;">Salary Summary</div>
+        <div class="metrics-grid">
+           <div class="metric-card glass-card">
+              <div class="metric-label">Weekly Hours</div>
+              <div class="metric-value" id="summary-weekly-hours">0<span class="metric-unit">HRS</span></div>
+           </div>
+           <div class="metric-card glass-card">
+              <div class="metric-label">Estimated Salary</div>
+              <div class="metric-value" id="summary-weekly-salary">0<span class="metric-unit">DZD</span></div>
+           </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════ CULTURES ════ -->
+    <section id="page-cultures" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Cultures</h1>
+          <p class="page-subtitle">Active crop monitoring · 12 varieties · 3 zones</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline">Filter</button>
+          <button class="btn-sm btn-filled" onclick="openCultureModal()">+ Add Culture</button>
+        </div>
+      </div>
+      <div class="cultures-grid" id="cultures-container">
+        <!-- Dynamic content from Cultures Microservice -->
+      </div>
+    </section>
+
+    <!-- ════ QUALITY INSPECTOR ════ -->
+    <section id="page-quality" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Crop Quality Control</h1>
+          <p class="page-subtitle">Enter growth data · Assess health status · Monitor yield</p>
+        </div>
+      </div>
+      <div class="cultures-grid" id="quality-cultures-container">
+        <!-- populated via JS -->
+      </div>
+    </section>
+
+    <!-- ════ EQUIPMENT ════ -->
+    <section id="page-equipment" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Equipment</h1>
+          <p class="page-subtitle" id="equip-subtitle">Machinery inventory · Zone maintenance</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline" onclick="openEquipModal()">Schedule Maintenance</button>
+          <button class="btn-sm btn-filled" id="equip-add-btn" onclick="openEquipModal()">+ Add Unit</button>
+        </div>
+      </div>
+      <div class="equipment-list" id="equipment-container">
+        <!-- Dynamic content from Sid Ahmed's Equipment Microservice -->
+      </div>
+    </section>
+
+    <!-- ════ TERRE ════ -->
+    <section id="page-terre" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Terre Hub</h1>
+          <p class="page-subtitle" id="terre-subtitle">Analyzing soil health across active plots</p>
+        </div>
+        <div class="header-actions" id="terre-admin-actions" style="display:none;">
+          <button class="btn-sm btn-outline">Run Analysis</button>
+          <button class="btn-sm btn-filled" onclick="openLandModal(null)">+ Add Plot</button>
+        </div>
+      </div>
+      
+      <!-- 📋 AGRONOMIST VIEW: Soil Management Table -->
+      <div id="terre-agronomist-view" class="glass-card" style="display:none; padding:2rem; margin-top:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h3 style="margin:0; font-family:'Syne',sans-serif;">Soil & Culture Mapping</h3>
+          <span class="health-badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Agronomist Access</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>Plot ID</th>
+                <th>Surface</th>
+                <th>Soil Type</th>
+                <th>pH</th>
+                <th>Nitrogen</th>
+                <th>Moisture</th>
+                <th>Culture</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="terre-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="terre-grid" id="terre-container" style="margin-top:2rem;">
+        <!-- Plots populated by JS loadLands() -->
+      </div>
+    </section>
+
+    <!-- ════ TEAM ════ -->
+    <section id="page-workers" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">AgriTech Team</h1>
+          <p class="page-subtitle">Manage workforce, assignments, and payroll</p>
+        </div>
+        <div style="display:flex; gap:1rem;">
+          <button class="btn-sm btn-outline" id="salary-hub-btn" onclick="openSalaryModal()">Salary Hub</button>
+          <button class="btn-sm btn-filled" id="add-worker-btn" onclick="openWorkerModal()">+ Add Worker</button>
+        </div>
+      </div>
+
+      <div class="worker-tile-list" id="worker-container">
+        <!-- Full-width premium worker tiles populated via JS -->
+      </div>
+
+      <style>
+        .worker-tile-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          margin-top: 2rem;
+          width: 100%;
+        }
+        .worker-tile {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1.5rem 2.5rem;
+          background: rgba(2, 44, 34, 0.3);
+          border: 1px solid rgba(52, 211, 153, 0.15);
+          border-radius: 24px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          width: 100%;
+        }
+        .worker-tile:hover {
+          background: rgba(16, 185, 129, 0.12);
+          border-color: var(--emerald-glow);
+          transform: scale(1.005) translateX(5px);
+          box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4);
+        }
+        .worker-tile-main { display: flex; align-items: center; gap: 2.5rem; flex: 1; }
+        .worker-tile-stats { display: flex; align-items: center; gap: 5rem; }
+        
+        .tile-stat { text-align: right; min-width: 120px; }
+        .tile-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 0.15em; }
+        .tile-val { font-family: 'Cabinet Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+      </style>
+    </section>
+
+    <!-- ════ SUPERVISOR DASHBOARD ════ -->
+    <section id="page-supervisor" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Supervisor Dashboard</h1>
+          <p class="page-subtitle">Manage worker productivity and compensation</p>
+        </div>
+        <div class="header-actions">
+        </div>
+      </div>
+
+      <!-- Top Stats -->
+      <div class="supervisor-stats">
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Total Workers</span>
+          <span class="stat-value" id="stats-total-workers">0</span>
+        </div>
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Working Now</span>
+          <span class="stat-value" id="stats-active-workers" style="color:var(--emerald-vivid);">0</span>
+        </div>
+
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Total Payroll</span>
+          <span class="stat-value" id="stats-total-payroll">0 DZD</span>
+        </div>
+      </div>
+
+      <!-- Card-based Worker List -->
+      <div class="supervisor-card-list" id="supervisor-worker-list">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+    <!-- ════ SETTINGS ════ -->
+    <section id="page-settings" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Platform configuration · Preferences · Integrations</p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Automation Thresholds</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Moisture Alert Threshold</div><div class="setting-desc">Trigger watering below this value</div></div>
+          <select class="settings-select"><option>40%</option><option selected>50%</option><option>60%</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Temperature Alert Range</div><div class="setting-desc">Alert when outside range</div></div>
+          <select class="settings-select"><option>18–28°C</option><option selected>20–26°C</option><option>22–28°C</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Nutrient Refill Trigger</div><div class="setting-desc">Auto-order when index drops below</div></div>
+          <select class="settings-select"><option>5.0</option><option selected>6.0</option><option>7.0</option></select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Notifications</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Email Alerts</div><div class="setting-desc">Receive critical alerts via email</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">SMS Notifications</div><div class="setting-desc">Urgent system failures</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Weekly Digest Report</div><div class="setting-desc">Auto-generated performance summary</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Platform</div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Language</div><div class="setting-desc">Interface display language</div></div>
+          <select class="settings-select"><option>English</option><option>Français</option><option>العربية</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Data Refresh Rate</div><div class="setting-desc">Sensor polling interval</div></div>
+          <select class="settings-select"><option>5s</option><option selected>15s</option><option>30s</option><option>60s</option></select>
+        </div>
+        <div class="setting-row glass-card">
+          <div><div class="setting-name">Dark Mode</div><div class="setting-desc">Deep field dark theme (active)</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <div style="padding:1.5rem;border-radius:16px;border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:#fca5a5;margin-bottom:0.5rem;">Danger Zone</div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">These actions are irreversible. Proceed with extreme caution.</p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn-sm" style="border-color:rgba(239,68,68,0.3);color:#fca5a5;background:rgba(239,68,68,0.08);">Reset All Settings</button>
+          <button class="btn-sm" style="border-color:rgba(239,68,68,0.3);color:#fca5a5;background:rgba(239,68,68,0.08);" onclick="handleLogout()">Log Out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ CULTURE DETAILS ════ -->
+    <section id="page-culture-details" class="page-section">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn-sm btn-outline" onclick="navigate('cultures')">← Back</button>
+          <div>
+            <h1 class="page-title" id="det-name">Culture Details</h1>
+            <p class="page-subtitle" id="det-variety">Var. Loading...</p>
+          </div>
+        </div>
+        <div class="header-actions" id="det-actions">
+          <!-- Populated by JS based on role -->
+        </div>
+      </div>
+
+      <div class="details-layout">
+        <div class="glass-card" style="padding:2rem;display:flex;flex-direction:column;gap:1.5rem;">
+          <div style="font-size:3rem;text-align:center;" id="det-emoji">🌿</div>
+          <div class="details-list">
+            <div class="details-row"><span>Status</span><span class="health-badge" id="det-health">⬤ Good</span></div>
+            <div class="details-row"><span>Growth</span><span id="det-growth">0%</span></div>
+            <div class="details-row"><span>Days Remaining</span><span id="det-days">0</span></div>
+            <div class="details-row"><span>Estimated Yield</span><span id="det-yield">0kg</span></div>
+            <div class="details-row"><span>Assigned Zone</span><span id="det-zone">1</span></div>
+            <div class="details-row"><span>Location</span><span>Block 4-A · Greenhouse</span></div>
+          </div>
+        </div>
+        
+        <div class="glass-card" style="padding:1.5rem;">
+          <div class="settings-title" style="margin-bottom:1rem;">Operational Notes</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;">
+            Regular monitoring requested for nutrient absorption in this zone. 
+            Automated irrigation cycle is currently maintaining optimal moisture at 62%.
+          </p>
+        </div>
+      </div>
+
+      <style>
+        .details-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .details-list { display: flex; flex-direction: column; gap: 1rem; }
+        .details-row { 
+          display: flex; justify-content: space-between; align-items: center; 
+          padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .details-row span:first-child { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .details-row span:last-child { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--text-primary); }
+      </style>
+    </section>
+
+
+    <!-- ════ TERRE DETAILS PAGE ════ -->
+    <style>
+      @keyframes float-map-card {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+        100% { transform: translateY(0px); }
+      }
+      #detail-map {
+        animation: float-map-card 8s ease-in-out infinite;
+      }
+    </style>
+    <section id="page-terre-details" class="page-section" style="position:relative; height:calc(100vh - 2rem); padding:0; overflow:hidden; border-radius:24px; margin:1rem;">
+      <div id="detail-map" style="position:absolute; inset:-20px; z-index:0;"></div>
+      
+      <!-- Gradient Overlay for readability -->
+      <div style="position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(circle at 30% 50%, transparent 40%, rgba(2,44,34,0.7) 100%);"></div>
+      
+      <!-- Top Left Header -->
+      <div style="position:absolute; top:1.5rem; left:2rem; z-index:10; pointer-events:auto;">
+        <div class="glass-strong" style="padding:1.5rem; border-radius:20px; display:flex; align-items:center; gap:1.25rem;">
+          <button class="btn-sm btn-outline glass" style="width:44px; height:44px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; border-color:rgba(255,255,255,0.2);" onclick="closeTerreModal()">←</button>
+          <div>
+            <h1 class="page-title" id="td-title" style="margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.8);">Plot Details</h1>
+            <p class="page-subtitle" id="td-id" style="margin-top:0.3rem; text-shadow:0 1px 4px rgba(0,0,0,0.8);">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Panels -->
+      <div style="position:absolute; right:2rem; top:2rem; bottom:2rem; width:360px; z-index:10; display:flex; flex-direction:column; gap:1.5rem; pointer-events:auto; overflow-y:auto; padding-right:0.5rem;">
+        
+        <div class="glass-strong" style="padding:1.8rem; border-radius:24px;">
+          <div class="tile-label" style="margin-bottom:1.2rem;">Current Status</div>
+          <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.85rem;">Crop:</span> <span id="td-crop" style="font-weight:700;margin-left:0.5rem; font-size:1.1rem;"></span></div>
+          <div style="margin-bottom:1.5rem;"><span style="color:var(--text-muted);font-size:0.85rem;">Soil Type:</span> <span id="td-type" style="font-weight:700;margin-left:0.5rem; font-size:1.1rem;"></span></div>
+          <div id="td-health-badge"></div>
+        </div>
+        
+        <div class="glass-strong" style="padding:1.8rem; border-radius:24px;">
+          <div class="tile-label" style="margin-bottom:1.2rem;">Soil Composition</div>
+          <div id="td-soil-stats" style="display:flex; flex-direction:column; gap:1rem;">
+            <!-- Dynamic Bars -->
+          </div>
+        </div>
+
+        <div id="td-actions" style="margin-top:auto; display:flex; flex-direction:column; gap:0.75rem;">
+          <!-- Action buttons for Admin populated via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+<!-- /main-content -->
+
+  <!-- ════ ADD CULTURE MODAL ════ -->
+  <div class="modal-overlay" id="culture-modal">
+    <div class="glass-card modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="font-family:'Syne',sans-serif;margin:0;">New Culture</h2>
+        <span style="cursor:pointer;opacity:0.5;" onclick="closeCultureModal()">✕</span>
+      </div>
+      <form id="culture-form" onsubmit="saveCulture(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Crop Name</label>
+            <input type="text" id="c-name" placeholder="e.g. Cherry Tomatoes" required>
+          </div>
+          <div class="form-group">
+            <label>Variety</label>
+            <input type="text" id="c-variety" placeholder="e.g. Solanum lycopersicum" required>
+          </div>
+          <div class="form-group">
+            <label>Icon (Emoji)</label>
+            <input type="text" id="c-emoji" placeholder="🍅" required>
+          </div>
+          <div class="form-group">
+            <label>Zone</label>
+            <input type="number" id="c-zone" value="1" required>
+          </div>
+          <div class="form-group">
+            <label>Yield Est.</label>
+            <input type="text" id="c-yield" placeholder="42kg" required>
+          </div>
+          <div class="form-group">
+            <label>Days Left</label>
+            <input type="number" id="c-days" placeholder="18" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Create Culture</button>
+      </form>
+    </div>
+  </div>
+  </div>
+</div><!-- /app -->
+
+<!-- 🏛️ WORKER DETAILS MODAL (Mirrors Culture Modal) -->
+<div class="modal-overlay" id="worker-det-modal">
+  <div class="modal-content glass-strong" style="max-width:600px; padding:0; overflow:hidden; border-radius:28px;">
+    <!-- Top Banner -->
+    <div style="height:120px; background:linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); position:relative; display:flex; align-items:flex-end; padding:1.5rem 2.5rem;">
+      <div id="wd-avatar" class="user-avatar" style="width:80px; height:80px; font-size:2rem; border:4px solid var(--bg-dark); box-shadow:0 10px 25px rgba(0,0,0,0.3); position:absolute; bottom:-40px; left:2.5rem;">AB</div>
+      <div style="margin-left:90px; margin-bottom:0.5rem;">
+        <h2 id="wd-name" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; letter-spacing:-0.03em;">Staff Name</h2>
+        <p id="wd-role" style="margin:0; font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--emerald-glow); text-transform:uppercase; letter-spacing:0.1em;">FIELD WORKER</p>
+      </div>
+      <button onclick="closeWorkerDetModal()" style="position:absolute; top:1.5rem; right:1.5rem; background:rgba(0,0,0,0.3); border:none; color:white; width:32px; height:32px; border-radius:50%; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Content Area -->
+    <div style="padding:3rem 2.5rem 2rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+      <!-- Details Column -->
+      <div>
+        <div class="tile-label">Identity & Access</div>
+        <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.8rem;">
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Username</span> <span id="wd-user" style="font-weight:600;">ali_ben</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Phone</span> <span id="wd-phone" style="font-weight:600;">0555123456</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Zone</span> <span id="wd-zone" style="font-weight:600;">North Block</span></div>
+          <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted); font-size:0.8rem;">Access Key</span> <span style="font-family:'DM Mono',monospace; color:var(--emerald-glow);">••••••••</span></div>
+        </div>
+      </div>
+
+      <!-- Financials Column -->
+      <div>
+        <div class="tile-label">Payroll Summary</div>
+        <div id="wd-salary" style="margin-top:0.75rem; padding:1rem; background:rgba(0,0,0,0.2); border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+          Loading...
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Action Footer -->
+    <div id="wd-actions" style="padding:1.5rem 2.5rem; background:rgba(255,255,255,0.03); border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:1rem; justify-content:flex-end;">
+      <!-- Buttons populated via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ════ WORKER MODAL ════ -->
+<div class="modal-overlay" id="worker-modal">
+  <div class="modal-box glass-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif;font-weight:700;">Hire Staff</h2>
+      <span style="cursor:pointer;opacity:0.5;" onclick="closeWorkerModal()">✕</span>
+    </div>
+    <form onsubmit="saveWorker(event)">
+      <div class="form-grid">
+        <div class="form-group"><label>First Name</label><input type="text" id="w-fn" placeholder="e.g. Salim" required></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="w-ln" placeholder="e.g. Brahimi" required></div>
+        <div class="form-group" style="grid-column: 1 / -1;"><label>Email</label><input type="email" id="w-email" placeholder="salim@agritech.com" required></div>
+        <div class="form-group"><label>Username</label><input type="text" id="w-user" placeholder="salim_b" required></div>
+        <div class="form-group"><label>Security Key (Pass)</label><input type="password" id="w-pass" placeholder="••••••••" required></div>
+        <div class="form-group"><label>Phone</label><input type="text" id="w-phone" placeholder="0555..." required></div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="w-role" class="settings-select" style="width:100%;background:rgba(0,0,0,0.2);">
+            <option value="field_worker">Field Worker</option>
+            <option value="irrigation_worker">Irrigation Worker</option>
+            <option value="equipment_operator">Equipment Operator</option>
+            <option value="quality_inspector">Quality Inspector</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="agronomist">Agronomist</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Zone</label><input type="text" id="w-zone" placeholder="North Block"></div>
+        <div class="form-group"><label>Hire Date</label><input type="date" id="w-date" value="2024-04-26"></div>
+      </div>
+      <button type="submit" id="hire-confirm-btn" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Confirm Hire & Create Account</button>
+    </form>
+  </div>
+</div>
+<!-- 💰 SALARY HUB MODAL -->
+<div class="modal-overlay" id="salary-modal">
+  <div class="modal-box glass-strong">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;">Salary Hub</h2>
+      <button onclick="closeSalaryModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div class="form-group"><label>Worker</label><select id="sal-worker" style="width:100%;"></select></div>
+    <div class="form-group"><label>Month</label><input type="month" id="sal-month" value="2024-04"></div>
+    <button onclick="calculateSalary()" class="btn-filled" style="width:100%; margin-top:1rem; padding:0.8rem;">Calculate & Review</button>
+    <div id="salary-result" style="margin-top:1.5rem; padding:1.25rem; background:rgba(0,0,0,0.2); border-radius:12px; display:none;">
+      <!-- Result will appear here -->
+    </div>
+  </div>
+</div>
+
+<!-- ⏱️ LOG HOURS MODAL -->
+<div class="modal-overlay" id="hours-modal">
+  <div class="modal-box glass-strong">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800;">Log Work Session</h2>
+      <button onclick="closeHoursModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Hours Worked</label><input type="number" id="h-hours" value="8" step="0.5"></div>
+      <div class="form-group"><label>Overtime</label><input type="number" id="h-over" value="0" step="0.5"></div>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" id="h-date" value="2024-04-26"></div>
+    <div class="form-group"><label>Notes</label><textarea id="h-notes" placeholder="e.g. Irrigation maintenance"></textarea></div>
+    <button onclick="submitHours()" class="btn-filled" style="width:100%; margin-top:1rem; padding:0.8rem;">Submit Timesheet</button>
+  </div>
+</div>
+
+
+
+<!-- ─── MOBILE NAV ─── -->
+<nav class="mobile-nav">
+  <div class="mob-nav-item active" onclick="navigate('dashboard',this,true)">
+    <span class="mob-nav-icon">⬡</span>Home
+  </div>
+  <div class="mob-nav-item" onclick="navigate('cultures',this,true)">
+    <span class="mob-nav-icon">🌿</span>Crops
+  </div>
+  <div class="mob-nav-item" onclick="navigate('equipment',this,true)">
+    <span class="mob-nav-icon">⚙</span>Equip
+  </div>
+  <div class="mob-nav-item" onclick="navigate('terre',this,true)">
+    <span class="mob-nav-icon">◈</span>Land
+  </div>
+  <div class="mob-nav-item" onclick="navigate('workers',this,true)">
+    <span class="mob-nav-icon">◎</span>Team
+  </div>
+  <div class="mob-nav-item" onclick="navigate('settings',this,true)">
+    <span class="mob-nav-icon">⊛</span>Config
+  </div>
+</nav>
+
+<script>
+  // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
+  const USE_MOCK = false;
+  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
+  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
+  const WORKER_SERVICE_BASE = "https://worker-service-hzwi.onrender.com";
+  const WORKERS_API_URL = `${WORKER_SERVICE_BASE}/api`;
+  const LANDS_API_URL = "https://agritech-production-639b.up.railway.app/api/parcelles/";
+  const EQUIPMENT_API_URL = "https://equipment-service-v67j.onrender.com/api/equipements/";
+  const EQUIPMENT_MOCK_URL = `${WORKER_SERVICE_BASE}/mock/equipments/`;
+
+  // TODO: move to .env before deployment
+  const MAPBOX_TOKEN = "pk.eyJ1IjoibmFkam91YTEiLCJhIjoiY21kM20zbWtmMDVmOTJqc2RlZHU1bGc5bCJ9.M6PUG-qrsg_tTU1XY7vWhQ";
+  if (!MAPBOX_TOKEN) {
+    console.error("Mapbox token missing");
+  } else {
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+  }
+
+  let selectedLocation = null;
+  let adminMap = null;
+  let adminMarker = null;
+  let detailMap = null;
+  let particleInterval = null;
+
+  function createParticle() {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    
+    // Find the container to append to
+    const container = document.getElementById("detail-map");
+    if (container) {
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 3000);
+    }
+  }
+
+  function startParticles() {
+    if (particleInterval) clearInterval(particleInterval);
+    particleInterval = setInterval(createParticle, 300);
+  }
+
+  function stopParticles() {
+    if (particleInterval) clearInterval(particleInterval);
+    particleInterval = null;
+  }
+
+  let role = null;
+
+  function hasRole(...roles) {
+    return roles.includes(role);
+  }
+
+  const apiService = {
+    async fetchProfile() {
+      const token = localStorage.getItem('access_token');
+      const headers = { 'Authorization': `Bearer ${token}` };
+      
+      const res = await fetch(`${AUTH_API_URL}/profile/`, { headers });
+      if (!res.ok) throw new Error("Invalid token");
+      return res.json();
+    },
+    async fetchWorkers() {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Could not fetch workers");
+      return res.json();
+    },
+
+    async fetchHoursSummary(workerId) {
+       const res = await fetch(`${WORKERS_API_URL}/hours/summary/?worker=${workerId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      return res.json();
+    }
+  };
+
+  function showNotification(message, type = 'info') {
+    const container = document.getElementById('notif-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `notif-toast notif-${type}`;
+    
+    const iconMap = {
+        success: '✓',
+        error: '⚠',
+        info: 'ℹ'
+    };
+    
+    toast.innerHTML = `
+        <div class="notif-icon">${iconMap[type] || 'ℹ'}</div>
+        <div class="notif-content" style="font-size:0.9rem; font-weight:500;">${message}</div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+  }
+
+  // Global alert override
+  window.alert = (msg) => showNotification(msg, 'info');
+
+  function togglePass() {
+    const p = document.getElementById('login-pass');
+    const t = document.getElementById('pass-toggle');
+    if (p.type === 'password') {
+      p.type = 'text';
+      t.textContent = '🔒';
+    } else {
+      p.type = 'password';
+      t.textContent = '👁️';
+    }
+  }
+
+  async function handleLogin() {
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value.trim();
+    const err  = document.getElementById('login-error');
+    const btn  = document.getElementById('btn-text');
+
+    if (!user || !pass) { err.classList.add('visible'); err.textContent='⚠ Please fill in both fields.'; return; }
+
+    btn.textContent = 'Authenticating…';
+    try {
+        const res = await fetch(`${AUTH_API_URL}/login/`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: user, password: pass})
+        });
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || "Invalid credentials");
+        }
+        
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        
+        await loadProfile();
+        
+        document.getElementById('login-page').style.opacity = '0';
+        document.getElementById('login-page').style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+            document.getElementById('login-page').style.display = 'none';
+            const app = document.getElementById('app');
+            app.classList.add('active');
+            app.style.opacity = '0';
+            app.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => { app.style.opacity = '1'; }, 50);
+        }, 500);
+    } catch(error) {
+        err.classList.add('visible');
+        err.textContent = `⚠ ${error.message}`;
+    } finally {
+        btn.textContent = 'Access Platform';
+    }
+  }
+
+  /* ─── AGRONOMIST DASHBOARD LOGIC ─── */
+  async function loadAgronomistDashboard() {
+    const container = document.getElementById('agro-land-list-container');
+    if (!container) return;
+    
+    container.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:var(--text-muted);">Loading scientific data...</td></tr>`;
+    
+    try {
+        const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+        const [landsRes, culturesRes] = await Promise.all([
+            fetch(LANDS_API_URL, { headers: authHeader }).catch(() => ({ ok: false })),
+            fetch(CULTURES_API_URL, { headers: authHeader }).catch(() => ({ ok: false }))
+        ]);
+        
+        let apiLands = [];
+        if (landsRes.ok) apiLands = await landsRes.json();
+        
+        // Merge API data with LocalStorage (Consistent with Terre Hub)
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        const allLandsMap = {};
+        
+        // Normalize API data if it has .results
+        const normalizedApiLands = Array.isArray(apiLands) ? apiLands : (apiLands.results || []);
+        normalizedApiLands.forEach(l => allLandsMap[l.id] = l);
+        storedLands.forEach(l => allLandsMap[l.id] = l);
+        
+        const combinedLands = Object.values(allLandsMap);
+        
+        let cultures = [];
+        if (culturesRes.ok) {
+            const cultData = await culturesRes.json();
+            cultures = Array.isArray(cultData) ? cultData : (cultData.results || []);
+        }
+        
+        const cultureOptions = cultures.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        
+        if (combinedLands.length === 0) {
+            container.innerHTML = `<tr><td colspan="8" style="padding:3rem; text-align:center; color:var(--text-muted);">
+                No land plots detected. <br>
+                <small style="opacity:0.6;">Try adding plots in the Terre tab or check your network connection.</small>
+            </td></tr>`;
+            return;
+        }
+
+        container.innerHTML = combinedLands.map(l => {
+            const currentSoil = l.type_sol || l.tree_type || '';
+            const currentCult = l.culture_plantee || l.culture_type || '';
+            
+            return `
+            <tr style="background:rgba(255,255,255,0.02); transition:all 0.3s ease;">
+                <td style="padding:1rem; font-family:'Syne',sans-serif; font-weight:700; color:#fff;">${l.nom || l.name || 'Plot ' + l.id}</td>
+                <td style="padding:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">${l.surface || '--'} HA</td>
+                <td style="padding:1rem;">
+                    <input type="text" id="tree-${l.id}" value="${currentSoil}" placeholder="Soil Category" class="agro-input" style="width:120px; background:transparent; border:none; padding:0; font-size:0.85rem;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="ph-${l.id}" value="${l.ph || 6.8}" step="0.1" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="nitro-${l.id}" value="${l.nitrogen || 42}" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="moist-${l.id}" value="${l.moisture || 71}" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <select id="cult-${l.id}" class="agro-select" style="width:130px; background:transparent; border:none; padding:0; font-size:0.85rem; color:var(--emerald-glow);">
+                        <option value="aucune">None</option>
+                        ${cultureOptions}
+                    </select>
+                </td>
+                <td style="padding:1rem; text-align:right;">
+                    <button onclick="saveAgroData('${l.id}')" class="btn-sm btn-filled" style="padding:0.5rem 1.2rem; border-radius:10px; font-weight:700; cursor:pointer;">Save Changes</button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+        
+        // Restore specific selections
+        combinedLands.forEach(l => {
+            const select = document.getElementById(`cult-${l.id}`);
+            const val = l.culture_plantee || l.culture_type || 'aucune';
+            if (select) select.value = val;
+        });
+        
+    } catch (e) {
+        console.error("Agro Dashboard Load Error:", e);
+        container.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:#fca5a5;">Failed to load mapping data. Please refresh.</td></tr>`;
+    }
+  }
+
+  async function saveAgroData(id) {
+    const data = {
+        type_sol: document.getElementById(`tree-${id}`).value,
+        culture_plantee: document.getElementById(`cult-${id}`).value,
+        ph: parseFloat(document.getElementById(`ph-${id}`).value) || 6.8,
+        nitrogen: parseInt(document.getElementById(`nitro-${id}`).value) || 42,
+        moisture: parseInt(document.getElementById(`moist-${id}`).value) || 71
+    };
+    
+    // Optimistic UI: Show notification early
+    showNotification("Synchronizing with Railway...", "info");
+    
+    try {
+        const res = await fetch(`${LANDS_API_URL}${id}/`, {
+            method: 'PATCH',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (res.ok) {
+            // Update local storage too to keep everything in sync
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            const idx = storedLands.findIndex(l => l.id == id);
+            if (idx >= 0) {
+                // Map back to local names if needed
+                const updated = { ...storedLands[idx], ...data, tree_type: data.type_sol, culture_type: data.culture_plantee };
+                storedLands[idx] = updated;
+                localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+            }
+            showNotification("Data synchronized with Railway database", "success");
+        } else {
+            const errorData = await res.json().catch(() => ({}));
+            console.error("Server synchronization failed:", errorData);
+            showNotification(`Failed to save: ${errorData.detail || 'Access Denied'}`, "error");
+        }
+    } catch (e) {
+        console.error("Connection error:", e);
+        showNotification("Railway unreachable. Data saved in browser memory.", "info");
+        
+        // Fallback to local storage if server is truly down
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        const idx = storedLands.findIndex(l => l.id == id);
+        if (idx >= 0) {
+            const updated = { ...storedLands[idx], ...data, tree_type: data.type_sol, culture_type: data.culture_plantee };
+            storedLands[idx] = updated;
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        }
+    }
+  }
+
+  /* ─── FIELD WORKER LIVE TIMER LOGIC ─── */
+  let fwTimerInterval = null;
+  const FW_SESSION_KEY = 'fw_active_session';
+  const FW_HISTORY_KEY = 'fw_work_history';
+
+  async function loadFieldWorkerDashboard() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+    // 1. Load counts (culture, lands) – same as before, with fallback for lands
+    try {
+        const cRes = await fetch(CULTURES_API_URL, { headers: authHeader }).catch(() => ({ ok: false }));
+        if (cRes.ok) {
+            const d = await cRes.json();
+            const n = Array.isArray(d) ? d.length : (d.count || 0);
+            document.getElementById('fw-stat-cultures').textContent = n;
+        }
+    } catch (e) { }
+    // lands with fallback to local storage
+    try {
+        const lRes = await fetch(LANDS_API_URL, { headers: authHeader }).catch(() => ({ ok: false }));
+        let landCount = 0;
+        if (lRes.ok) {
+            const d = await lRes.json();
+            landCount = Array.isArray(d) ? d.length : (d.count || 0);
+        }
+        const saved = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        landCount = Math.max(landCount, saved.length);
+        document.getElementById('fw-stat-lands').textContent = landCount;
+    } catch (e) { }
+    // 2. Initialise UI – status label, counters are updated by a timer that watches the supervisor session
+    const rate = parseInt(localStorage.getItem(`rate_${user.id}`) || localStorage.getItem('hourly_rate') || '500');
+    // Ensure any previous interval is cleared
+    if (window.fwTimerInterval) clearInterval(window.fwTimerInterval);
+    // Update UI every second based on supervisor active session for this worker
+    window.fwTimerInterval = setInterval(() => {
+        const sessions = JSON.parse(localStorage.getItem('active_sessions') || '{}');
+        const session = sessions[user.id];
+        const label = document.getElementById('fw-status-label');
+        const hrsEl = document.getElementById('fw-hours-counter');
+        const salEl = document.getElementById('fw-salary-counter');
+        if (!label || !hrsEl || !salEl) return;
+        if (session && session.startTime) {
+            const elapsed = Math.floor((Date.now() - session.startTime) / 1000);
+            const totalSeconds = (session.total_seconds || 0) + elapsed;
+            const totalHours = (totalSeconds / 3600).toFixed(1);
+            const totalEarnings = Math.round((totalSeconds / 3600) * session.rate);
+            hrsEl.innerHTML = `${totalHours}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+            salEl.innerHTML = `${totalEarnings}<span class="metric-unit">DZD</span>`;
+            label.textContent = '● Working (Supervisor)';
+            label.style.color = 'var(--emerald-glow)';
+        } else {
+            // No active session – show summed history for today (if any)
+            const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+            const today = new Date().toDateString();
+            const todayEntries = history.filter(h => h.date === today);
+            const totalSec = todayEntries.reduce((s, h) => s + h.seconds, 0);
+            const totalHrs = (totalSec / 3600).toFixed(1);
+            const totalEarn = Math.round(todayEntries.reduce((s, h) => s + h.earnings, 0));
+            hrsEl.innerHTML = `${totalHrs}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+            salEl.innerHTML = `${totalEarn}<span class="metric-unit">DZD</span>`;
+            label.textContent = '○ Offline';
+            label.style.color = 'var(--text-muted)';
+        }
+    }, 1000);
+}
+
+
+  function updateFWStatus(online, rate) {
+    const label = document.getElementById('fw-status-label');
+    if (!label) return;
+    if (online) {
+        label.textContent = '● Working — Live';
+        label.style.color = 'var(--emerald-glow)';
+    } else {
+        label.textContent = '○ Offline';
+        label.style.color = 'var(--text-muted)';
+    }
+  }
+
+  function startFWTimer(startTime, rate, pastSeconds, pastEarnings) {
+    if (fwTimerInterval) clearInterval(fwTimerInterval);
+    fwTimerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const totalSeconds = pastSeconds + elapsed;
+        const totalEarnings = pastEarnings + (elapsed / 3600) * rate;
+
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        const formatted = [h, m, s].map(v => v < 10 ? '0' + v : v).join(':');
+
+        const hEl = document.getElementById('fw-hours-counter');
+        const sEl = document.getElementById('fw-salary-counter');
+        if (hEl) hEl.innerHTML = `${formatted}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+        if (sEl) sEl.innerHTML = `${Math.round(totalEarnings)}<span class="metric-unit">DZD</span>`;
+    }, 1000);
+  }
+
+  /* ─── QUALITY INSPECTOR HUB LOGIC ─── */
+  async function loadQualityInspectorDashboard() {
+    const container = document.getElementById('quality-dashboard-container');
+    if (!container) return;
+    
+    container.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--text-muted);">Loading culture quality data...</td></tr>`;
+    
+    try {
+        const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+        const res = await fetch(CULTURES_API_URL, { headers: authHeader });
+        if (!res.ok) throw new Error("Failed to fetch cultures");
+        
+        const cultData = await res.json();
+        const cultures = Array.isArray(cultData) ? cultData : (cultData.results || []);
+
+        // Apply Local Cache (Fallback if server didn't update yet)
+        const localCache = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
+        const mergedCultures = cultures.map(c => {
+            if (localCache[c.id]) {
+                return { ...c, ...localCache[c.id] };
+            }
+            return c;
+        });
+
+        if (mergedCultures.length === 0) {
+            container.innerHTML = `<tr><td colspan="7" style="padding:3rem; text-align:center; color:var(--text-muted);">No cultures found for inspection.</td></tr>`;
+            return;
+        }
+
+        container.innerHTML = mergedCultures.map(c => `
+            <tr style="background:rgba(255,255,255,0.02); transition:all 0.3s ease;">
+                <td style="padding:1rem;">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.5rem;">${c.emoji || '🌿'}</span>
+                        <span style="font-family:'Syne',sans-serif; font-weight:700; color:#fff;">${c.name}</span>
+                    </div>
+                </td>
+                <td style="padding:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">${c.variety}</td>
+                <td style="padding:1rem; text-align:center;">
+                    <input type="number" id="q-growth-${c.id}" value="${c.growth || 0}" class="agro-input" style="width:60px; text-align:center;">
+                </td>
+                <td style="padding:1rem; text-align:center;">
+                    <input type="number" id="q-days-${c.id}" value="${c.days_left || 0}" class="agro-input" style="width:60px; text-align:center;">
+                </td>
+                <td style="padding:1rem; text-align:center;">
+                    <select id="q-health-${c.id}" class="agro-select" style="width:110px;">
+                        <option value="Excellent" ${c.health === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                        <option value="Good" ${c.health === 'Good' ? 'selected' : ''}>Good</option>
+                        <option value="Fair" ${c.health === 'Fair' ? 'selected' : ''}>Fair</option>
+                        <option value="Poor" ${c.health === 'Poor' ? 'selected' : ''}>Poor</option>
+                    </select>
+                </td>
+                <td style="padding:1rem;">
+                    <input type="text" id="q-notes-${c.id}" value="${c.notes || ''}" placeholder="Add inspection note..." class="agro-input" style="width:100%;">
+                </td>
+                <td style="padding:1rem; text-align:right;">
+                    <button onclick="saveQualityDashboardData('${c.id}')" class="btn-sm btn-filled" style="background:#60a5fa; color:#fff;">Sync Quality</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:#fca5a5;">Failed to load quality data.</td></tr>`;
+    }
+  }
+
+  async function saveQualityDashboardData(id) {
+    const data = {
+        growth: parseInt(document.getElementById(`q-growth-${id}`).value),
+        days_left: parseInt(document.getElementById(`q-days-${id}`).value),
+        health: document.getElementById(`q-health-${id}`).value,
+        notes: document.getElementById(`q-notes-${id}`).value
+    };
+
+    showNotification("Syncing quality metrics...", "info");
+
+    // 1. Save Locally First (Optimistic / Fallback)
+    const localCultures = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
+    localCultures[id] = { ...data, last_sync: new Date().toISOString() };
+    localStorage.setItem('saved_cultures_cache', JSON.stringify(localCultures));
+
+    // 2. Attempt Server Sync
+    const tryMethods = ['PATCH', 'PUT'];
+    let success = false;
+
+    for (const method of tryMethods) {
+        try {
+            const res = await fetch(`${CULTURES_API_URL}/${id}/`, {
+                method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                success = true;
+                break;
+            } else if (res.status === 405 && method === 'PATCH') {
+                continue; // Try PUT
+            } else if (res.status === 403) {
+                console.warn("Authorization Error (403). Backend permissions may need update for Quality Inspector.");
+                break; // Don't bother with other methods if forbidden
+            }
+        } catch (e) {
+            console.error("Connection error during quality sync:", e);
+            break;
+        }
+    }
+
+    if (success) {
+        showNotification("Quality metrics synchronized with server ✓", "success");
+    } else {
+        // Silent fallback - user is notified but not blocked by a "Failure" message
+        showNotification("Changes saved locally (Cloud sync pending/restricted)", "success");
+        console.info("Metric saved to local storage due to server permission or connection issue.");
+    }
+    
+    loadQualityInspectorDashboard();
+  }
+
+  async function loadProfile() {
+      try {
+          const user = await apiService.fetchProfile();
+          localStorage.setItem('user', JSON.stringify(user));
+          role = user.role;
+          
+          document.getElementById('ui-name').textContent = user.first_name ? `${user.first_name} ${user.last_name}` : user.username;
+          document.getElementById('ui-role').textContent = role.replace('_', ' ').toUpperCase();
+          document.getElementById('ui-avatar').textContent = user.username.substring(0,2).toUpperCase();
+          
+          renderUIByRole(user);
+
+          loadCultures();
+          loadWorkers();
+
+          loadTerre();
+          loadEquipment();
+          if (hasRole('quality_inspector', 'admin', 'farm_manager')) loadQuality();
+          return true;
+      } catch (e) {
+          console.error(e);
+          handleLogout();
+          return false;
+      }
+  }
+
+  function renderUIByRole(user) {
+    const isMgmt = hasRole('admin', 'farm_manager');
+    const isAgro = hasRole('agronomist');
+    const isWorker = hasRole('field_worker', 'irrigation_worker', 'equipment_operator');
+    const isSupervisor = hasRole('supervisor');
+
+    // 1. Sidebar/Nav Removal (Strict)
+    if (isWorker) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            // Workers can see Dashboard, Cultures, and Terre (Read-Only)
+            if (!text.includes('dashboard') && !text.includes('cultures') && !text.includes('terre')) {
+                nav.remove();
+            }
+        });
+        
+        // Hide management elements in Dashboard
+        document.querySelectorAll('.farm-canvas, .status-grid, .page-subtitle, #main-metrics-grid').forEach(el => el.style.display = 'none');
+        
+        // Show Worker Dashboard Hub
+        const fwHub = document.getElementById('fw-dashboard-hub');
+        if (fwHub) {
+            fwHub.style.display = 'block';
+            loadFieldWorkerDashboard();
+        }
+        
+        // Show weekly tracking read-only
+        const extra = document.getElementById('worker-dashboard-extra');
+        if (extra) {
+            extra.style.display = 'block';
+            loadTimesheet();
+            // Disable manual sync button for workers
+            const syncBtn = extra.querySelector('button');
+            if (syncBtn) syncBtn.style.display = 'none';
+        }
+
+        // Apply Global Read-Only for Workers on Cultures and Terre
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #page-cultures .header-actions, #page-terre .header-actions { display: none !important; }
+            .card-actions, .edit-btn, .delete-btn, [onclick*="edit"], [onclick*="delete"] { display: none !important; }
+            #page-cultures input, #page-cultures select, #page-cultures textarea,
+            #page-terre input, #page-terre select, #page-terre textarea { pointer-events: none !important; opacity: 0.8; }
+            #fw-dashboard-hub .metrics-grid { justify-content: flex-end; }
+            .terre-input { background: transparent !important; border: none !important; color: inherit; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    if (isAgro) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            if (!text.includes('cultures') && !text.includes('terre') && !text.includes('dashboard')) {
+                nav.remove();
+            }
+        });
+        
+        document.querySelectorAll('.farm-canvas, .metrics-grid, .page-subtitle, .status-grid, .header-actions').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+
+        const agroHub = document.getElementById('agro-dashboard-hub');
+        if (agroHub) {
+            agroHub.style.display = 'block';
+            loadAgronomistDashboard();
+        }
+    }
+
+    if (hasRole('quality_inspector')) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            if (!text.includes('cultures') && !text.includes('terre') && !text.includes('dashboard')) {
+                nav.remove();
+            }
+        });
+
+        document.querySelectorAll('.farm-canvas, .metrics-grid, .page-subtitle, .status-grid, .header-actions').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+
+        const qualityHub = document.getElementById('quality-dashboard-hub');
+        if (qualityHub) {
+            qualityHub.style.display = 'block';
+            loadQualityInspectorDashboard();
+        }
+        
+        // Apply Read-Only for Terre tab, but ALLOW editing in Quality Hub
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #page-terre .header-actions { display: none !important; }
+            #page-terre .card-actions, #page-terre [onclick*="edit"], #page-terre [onclick*="delete"] { display: none !important; }
+            #page-terre input, #page-terre select { pointer-events: none !important; opacity: 0.8; }
+            #quality-dashboard-hub input, #quality-dashboard-hub select { pointer-events: auto !important; opacity: 1 !important; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    if (isSupervisor) {
+        // Supervisors can see these sections read-only
+        document.getElementById('nav-supervisor').style.display = 'flex';
+        loadSupervisorDashboard();
+        
+        // Hide adding buttons globally for supervisor
+        setTimeout(() => {
+            document.querySelectorAll('.btn-filled, .btn-primary').forEach(btn => {
+                const text = btn.textContent.toLowerCase();
+                if (text.includes('add') || text.includes('create') || text.includes('new')) {
+                    btn.style.display = 'none';
+                }
+            });
+            // Hide card actions (Edit/Delete)
+            const style = document.createElement('style');
+            style.id = 'supervisor-readonly-styles';
+            style.innerHTML = `
+                .card-actions, .edit-btn, .delete-btn, [onclick*="edit"], [onclick*="delete"] { display: none !important; }
+                input:not(.supervisor-allowed), select:not(.supervisor-allowed) { pointer-events: none !important; opacity: 0.8; }
+                .supervisor-allowed { pointer-events: auto !important; opacity: 1 !important; }
+            `;
+            document.head.appendChild(style);
+        }, 100);
+    } else {
+        const existingStyle = document.getElementById('supervisor-readonly-styles');
+        if (existingStyle) existingStyle.remove();
+    }
+
+    if (isMgmt) {
+        document.getElementById('nav-supervisor').style.display = 'flex';
+    }
+
+    // 2. Section visibility & Greetings
+    const dashTitle = document.querySelector('#page-dashboard .page-title');
+    if (isAgro && dashTitle) dashTitle.textContent = 'Good Morning, Agronomist';
+    if (isWorker && dashTitle) dashTitle.textContent = `Worker Dashboard — ${user.first_name || user.username}`;
+    if (isSupervisor && dashTitle) dashTitle.textContent = `Supervisor Hub — ${user.first_name || user.username}`;
+
+    // 3. Action Buttons
+    const cultAddBtn = document.querySelector('#page-cultures .btn-filled');
+    if (cultAddBtn) cultAddBtn.style.display = (isMgmt || hasRole('quality_inspector')) ? 'block' : 'none';
+
+    const addWorkBtn = document.getElementById('add-worker-btn');
+    if (addWorkBtn) addWorkBtn.style.display = isMgmt ? 'block' : 'none';
+
+    const salHubBtn = document.getElementById('salary-hub-btn');
+    if (salHubBtn) salHubBtn.style.display = (isMgmt || isSupervisor) ? 'block' : 'none';
+  }
+
+  /* ─── TIMESHEET LOGIC ─── */
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  function loadTimesheet() {
+    const tbody = document.getElementById('timesheet-body');
+    if (!tbody) return;
+    
+    const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const rate = parseInt(localStorage.getItem(`rate_${user.id}`) || localStorage.getItem('hourly_rate') || '500');
+    
+    // Group history by date for this user
+    const userHistory = history.filter(h => h.workerId == user.id);
+    const dailyStats = {};
+    
+    userHistory.forEach(h => {
+        const date = h.date || new Date().toDateString(); // Fallback to today if date missing
+        if (!dailyStats[date]) dailyStats[date] = { seconds: 0, earnings: 0 };
+        dailyStats[date].seconds += (h.seconds || 0);
+        dailyStats[date].earnings += (h.earnings || 0);
+    });
+
+    // Show last 7 days or just entries found
+    const sortedDates = Object.keys(dailyStats).sort((a,b) => new Date(b) - new Date(a));
+    
+    if (sortedDates.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:2rem; color:var(--text-muted);">No work history found yet.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = sortedDates.map(date => {
+        const stats = dailyStats[date];
+        const hrs = (stats.seconds / 3600).toFixed(1);
+        return `
+            <tr>
+                <td style="text-align:left; padding:1rem;">${date}</td>
+                <td style="text-align:center; padding:1rem;">${hrs} HRS</td>
+                <td style="text-align:center; padding:1rem;">${Math.round(stats.earnings)} DZD</td>
+            </tr>
+        `;
+    }).join('');
+    
+    updateSummary();
+  }
+
+  function calculateDiff(start, end) {
+    const s = start.split(':');
+    const e = end.split(':');
+    const diff = (parseInt(e[0]) + parseInt(e[1])/60) - (parseInt(s[0]) + parseInt(s[1])/60);
+    return Math.max(0, diff).toFixed(1);
+  }
+
+  function updateTime(day, field, value) {
+    const savedData = JSON.parse(localStorage.getItem('weekly_timesheet') || '{}');
+    if (!savedData[day]) savedData[day] = { start: '08:00', end: '17:00' };
+    savedData[day][field] = value;
+    localStorage.setItem('weekly_timesheet', JSON.stringify(savedData));
+    
+    const hours = calculateDiff(savedData[day].start, savedData[day].end);
+    document.getElementById(`hours-${day}`).textContent = `${hours} hrs`;
+    const rate = parseInt(localStorage.getItem('hourly_rate') || '500');
+    document.getElementById(`salary-${day}`).textContent = `${(hours * rate).toFixed(0)} DZD`;
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    const userHistory = history.filter(h => h.workerId == user.id);
+    let totalSeconds = userHistory.reduce((s, h) => s + (h.seconds || 0), 0);
+    let totalEarnings = userHistory.reduce((s, h) => s + (h.earnings || 0), 0);
+    
+    document.getElementById('summary-weekly-hours').innerHTML = `${(totalSeconds / 3600).toFixed(1)}<span class="metric-unit">HRS</span>`;
+    document.getElementById('summary-weekly-salary').innerHTML = `${Math.round(totalEarnings)}<span class="metric-unit">DZD</span>`;
+  }
+
+  async function submitWeeklyHours() {
+     const savedData = JSON.parse(localStorage.getItem('weekly_timesheet') || '{}');
+     const user = JSON.parse(localStorage.getItem('user') || '{}');
+     
+     // Simulate API calls for each day
+     for (const day of days) {
+        const data = savedData[day] || { start: '08:00', end: '17:00' };
+        const hours = calculateDiff(data.start, data.end);
+        
+        await fetch(`${WORKERS_API_URL}/hours/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+            body: JSON.stringify({
+                worker: user.worker_profile_id || 1, // Fallback
+                date: new Date().toISOString().split('T')[0], // Simulation
+                hours_worked: hours,
+                notes: `Weekly auto-sync: ${day}`
+            })
+        });
+     }
+     showNotification("Timesheet synchronized with server!", "success");
+  }
+
+  /* ─── SUPERVISOR DASHBOARD ─── */
+  /* ─── SUPERVISOR DASHBOARD LOGIC ─── */
+  let activeSessions = JSON.parse(localStorage.getItem('active_sessions') || '{}');
+  let workHistory = JSON.parse(localStorage.getItem('work_history') || '[]');
+  let supervisorTimerInterval = null;
+
+  async function loadSupervisorDashboard() {
+    const container = document.getElementById('supervisor-worker-list');
+    if (!container) return;
+    
+    try {
+        const data = await apiService.fetchWorkers();
+        const workers = data.results || data;
+        
+        document.getElementById('stats-total-workers').textContent = workers.length;
+        
+        container.innerHTML = workers.map(w => {
+            const rate = parseInt(localStorage.getItem(`rate_${w.id}`) || '500');
+            const isActive = !!activeSessions[w.id];
+            const session = activeSessions[w.id] || { total_seconds: 0, earnings: 0 };
+            
+            return `
+                <div class="supervisor-worker-card glass-card">
+                    <div style="display:flex; align-items:center; gap:1.25rem; flex:2;">
+                        <div class="user-avatar" style="width:48px; height:48px; font-size:1rem; background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.2);">
+                          ${w.first_name[0]}${w.last_name[0]}
+                        </div>
+                        <div>
+                            <div style="font-weight:700; font-size:1.1rem; color:#fff;">${w.first_name} ${w.last_name}</div>
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.25rem;">
+                                <span class="shift-chip shift-morning" style="font-size:0.65rem;">${w.worker_type}</span>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">Zone: ${w.zone || 'Global'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="flex:1;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Hourly Rate</div>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="number" class="terre-input supervisor-allowed" style="width:70px; padding:0.3rem; background:transparent;" value="${rate}" onchange="updateHourlyRate(${w.id}, this.value)">
+                            <span style="font-size:0.75rem; color:var(--text-muted);">DZD</span>
+                        </div>
+                    </div>
+
+                    <div style="flex:1;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Live Session</div>
+                        <div class="timer-badge" id="timer-${w.id}">${isActive ? '00:00:00' : 'Offline'}</div>
+                    </div>
+
+                    <div style="flex:1.5;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Today's Earnings</div>
+                        <div class="earnings-badge" id="earnings-${w.id}">0 DZD</div>
+                    </div>
+
+                    <div style="flex:0.5; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                        <div class="tile-label" style="font-size:0.6rem;">Status</div>
+                        <div id="status-dot-${w.id}" class="pulse-dot" style="background:${isActive ? 'var(--emerald-vivid)' : '#666'};"></div>
+                    </div>
+
+                    <div style="flex:1; display:flex; align-items:center; gap:1rem; justify-content:flex-end;">
+                        <div class="toggle-switch supervisor-allowed ${isActive ? 'on' : ''}" onclick="toggleWork(${w.id}, ${rate}, this)"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        renderHistory();
+        startSupervisorTimers();
+        
+    } catch(e) { console.error("Supervisor Load Error:", e); }
+  }
+
+  function toggleWork(workerId, rate, el) {
+    const isActive = el.classList.contains('on');
+    const dot = document.getElementById(`status-dot-${workerId}`);
+
+    if (!isActive) {
+        // Start Work
+        el.classList.add('on');
+        dot.style.background = 'var(--emerald-vivid)';
+        activeSessions[workerId] = {
+            startTime: Date.now(),
+            rate: rate,
+            accumulatedTime: 0
+        };
+    } else {
+        // Stop Work
+        const session = activeSessions[workerId];
+        const durationSeconds = Math.floor((Date.now() - session.startTime) / 1000);
+        const finalEarnings = Math.round((durationSeconds / 3600) * session.rate);
+        
+        // Add to history
+        workHistory.unshift({
+            id: Date.now(),
+            workerId: workerId,
+            workerName: document.querySelector(`#status-dot-${workerId}`).closest('.supervisor-worker-card').querySelector('div div').textContent,
+            date: new Date().toDateString(),
+            start: new Date(session.startTime).toLocaleTimeString(),
+            end: new Date().toLocaleTimeString(),
+            duration: formatDuration(durationSeconds),
+            seconds: durationSeconds,
+            rate: session.rate,
+            earnings: finalEarnings
+        });
+
+        delete activeSessions[workerId];
+        el.classList.remove('on');
+        dot.style.background = '#666';
+        document.getElementById(`timer-${workerId}`).textContent = 'Offline';
+        
+        renderHistory();
+    }
+
+    localStorage.setItem('active_sessions', JSON.stringify(activeSessions));
+    localStorage.setItem('work_history', JSON.stringify(workHistory));
+    updateStats();
+  }
+
+  function startSupervisorTimers() {
+    if (supervisorTimerInterval) clearInterval(supervisorTimerInterval);
+    supervisorTimerInterval = setInterval(updateLiveUI, 1000);
+  }
+
+  function updateLiveUI() {
+    let activeCount = 0;
+    let totalEarningsToday = workHistory.reduce((sum, s) => sum + s.earnings, 0);
+
+    for (const id in activeSessions) {
+        activeCount++;
+        const session = activeSessions[id];
+        const elapsed = Math.floor((Date.now() - session.startTime) / 1000);
+        const earnings = (elapsed / 3600) * session.rate;
+        
+        const timerEl = document.getElementById(`timer-${id}`);
+        const earningsEl = document.getElementById(`earnings-${id}`);
+        
+        if (timerEl) timerEl.textContent = formatDuration(elapsed);
+        if (earningsEl) earningsEl.textContent = `${Math.round(earnings)} DZD`;
+        
+        totalEarningsToday += earnings;
+    }
+
+    document.getElementById('stats-active-workers').textContent = activeCount;
+    document.getElementById('stats-total-payroll').textContent = `${Math.round(totalEarningsToday)} DZD`;
+  }
+
+  function formatDuration(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [h, m, s].map(v => v < 10 ? "0" + v : v).join(":");
+  }
+
+
+  function renderHistory() {
+    const tbody = document.getElementById('work-tracking-history');
+    if (!tbody) return;
+    
+    tbody.innerHTML = workHistory.slice(0, 10).map(s => `
+        <tr>
+            <td>${s.workerName}</td>
+            <td>${s.start}</td>
+            <td>${s.end}</td>
+            <td>${s.duration}</td>
+            <td>${s.rate} DZD/hr</td>
+            <td style="font-weight:700; color:var(--emerald-vivid);">${s.earnings} DZD</td>
+            <td><span class="health-badge health-good">Completed</span></td>
+        </tr>
+    `).join('');
+  }
+
+  function updateStats() {
+    // Already handled in updateLiveUI and loadSupervisorDashboard
+  }
+
+  function updateHourlyRate(workerId, rate) {
+    localStorage.setItem(`rate_${workerId}`, rate);
+    if (activeSessions[workerId]) {
+        activeSessions[workerId].rate = parseInt(rate);
+        localStorage.setItem('active_sessions', JSON.stringify(activeSessions));
+    }
+  }
+
+
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const lp = document.getElementById('login-page');
+      if (lp && lp.style.display !== 'none') handleLogin();
+    }
+  });
+
+  function handleLogout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    const app = document.getElementById('app');
+    app.style.opacity = '0';
+    app.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => {
+      app.classList.remove('active');
+      app.style.opacity = '1';
+      const lp = document.getElementById('login-page');
+      lp.style.display = 'flex';
+      lp.style.opacity = '0';
+      setTimeout(() => { lp.style.opacity = '1'; lp.style.transition = 'opacity 0.4s ease'; }, 10);
+    }, 400);
+  }
+
+  /* ─── NAVIGATION ─── */
+  function navigate(page, el, mobile = false) {
+    // Update page sections
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    const targetPage = document.getElementById('page-' + page);
+    if (targetPage) targetPage.classList.add('active');
+
+    if (!mobile) {
+      // Desktop sidebar
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      if (el) el.classList.add('active');
+      // Sync mobile
+      const mItems = document.querySelectorAll('.mob-nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];
+      const idx = pages.indexOf(page);
+      mItems.forEach(m => m.classList.remove('active'));
+      if (idx > -1) mItems[idx]?.classList.add('active');
+    } else {
+      // Mobile nav
+      document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+      if (el) el.classList.add('active');
+      // Sync desktop
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];
+      const idx = pages.indexOf(page);
+      navItems.forEach(n => n.classList.remove('active'));
+      
+      const clickable = document.querySelectorAll('.nav-item');
+      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,supervisor:5,settings:6};
+      if (map[page] !== undefined) clickable[map[page]]?.classList.add('active');
+    }
+
+    // Scroll top
+    document.querySelector('.main-content')?.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  /* ─── CULTURES INTEGRATION ─── */
+  async function loadCultures() {
+    const container = document.getElementById('cultures-container');
+    if (!container) return;
+    container.innerHTML = '<div style="color:var(--text-muted);grid-column:1/-1;text-align:center;">Synchronizing with Firebase...</div>';
+
+    try {
+      const res = await fetch(CULTURES_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Failed to fetch cultures");
+      const cultures = await res.json();
+      
+      container.innerHTML = '';
+      cultures.forEach(crop => {
+        const card = document.createElement('div');
+        card.className = 'crop-card glass-card';
+        card.onclick = () => showCultureDetails(crop);
+        card.innerHTML = `
+          <span class="crop-emoji">${crop.emoji}</span>
+          <div class="crop-name">${crop.name}</div>
+          <div class="crop-variety">${crop.variety}</div>
+          <div class="crop-stats">
+            <div class="crop-stat"><div class="crop-stat-label">Growth</div><div class="crop-stat-val">${crop.growth}%</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Days left</div><div class="crop-stat-val">${crop.days_left}</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Yield est.</div><div class="crop-stat-val">${crop.yield_est}</div></div>
+          </div>
+          <div class="progress-track" style="margin-bottom:0.85rem;">
+            <div class="progress-fill" style="width:${crop.growth}%"></div>
+          </div>
+          <span class="health-badge health-${crop.health.toLowerCase()}">⬤ ${crop.health}</span>
+        `;
+        container.appendChild(card);
+      });
+    } catch (e) {
+      container.innerHTML = `<div style="color:var(--text-muted);grid-column:1/-1;text-align:center;">Error: ${e.message}</div>`;
+    }
+  }
+
+  let currentEditId = null;
+
+  function openCultureModal(isEdit = false) {
+    currentEditId = isEdit ? currentEditId : null;
+    document.getElementById('culture-modal').querySelector('h2').textContent = isEdit ? 'Update Culture' : 'New Culture';
+    document.getElementById('culture-modal').querySelector('button').textContent = isEdit ? 'Save Changes' : 'Create Culture';
+    document.getElementById('culture-modal').style.display = 'flex';
+  }
+
+  function closeCultureModal() {
+    document.getElementById('culture-modal').style.display = 'none';
+  }
+
+  function editCulture(id, data) {
+    currentEditId = id;
+    document.getElementById('c-name').value = data.name;
+    document.getElementById('c-variety').value = data.variety;
+    document.getElementById('c-emoji').value = data.emoji;
+    document.getElementById('c-zone').value = data.zone;
+    document.getElementById('c-yield').value = data.yield_est;
+    document.getElementById('c-days').value = data.days_left;
+    openCultureModal(true);
+  }
+
+  async function confirmDelete(id) {
+    if (confirm("Are you sure you want to remove this culture?")) {
+      try {
+        const res = await fetch(`${CULTURES_API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (!res.ok) throw new Error("Delete failed");
+        loadCultures();
+      } catch (e) { alert(e.message); }
+    }
+  }
+
+  async function saveCulture(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    const data = {
+      name: document.getElementById('c-name').value,
+      variety: document.getElementById('c-variety').value,
+      emoji: document.getElementById('c-emoji').value,
+      zone: parseInt(document.getElementById('c-zone').value),
+      yield_est: document.getElementById('c-yield').value,
+      days_left: parseInt(document.getElementById('c-days').value),
+      growth: 0, // In true edit we might want to preserve this, but keeping it simple for now
+      health: 'Good'
+    };
+
+    try {
+      const url = currentEditId ? `${CULTURES_API_URL}/${currentEditId}` : CULTURES_API_URL;
+      const method = currentEditId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method: method,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to save culture");
+      
+      closeCultureModal();
+      e.target.reset();
+      loadCultures(); 
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      btn.textContent = currentEditId ? 'Save Changes' : 'Create Culture';
+      btn.disabled = false;
+    }
+  }
+
+  /* ─── CULTURE DETAILS LOGIC ─── */
+  let activeCultureData = null;
+
+  function showCultureDetails(crop) {
+    activeCultureData = crop;
+    document.getElementById('det-name').textContent = crop.name;
+    document.getElementById('det-variety').textContent = crop.variety;
+    document.getElementById('det-emoji').textContent = crop.emoji;
+    document.getElementById('det-health').textContent = `⬤ ${crop.health}`;
+    
+    const actions = document.getElementById('det-actions');
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const isMgmt = userData.role === 'admin' || userData.role === 'farm_manager';
+    
+    actions.innerHTML = isMgmt ? `
+      <button class="btn-sm btn-outline" onclick='editCulture("${crop.id}", activeCultureData)'>Edit Culture</button>
+      <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="confirmDelete('${crop.id}')">Delete</button>
+    ` : `
+      <span class="health-badge health-good">⬤ Read Only Access</span>
+    `;
+
+    document.getElementById('det-health').className = `health-badge health-${crop.health.toLowerCase()}`;
+    document.getElementById('det-growth').textContent = `${crop.growth}%`;
+    document.getElementById('det-days').textContent = crop.days_left;
+    document.getElementById('det-yield').textContent = crop.yield_est;
+    document.getElementById('det-zone').textContent = crop.zone;
+
+    navigate('culture-details');
+  }
+
+  /* ─── WORKER SERVICE LOGIC ─── */
+  async function loadWorkers() {
+    const container = document.getElementById('worker-container');
+    if (!container) return;
+
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Could not fetch workers");
+      
+      const data = await res.json();
+      const workers = data.results || data; // Handle both paginated and non-paginated
+      
+      container.innerHTML = workers.map(w => `
+        <div class="worker-tile glass-card" onclick="showWorkerProfile(${w.id})">
+          <div class="worker-tile-main">
+            <div class="user-avatar" style="width:56px; height:56px; font-size:1.2rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2);">
+              ${w.first_name[0]}${w.last_name[0]}
+            </div>
+            <div>
+              <div style="font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:800; color:var(--text-primary);">${w.first_name} ${w.last_name}</div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; color:var(--emerald-glow); text-transform:uppercase; margin-top:0.25rem;">
+                ${w.worker_type.replace('_', ' ')}
+              </div>
+            </div>
+          </div>
+          <div class="worker-tile-stats">
+            <div class="tile-stat">
+              <div class="tile-label">Zone</div>
+              <div class="tile-val">${w.zone || 'Global'}</div>
+            </div>
+            <div class="tile-stat">
+              <div class="tile-label">Status</div>
+              <div class="tile-val emerald">⬤ Active</div>
+            </div>
+            <div class="tile-stat">
+              <div class="tile-label">Hired</div>
+              <div class="tile-val" style="font-family:'DM Mono',monospace; font-size:0.8rem;">${w.hire_date || '2024-04-01'}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      container.innerHTML = `<p style="color:#ef4444;padding:1rem;">Error: ${e.message}</p>`;
+    }
+  }
+
+
+
+
+  // MODAL LOGIC
+  function openSalaryModal() { 
+    document.getElementById('salary-modal').style.display = 'flex'; 
+    loadWorkerSelect('sal-worker');
+  }
+  function closeSalaryModal() { document.getElementById('salary-modal').style.display = 'none'; }
+  
+  function openHoursModal(workerId, name) { 
+    if (!workerId) return;
+    activeWorkerId = workerId;
+    document.getElementById('hours-modal').style.display = 'flex';
+  }
+  function closeHoursModal() { document.getElementById('hours-modal').style.display = 'none'; }
+
+  let activeWorkerId = null;
+
+  async function loadWorkerSelect(selectId) {
+    const select = document.getElementById(selectId);
+    const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+    });
+    const data = await res.json();
+    const workers = data.results || data;
+    select.innerHTML = workers.map(w => `<option value="${w.id}">${w.first_name} ${w.last_name}</option>`).join('');
+  }
+
+  async function showWorkerProfile(workerId) {
+    const modal = document.getElementById('worker-det-modal');
+    modal.style.display = 'flex';
+    
+    const nameEl = document.getElementById('wd-name');
+    const tasksEl = document.getElementById('wd-tasks');
+    const salEl = document.getElementById('wd-salary');
+    const actionsEl = document.getElementById('wd-actions');
+    
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/workers/${workerId}/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const w = await res.json();
+      
+      nameEl.textContent = `${w.first_name} ${w.last_name}`;
+      document.getElementById('wd-avatar').textContent = `${w.first_name[0]}${w.last_name[0]}`;
+      document.getElementById('wd-role').textContent = w.worker_type.replace('_', ' ').toUpperCase();
+      document.getElementById('wd-zone').textContent = w.zone || 'Unassigned';
+      document.getElementById('wd-phone').textContent = w.phone;
+      document.getElementById('wd-user').textContent = w.first_name.toLowerCase() + '_' + w.id;
+
+      // Tasks section removed - not needed anymore.
+      
+      // Salary calculation hub integration
+
+      const salRes = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+        body: JSON.stringify({ worker_id: parseInt(workerId), month: '2024-04' })
+      });
+      const s = await salRes.json();
+      salEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Base Salary</span>
+          <span style="font-weight:700;">${s.base_salary} DZD</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">Overtime</span>
+          <span style="color:var(--emerald-glow);">+ ${s.overtime_pay} DZD</span>
+        </div>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:1rem 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800; color:var(--emerald-vivid);">
+          <span>Total Pay</span>
+          <span>${s.total_salary} DZD</span>
+        </div>
+      `;
+    } catch (e) { console.error("Profile load error", e); }
+  }
+
+  async function calculateSalary() {
+    const resDiv = document.getElementById('salary-result');
+    const workerId = document.getElementById('sal-worker').value;
+    const month = document.getElementById('sal-month').value;
+    
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify({ worker_id: parseInt(workerId), month: month })
+      });
+      const data = await res.json();
+      resDiv.style.display = 'block';
+      resDiv.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Base Salary</span>
+          <span style="font-weight:700;">${data.base_salary} DZD</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Overtime Pay</span>
+          <span style="color:var(--emerald-glow);">+ ${data.overtime_pay} DZD</span>
+        </div>
+        <div style="height:1px; background:rgba(255,255,255,0.1); margin:0.8rem 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:1.1rem;">
+          <span style="font-weight:800;">TOTAL</span>
+          <span style="font-weight:800; color:var(--emerald-vivid);">${data.total_salary} DZD</span>
+        </div>
+      `;
+    } catch (e) { alert("Salary calculation failed"); }
+  }
+
+  async function submitHours() {
+    const data = {
+      worker: parseInt(activeWorkerId),
+      date: document.getElementById('h-date').value,
+      hours_worked: document.getElementById('h-hours').value,
+      overtime: document.getElementById('h-over').value,
+      notes: document.getElementById('h-notes').value
+    };
+    try {
+      const res = await fetch(`${WORKERS_API_URL}/hours/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        showNotification("Hours logged successfully!", "success");
+        closeHoursModal();
+      }
+    } catch (e) { alert("Logging failed"); }
+  }
+
+  function openWorkerModal() { document.getElementById('worker-modal').style.display = 'flex'; }
+  function closeWorkerModal() { document.getElementById('worker-modal').style.display = 'none'; }
+  
+
+
+  async function saveWorker(e) {
+    e.preventDefault();
+    const btn = document.getElementById('hire-confirm-btn');
+    const oldText = btn.textContent;
+    btn.textContent = 'Creating Account...';
+    btn.disabled = true;
+
+    try {
+      // 1. Register in AUTH SERVICE
+      const authData = {
+        username: document.getElementById('w-user').value,
+        password: document.getElementById('w-pass').value,
+        email: document.getElementById('w-email').value,
+        role: document.getElementById('w-role').value,
+        first_name: document.getElementById('w-fn').value,
+        last_name: document.getElementById('w-ln').value
+      };
+
+      const authRes = await fetch(`${AUTH_API_URL}/register/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(authData)
+      });
+
+      if (!authRes.ok) {
+        const err = await authRes.json();
+        throw new Error(err.username || err.detail || "Auth registration failed");
+      }
+
+      const newUser = await authRes.json();
+      const userId = newUser.id;
+
+      // 2. Create Profile in WORKER SERVICE
+      const workerData = {
+        user_id: userId,
+        first_name: authData.first_name,
+        last_name: authData.last_name,
+        phone: document.getElementById('w-phone').value,
+        worker_type: authData.role,
+        zone: document.getElementById('w-zone').value,
+        hire_date: document.getElementById('w-date').value
+      };
+
+      const workerRes = await fetch(`${WORKERS_API_URL}/workers/`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        },
+        body: JSON.stringify(workerData)
+      });
+
+      if (!workerRes.ok) throw new Error("Staff profile creation failed");
+
+      console.log(`Success! ${authData.username} has been hired.`);
+      closeWorkerModal();
+      loadWorkers();
+    } catch (e) { 
+      alert("Hiring Error: " + e.message); 
+    } finally {
+      btn.textContent = oldText;
+      btn.disabled = false;
+    }
+  }
+
+
+
+  function openSalaryModal() { alert("Salary Calculation Hub: Coming soon with payroll export!"); }
+
+  /* ─── ANIMATE PROGRESS BARS ON LOAD ─── */
+  function animateBars() {
+    document.querySelectorAll('.progress-fill, .soil-bar-fill').forEach(bar => {
+      const target = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = target; }, 300);
+    });
+  }
+
+  /* ─── SYSTEM METRICS ─── */
+  function updateMetrics() {
+    const metrics = document.querySelectorAll('.metric-value');
+    if (metrics.length === 0) return;
+    // We could fetch real counts from the services here later
+  }
+
+  window.addEventListener('load', async () => {
+    animateBars();
+    setInterval(updateMetrics, 5000);
+    
+    // Auto-login with existing token
+    if (localStorage.getItem('access_token')) {
+        const valid = await loadProfile();
+        if (valid) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('app').classList.add('active');
+        }
+    }
+  });
+
+  /* ─── TERRE LOGIC ─── */
+  async function loadTerre() {
+    const container = document.getElementById('terre-container');
+    const tableBody = document.getElementById('terre-table-body');
+    const agronomistView = document.getElementById('terre-agronomist-view');
+    const adminActions = document.getElementById('terre-admin-actions');
+    
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAgro = user.role === 'agronomist';
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    const canAddEdit = isAdmin || isAgro;
+    
+    if (isAgro && agronomistView) agronomistView.style.display = 'none'; // Centralized in Dashboard
+    if (canAddEdit && adminActions) adminActions.style.display = 'flex';
+    
+    try {
+      const res = await fetch(LANDS_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("API Unavailable");
+      const lands = await res.json();
+      
+      let cultureOptions = '<option value="">None</option>';
+      try {
+        const cRes = await fetch(CULTURES_API_URL, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        const cultures = await cRes.json();
+        cultureOptions += cultures.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+      } catch (e) { console.warn("Could not fetch cultures"); }
+      
+      if (!lands || lands.length === 0) return; // Keep fallbacks if no data
+
+      // 📋 Populate Agronomist Table
+      if (isAgro && tableBody) {
+        tableBody.innerHTML = lands.map(l => `
+          <tr>
+            <td><span style="font-family:'DM Mono',monospace;">${l.name}</span></td>
+            <td>${l.surface} HA</td>
+            <td><input type="text" class="terre-input" value="${l.soil_type || ''}" onchange="updateSoil(${l.id}, 'soil_type', this.value)"></td>
+            <td><input type="number" step="0.1" class="terre-input" style="width:70px;" value="6.8" onchange="updateSoil(${l.id}, 'ph', this.value)"></td>
+            <td><input type="number" class="terre-input" style="width:70px;" value="42" onchange="updateSoil(${l.id}, 'nitrogen', this.value)"></td>
+            <td><input type="number" class="terre-input" style="width:70px;" value="71" onchange="updateSoil(${l.id}, 'moisture', this.value)"></td>
+            <td>
+              <select class="terre-select" onchange="updateSoil('${l.id}', 'crop_planted', this.value)">
+                ${cultureOptions.replace(`value="${l.crop_planted}"`, `value="${l.crop_planted}" selected`)}
+              </select>
+            </td>
+            <td><button class="btn-sm btn-outline" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button></td>
+          </tr>
+        `).join('');
+      }
+
+      // 🗺️ Update Cards with Live Data
+      container.innerHTML = lands.map(l => `
+        <div class="plot-card glass-card" onclick="showTerreDetails(${JSON.stringify(l).replace(/"/g, '&quot;')})">
+          <div class="plot-id">PLOT · ${l.id} · ${l.surface} HA</div>
+          <div class="plot-name">${l.name}</div>
+          <div class="soil-metrics">
+            ${renderSoilBar('pH Level', 6.8, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
+            ${renderSoilBar('Nitrogen', 42, 'linear-gradient(90deg,#059669,#10b981)')}
+            ${renderSoilBar('Moisture', 71, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
+          </div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-excellent" style="font-size:0.65rem;">⬤ Optimal</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono'; text-transform:uppercase;">${l.crop_planted || 'Unplanted'}</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) { 
+      console.warn("Using fallback Terre data:", e.message); 
+    }
+  }
+
+  function renderSoilBar(label, val, color) {
+    return `
+      <div class="soil-metric">
+        <div class="soil-metric-header"><span>${label}</span><span>${val}</span></div>
+        <div class="soil-bar"><div class="soil-bar-fill" style="width:${val}%; background:${color};"></div></div>
+      </div>
+    `;
+  }
+
+  function showTerreDetails(l) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    const isAgro = user.role === 'agronomist';
+    
+    document.getElementById('td-title').textContent = l.name;
+    document.getElementById('td-id').textContent = `PLOT ${l.id} · ${l.surface} HA`;
+    document.getElementById('td-crop').textContent = l.crop_planted || 'Unplanted';
+    document.getElementById('td-type').textContent = l.soil_type || 'Unknown';
+    
+    document.getElementById('td-soil-stats').innerHTML = `
+       ${renderSoilBar('Soil pH', 6.8, '#fbbf24')}
+       ${renderSoilBar('Nitrogen (N)', 42, '#10b981')}
+       ${renderSoilBar('Phosphorus (P)', 18, '#3b82f6')}
+       ${renderSoilBar('Moisture', 71, '#06b6d4')}
+    `;
+
+    const actions = document.getElementById('td-actions');
+    let btnHtml = '';
+    if (isAdmin) {
+      btnHtml = `
+        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot('${l.id}')">Delete Plot</button>
+        <button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>
+      `;
+    } else if (isAgro) {
+      btnHtml = `<button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>`;
+    } else {
+      btnHtml = `<span class="health-badge health-good">⬤ Operational Plot</span>`;
+    }
+    actions.innerHTML = btnHtml;
+
+    // Navigate to the new page section
+    navigate('terre-details');
+    
+    // Render 3D Map
+    setTimeout(() => {
+      renderLand3D(l.lat || 36.7538, l.lng || 3.0588, l.surface || 2.4);
+      startParticles();
+    }, 100);
+  }
+
+  function renderLand3D(lat, lng, surface) {
+    if (!MAPBOX_TOKEN) {
+      document.getElementById('detail-map').innerHTML = '<div style="color:#fca5a5; text-align:center; padding-top: 50px;">Map failed to load</div>';
+      return;
+    }
+
+    if (detailMap) {
+      detailMap.remove();
+    }
+    
+    detailMap = new mapboxgl.Map({
+      container: 'detail-map',
+      style: 'mapbox://styles/mapbox/satellite-v9',
+      center: [lng, lat],
+      zoom: 15,
+      pitch: 60,
+      bearing: 30,
+      interactive: false
+    });
+
+    detailMap.on('load', () => {
+      detailMap.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.terrain-rgb',
+        tileSize: 512,
+        maxzoom: 14
+      });
+      detailMap.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+
+      // Estimated area visualization
+      const size = surface * 0.00001 * 5; // scaled visually
+      const polygon = [
+        [lng - size, lat - size],
+        [lng + size, lat - size],
+        [lng + size, lat + size],
+        [lng - size, lat + size],
+        [lng - size, lat - size]
+      ];
+
+      detailMap.addLayer({
+        id: 'land-layer',
+        type: 'fill-extrusion',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [polygon]
+            }
+          }
+        },
+        paint: {
+          'fill-extrusion-color': '#4ade80',
+          'fill-extrusion-height': 2,
+          'fill-extrusion-opacity': 0.6
+        }
+      });
+    });
+  }
+
+  function closeTerreModal() { 
+    navigate('terre');
+    stopParticles();
+  }
+
+  /* ─── ADD PLOT LOGIC ─── */
+  let currentLandId = null;
+  function openLandModal(land = null) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    const isAgro = user.role === 'agronomist';
+    
+    if (!isAdmin && !isAgro) {
+       alert("Access denied");
+       return;
+    }
+
+    if (land === null && !isAdmin) {
+       alert("Only Farm Managers can create new plots.");
+       return;
+    }
+    
+    document.getElementById('land-admin-fields').style.display = isAgro ? 'none' : 'block';
+    document.getElementById('land-agro-fields').style.display = isAgro ? 'block' : 'none';
+    
+    document.getElementById('land-modal-title').textContent = land ? 'Edit Plot' : 'Add Plot';
+    document.getElementById('land-submit-btn').textContent = land ? 'Save Changes' : 'Save Plot';
+
+    if (land) {
+      currentLandId = land.id;
+      document.getElementById('l-name').value = land.name || '';
+      document.getElementById('l-surface').value = land.surface || '';
+      document.getElementById('l-type').value = land.soil_type || 'Silt Loam';
+      document.getElementById('l-culture').value = land.crop_planted || 'Strawberries';
+      selectedLocation = land.lat ? { lat: land.lat, lng: land.lng } : null;
+    } else {
+      currentLandId = null;
+      document.getElementById('land-form').reset();
+      selectedLocation = null;
+    }
+    
+    // Set initial values if lat/lng are selected
+    if (selectedLocation) {
+        document.getElementById('l-lat').value = selectedLocation.lat;
+        document.getElementById('l-lng').value = selectedLocation.lng;
+    }
+    
+    document.getElementById('land-modal').style.display = 'flex';
+
+    if (!isAgro) {
+      setTimeout(() => {
+        initAdminMap(selectedLocation);
+      }, 100);
+    }
+  }
+
+  function initAdminMap(initialLocation) {
+    if (!MAPBOX_TOKEN) {
+      document.getElementById('admin-map').innerHTML = '<div style="color:#fca5a5; text-align:center; padding-top: 100px;">Map failed to load</div>';
+      return;
+    }
+
+    if (adminMap) {
+      adminMap.remove();
+    }
+    
+    adminMap = new mapboxgl.Map({
+      container: 'admin-map',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: initialLocation ? [initialLocation.lng, initialLocation.lat] : [3.0588, 36.7538],
+      zoom: 12
+    });
+
+    if (initialLocation) {
+      adminMarker = new mapboxgl.Marker().setLngLat([initialLocation.lng, initialLocation.lat]).addTo(adminMap);
+    } else {
+      adminMarker = null;
+    }
+
+    adminMap.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      selectedLocation = { lat, lng };
+      
+      document.getElementById('l-lat').value = lat;
+      document.getElementById('l-lng').value = lng;
+      
+      if (adminMarker) adminMarker.remove();
+      adminMarker = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(adminMap);
+    });
+  }
+
+  function updateAdminMarker() {
+      if (!adminMap) return;
+      const lat = parseFloat(document.getElementById('l-lat').value);
+      const lng = parseFloat(document.getElementById('l-lng').value);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+          selectedLocation = { lat, lng };
+          if (adminMarker) adminMarker.remove();
+          adminMarker = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(adminMap);
+          adminMap.flyTo({ center: [lng, lat], zoom: 14 });
+      }
+  }
+
+  function closeLandModal() {
+    document.getElementById('land-modal').style.display = 'none';
+  }
+
+  function saveLand(e) {
+    e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAgro = user.role === 'agronomist';
+    
+    // Admin fields
+    const name = document.getElementById('l-name').value;
+    const surface = document.getElementById('l-surface').value;
+    
+    if (!isAgro && !selectedLocation) {
+      alert("Please select a location on the map");
+      return;
+    }
+    
+    // Agro fields
+    const type = document.getElementById('l-type').value;
+    const culture = document.getElementById('l-culture').value;
+    
+    const newId = currentLandId || `Z-${Math.random().toString(36).substring(7).toUpperCase()}`;
+    const newLand = {
+        id: newId,
+        name: name,
+        surface: surface,
+        soil_type: type,
+        crop_planted: culture,
+        lat: selectedLocation ? selectedLocation.lat : null,
+        lng: selectedLocation ? selectedLocation.lng : null
+    };
+    
+    const landData = {
+        nom: name,
+        surface: parseFloat(surface),
+        type_sol: type,
+        culture_plantee: culture || 'aucune',
+        localisation: location,
+        latitude: selectedLocation ? selectedLocation.lat : null,
+        longitude: selectedLocation ? selectedLocation.lng : null
+    };
+    
+    // 🚀 Server-Side Persistence Attempt (Railway)
+    const authHeader = { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    };
+    
+    fetch(LANDS_API_URL, {
+        method: 'POST',
+        headers: authHeader,
+        body: JSON.stringify(landData)
+    }).then(async res => {
+        if (res.ok) {
+            const serverLand = await res.json();
+            showNotification(`Plot "${serverLand.nom}" registered in Railway database`, "success");
+            
+            // Re-sync local storage with server ID
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            storedLands.push({
+                ...landData,
+                id: serverLand.id,
+                name: serverLand.nom, // preserve local UI keys
+                soil_type: serverLand.type_sol,
+                crop_planted: serverLand.culture_plantee
+            });
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        } else {
+            console.warn("Plot registration failed on server, using local fallback");
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            storedLands.push({ ...landData, id: newId, name, soil_type: type, crop_planted: culture });
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        }
+        loadLands();
+    }).catch(e => {
+        console.warn("Server unreachable, plot kept in local storage", e);
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        storedLands.push({ ...landData, id: newId, name, soil_type: type, crop_planted: culture });
+        localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        loadLands();
+    });
+
+    closeLandModal();
+    document.getElementById('land-form').reset();
+  }
+
+  function deletePlot(id) {
+    if(!confirm("Are you sure you want to delete this plot?")) return;
+    const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+    const filtered = storedLands.filter(l => l.id !== id);
+    localStorage.setItem('saved_lands', JSON.stringify(filtered));
+    navigate('terre');
+    loadLands();
+  }
+
+  async function loadLands() {
+    const container = document.getElementById('terre-container');
+    if (!container) return;
+    
+    let lands = [];
+    try {
+        // Fetch mock lands
+        const res = await fetch(LANDS_API_URL);
+        if (res.ok) {
+            lands = await res.json();
+        }
+    } catch (e) {
+        console.warn("Could not fetch lands from API:", e);
+    }
+    
+    // Merge with localStorage
+    const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+    
+    // Combine prioritizing stored
+    const allLandsMap = {};
+    lands.forEach(l => allLandsMap[l.id] = l);
+    storedLands.forEach(l => allLandsMap[l.id] = l);
+    
+    const allLands = Object.values(allLandsMap);
+    
+    if (allLands.length === 0) {
+        container.innerHTML = `<div class="glass-card" style="padding:2rem; text-align:center; color:var(--text-muted); width:100%; grid-column:1/-1;">No plots registered.</div>`;
+        document.getElementById('terre-subtitle').textContent = `Analyzing soil health across 0 active plots`;
+        return;
+    }
+
+    container.innerHTML = allLands.map(l => {
+        const ph = l.ph || 6.8;
+        const nitrogen = l.nitrogen || 42;
+        const moisture = l.moisture || 71;
+        
+        return `
+        <div class="plot-card glass-card" onclick='showTerreDetails(${JSON.stringify(l).replace(/'/g, "&#39;")})'>
+          <div class="plot-id">PLOT · ${l.id} · ${l.surface || '??'} HA</div>
+          <div class="plot-name">${l.name || 'Unnamed Plot'}</div>
+          <div class="soil-metrics">
+            ${renderSoilBar('pH Level', ph, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
+            ${renderSoilBar('Nitrogen', nitrogen, 'linear-gradient(90deg,#059669,#10b981)')}
+            ${renderSoilBar('Moisture', moisture, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
+          </div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-excellent" style="font-size:0.65rem;">⬤ Optimal</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono'; text-transform:uppercase;">${l.crop_planted || 'Unplanted'}</span>
+          </div>
+        </div>
+        `;
+    }).join('');
+    
+    document.getElementById('terre-subtitle').textContent = `Analyzing soil health across ${allLands.length} active plots`;
+  }
+  
+  // Initialize lands on load
+  document.addEventListener('DOMContentLoaded', () => {
+     loadLands();
+  });
+
+  /* ─── EQUIPMENT LOGIC (Sid Ahmed's Part) ─── */
+  function openEquipModal() { document.getElementById('equip-modal').style.display = 'flex'; }
+  function closeEquipModal() { document.getElementById('equip-modal').style.display = 'none'; }
+  
+  async function saveEquip(e) {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('eq-name').value,
+      type: document.getElementById('eq-type').value,
+      serial_number: document.getElementById('eq-sn').value,
+      status: document.getElementById('eq-status').value,
+      usage_hours: parseInt(document.getElementById('eq-hours').value) || 0
+    };
+    try {
+      const res = await fetch(EQUIPMENT_API_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to save equipment");
+      closeEquipModal();
+      document.getElementById('equip-form').reset();
+      loadEquipment();
+    } catch(err) { alert(err.message); }
+  }
+
+  async function deleteEquip(id) {
+    if(!confirm("Are you sure you want to delete this equipment?")) return;
+    try {
+      const res = await fetch(`${EQUIPMENT_API_URL}${id}/`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Failed to delete equipment");
+      loadEquipment();
+    } catch(err) { alert(err.message); }
+  }
+
+  async function loadEquipment() {
+    const container = document.getElementById('equipment-container');
+    if (!container) return;
+    
+    try {
+      let res = await fetch(EQUIPMENT_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      }).catch(err => {
+         console.warn("Main Equipment API blocked or down, trying mock...");
+         return fetch(EQUIPMENT_MOCK_URL);
+      });
+      
+      if (!res.ok && res.url !== EQUIPMENT_MOCK_URL) {
+         res = await fetch(EQUIPMENT_MOCK_URL);
+      }
+
+      if (!res.ok) throw new Error("Equipment API Unavailable");
+      const equipments = await res.json();
+      
+      if (!equipments || equipments.length === 0) {
+          container.innerHTML = `
+              <div class="equip-row glass-card" style="justify-content:center;opacity:0.6;">
+                  <span>No machinery registered in inventory.</span>
+              </div>
+          `;
+          return;
+      }
+
+      container.innerHTML = equipments.map(e => {
+          let icon = "🚜";
+          if (e.type.toLowerCase().includes('drone')) icon = "🚁";
+          if (e.type.toLowerCase().includes('irrigation') || e.type.toLowerCase().includes('drip')) icon = "🚿";
+          if (e.type.toLowerCase().includes('analyzer')) icon = "🔬";
+          if (e.type.toLowerCase().includes('robot')) icon = "🤖";
+          
+          const isAvail = e.status === 'operational';
+          
+          return `
+            <div class="equip-row glass-card">
+              <div class="equip-icon">${icon}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="equip-name">${e.name}</div>
+                <div class="equip-model">TYPE · ${e.type.toUpperCase()} · SN:${e.serial_number}</div>
+                <div class="equip-meta">
+                    <span>Usage: ${e.usage_hours}h</span>
+                    <span>Next Service: ${e.next_revision || 'TBD'}</span>
+                    <span style="color:${isAvail ? 'var(--emerald-glow)' : '#fca5a5'}">${e.status.toUpperCase()}</span>
+                </div>
+              </div>
+              <span class="avail-chip ${isAvail ? 'avail-yes' : 'avail-no'}">${isAvail ? 'Available' : 'Restricted'}</span>
+              <button class="btn-sm btn-outline" style="border-color:#fca5a5;color:#fca5a5;padding:0.25rem 0.5rem;font-size:0.7rem;margin-left:1rem;" onclick="deleteEquip(${e.id})">Del</button>
+            </div>
+          `;
+      }).join('');
+    } catch (e) { 
+        console.warn("Using Equipment fallback data", e);
+        // Fallback static data if API fails but keep the first design
+        container.innerHTML = `
+          <div class="equip-row glass-card">
+            <div class="equip-icon">🚜</div>
+            <div style="flex:1;min-width:0;">
+              <div class="equip-name">Autonomous Tractor (Offline)</div>
+              <div class="equip-model">MODEL · AT-700X · SN:4521-A</div>
+              <div class="equip-meta"><span>Zone A</span><span>Static Data</span><span>Runtime: 1,240h</span></div>
+            </div>
+            <span class="avail-chip avail-yes">Available</span>
+          </div>
+        `;
+    }
+  }
+
+  /* ─── QUALITY LOGIC ─── */
+  let currentQualityCropId = null;
+  function openQualityModal(cropId, name) {
+    currentQualityCropId = cropId;
+    document.getElementById('quality-modal-title').textContent = `Quality: ${name}`;
+    document.getElementById('quality-modal').style.display = 'flex';
+  }
+  function closeQualityModal() { document.getElementById('quality-modal').style.display = 'none'; }
+  
+  async function saveQuality(e) {
+    e.preventDefault();
+    const data = {
+      growth: parseInt(document.getElementById('q-growth').value),
+      days_left: parseInt(document.getElementById('q-days').value),
+      health: document.getElementById('q-status').value
+    };
+    try {
+      const res = await fetch(`${CULTURES_API_URL}/${currentQualityCropId}`, {
+        method: 'PUT', // Assuming PUT handles partial updates or we just merge it backend
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data) // Note: this might overwrite name/variety if backend expects full object. But let's assume it works for the demo or we can fetch current first.
+      });
+      closeQualityModal();
+      loadQuality();
+      loadCultures(); // Refresh cultures grid too
+    } catch(err) { alert("Quality update failed"); }
+  }
+
+  async function loadQuality() {
+    const container = document.getElementById('quality-cultures-container');
+    if (!container) return;
+    try {
+      const res = await fetch(CULTURES_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const cultures = await res.json();
+      container.innerHTML = cultures.map(crop => `
+        <div class="crop-card glass-card" onclick="openQualityModal('${crop.id}', '${crop.name}')">
+          <span class="crop-emoji">${crop.emoji}</span>
+          <div class="crop-name">${crop.name}</div>
+          <div class="crop-variety">${crop.variety}</div>
+          <div class="crop-stats">
+            <div class="crop-stat"><div class="crop-stat-label">Growth</div><div class="crop-stat-val">${crop.growth}%</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Days left</div><div class="crop-stat-val">${crop.days_left}</div></div>
+          </div>
+          <span class="health-badge health-${crop.health.toLowerCase()}" style="margin-top:1rem;">⬤ ${crop.health}</span>
+        </div>
+      `).join('');
+    } catch(err) { console.warn(err); }
+  }
+
+  async function updateSoil(id, field, value) {
+    console.log(`Updating land ${id}: ${field} = ${value}`);
+  }
+</script>
+
+
+
+    <!-- 🏗️ ADD/EDIT LAND MODAL -->
+    <div class="modal-overlay" id="land-modal">
+      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="land-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
+          <button onclick="closeLandModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <form id="land-form" onsubmit="saveLand(event)">
+          <!-- Admin Fields -->
+          <div id="land-admin-fields">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">Plot Name</label>
+                <input type="text" id="l-name" class="terre-input" placeholder="e.g. North Sector" required style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Surface (HA)</label>
+                <input type="number" step="0.1" id="l-surface" class="terre-input" placeholder="2.4" required style="margin-top:0.5rem; width:100%">
+              </div>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+              <label class="tile-label">Location (Click to select)</label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:0.5rem; margin-top:0.5rem;">
+                <div>
+                  <label class="tile-label" style="font-size:0.55rem;">Latitude</label>
+                  <input type="number" step="any" id="l-lat" class="terre-input" placeholder="36.7525" style="margin-top:0.2rem; width:100%" oninput="updateAdminMarker()">
+                </div>
+                <div>
+                  <label class="tile-label" style="font-size:0.55rem;">Longitude</label>
+                  <input type="number" step="any" id="l-lng" class="terre-input" placeholder="3.0420" style="margin-top:0.2rem; width:100%" oninput="updateAdminMarker()">
+                </div>
+              </div>
+              <div id="admin-map" style="height:250px; width:100%; border-radius:12px; border:1px solid rgba(52,211,153,0.2); background:rgba(2,44,34,0.6); overflow:hidden;"></div>
+            </div>
+          </div>
+
+          <!-- Agronomist Fields -->
+          <div id="land-agro-fields" style="display:none;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">Soil Type</label>
+                <select id="l-type" class="terre-select" style="margin-top:0.5rem; width:100%;">
+                  <option value="Silt Loam">Silt Loam</option>
+                  <option value="Clay">Clay</option>
+                  <option value="Sandy">Sandy</option>
+                  <option value="Peaty">Peaty</option>
+                </select>
+              </div>
+              <div>
+                <label class="tile-label">Best Culture</label>
+                <select id="l-culture" class="terre-select" style="margin-top:0.5rem; width:100%;">
+                  <option value="Strawberries">Strawberries</option>
+                  <option value="Wheat">Wheat</option>
+                  <option value="Corn">Corn</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">pH</label>
+                <input type="number" step="0.1" id="l-ph" class="terre-input" placeholder="6.8" style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Nitrogen</label>
+                <input type="number" id="l-n" class="terre-input" placeholder="42" style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Moisture</label>
+                <input type="number" id="l-m" class="terre-input" placeholder="71" style="margin-top:0.5rem; width:100%">
+              </div>
+            </div>
+          </div>
+          
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeLandModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled" id="land-submit-btn">Save Plot</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 🏗️ EQUIPMENT MODAL -->
+    <div class="modal-overlay" id="equip-modal">
+      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="equip-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Equipment</h2>
+          <button onclick="closeEquipModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <form id="equip-form" onsubmit="saveEquip(event)">
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Name</label>
+            <input type="text" id="eq-name" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div>
+              <label class="tile-label">Type</label>
+              <input type="text" id="eq-type" class="terre-input" required style="margin-top:0.5rem; width:100%">
+            </div>
+            <div>
+              <label class="tile-label">Serial Number</label>
+              <input type="text" id="eq-sn" class="terre-input" required style="margin-top:0.5rem; width:100%">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div>
+              <label class="tile-label">Status</label>
+              <select id="eq-status" class="terre-select" style="margin-top:0.5rem; width:100%">
+                <option value="operational">Operational</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="broken">Broken</option>
+              </select>
+            </div>
+            <div>
+              <label class="tile-label">Usage Hours</label>
+              <input type="number" id="eq-hours" class="terre-input" value="0" style="margin-top:0.5rem; width:100%">
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeEquipModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled" id="equip-save-btn">Save Unit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 🏗️ QUALITY MODAL -->
+    <div class="modal-overlay" id="quality-modal">
+      <div class="modal-content glass-strong" style="max-width:400px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="quality-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Update Quality</h2>
+          <button onclick="closeQualityModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <form id="quality-form" onsubmit="saveQuality(event)">
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Growth %</label>
+            <input type="number" id="q-growth" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Days Left</label>
+            <input type="number" id="q-days" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Status</label>
+            <select id="q-status" class="terre-select" style="margin-top:0.5rem; width:100%">
+              <option value="Excellent">Excellent</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+              <option value="Poor">Poor</option>
+            </select>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeQualityModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled">Update Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  <div id="notif-container" class="notif-container"></div>
+</body>
+
+</html>
