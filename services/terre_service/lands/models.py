@@ -26,6 +26,8 @@ class Parcelle(models.Model):
     type_sol = models.CharField(max_length=30, choices=TYPE_SOL_CHOICES)
     culture_plantee = models.CharField(max_length=30, choices=CULTURE_CHOICES, default='aucune')
     localisation = models.CharField(max_length=200, blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     active = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_mise_a_jour = models.DateTimeField(auto_now=True)
