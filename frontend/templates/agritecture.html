@@ -9,6 +9,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cabinet+Grotesk:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+<<<<<<< HEAD
+=======
+  
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+>>>>>>> Terre
 
   <style>
     :root {
@@ -97,6 +103,68 @@
       transform: translateY(-3px);
     }
 
+<<<<<<< HEAD
+=======
+    /* ─── NOTIFICATION SYSTEM ─── */
+    .notif-container {
+      position: fixed; top: 2rem; right: 2rem; z-index: 10000;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      pointer-events: none;
+    }
+    .notif-toast {
+      min-width: 300px; max-width: 450px;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      display: flex; align-items: center; gap: 1rem;
+      pointer-events: auto;
+      background: var(--glass-strong);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-card), 0 0 20px rgba(16,185,129,0.1);
+      animation: toast-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: all 0.3s ease;
+    }
+    .notif-toast.hide {
+      animation: toast-slide-out 0.4s ease forwards;
+    }
+    @keyframes toast-slide-in {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toast-slide-out {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+    .notif-success { border-color: rgba(16, 185, 129, 0.5); background: rgba(6, 78, 59, 0.6); }
+    .notif-error { border-color: rgba(239, 68, 68, 0.5); background: rgba(127, 29, 29, 0.6); }
+    .notif-info { border-color: rgba(59, 130, 246, 0.5); background: rgba(30, 58, 138, 0.6); }
+    
+    .notif-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .notif-success .notif-icon { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .notif-error .notif-icon { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .notif-info .notif-icon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+    /* ─── AGRONOMIST DASHBOARD STYLES ─── */
+    .agro-input, .agro-select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 0.6rem;
+        color: white;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .agro-input:focus, .agro-select:focus { border-color: var(--emerald-vivid); }
+    .agro-select option { background: var(--emerald-deep); color: white; }
+
+>>>>>>> Terre
     /* ─── LOGIN PAGE ─── */
     #login-page {
       position: fixed; inset: 0; z-index: 100;
@@ -566,6 +634,38 @@
       white-space: nowrap;
     }
 
+<<<<<<< HEAD
+=======
+    /* ─── 3D MAPBOX ANIMATIONS ─── */
+    .land-container {
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+    .particle {
+      position: absolute;
+      bottom: 0;
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: rise 3s linear;
+      pointer-events: none;
+      z-index: 10;
+    }
+    @keyframes rise {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-300px); opacity: 0; }
+    }
+    .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
+      display: none !important;
+    }
+
+>>>>>>> Terre
     /* ─── CULTURES PAGE ─── */
     .cultures-grid {
       display: grid;
@@ -656,9 +756,13 @@
     }
     .worker-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
     .worker-role { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
+<<<<<<< HEAD
     .worker-task { flex: 1; }
     .task-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(110,231,183,0.4); }
     .task-val { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
+=======
+
+>>>>>>> Terre
     .shift-chip {
       padding: 0.25rem 0.65rem;
       border-radius: 6px;
@@ -732,6 +836,7 @@
       .metrics-grid { grid-template-columns: 1fr 1fr; }
       .cultures-grid { grid-template-columns: 1fr; }
       .page-title { font-size: 1.4rem; }
+<<<<<<< HEAD
     /* ─── ROLE-BASED ACCESS CONTROL (CSS) ─── */
     body.role-agronomist .nav-item[onclick*="page-workers"],
     body.role-agronomist .mob-nav-item[onclick*="page-workers"],
@@ -746,6 +851,87 @@
 
     /* Custom CSS to target by text content via attribute or similar if needed, 
        but we will mark them with classes for reliability */
+=======
+    }
+    /* ─── SUPERVISOR DASHBOARD STYLES ─── */
+    .supervisor-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      padding: 1.5rem;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at top right, rgba(52,211,153,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; font-family: 'Syne', sans-serif; }
+    .stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .supervisor-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .supervisor-worker-card {
+      padding: 1.5rem 2rem;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .supervisor-worker-card:hover {
+      transform: translateX(8px);
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(52,211,153,0.2);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+    .toggle-switch.on { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.4); }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 19px; height: 19px;
+      background: #fff;
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-switch.on::after { left: 26px; background: var(--emerald-vivid); }
+
+    .timer-badge { font-family: 'DM Mono', monospace; font-size: 0.95rem; color: var(--emerald-vivid); font-weight: 700; min-width: 85px; }
+    .earnings-badge { font-weight: 800; color: #fff; font-size: 1.1rem; }
+    
+    .tracking-table-container { margin-top: 3rem; animation: fade-in 0.5s ease 0.2s both; }
+
+    @media (max-width: 1000px) {
+      .supervisor-worker-card { flex-wrap: wrap; gap: 1rem; padding: 1.25rem; }
+      .supervisor-worker-card > div { flex: 1 1 150px; }
+    }
+>>>>>>> Terre
   </style>
 </head>
 <body>
@@ -843,6 +1029,12 @@
       <span class="nav-icon">◎</span> Workers
       <span class="nav-badge">8</span>
     </div>
+<<<<<<< HEAD
+=======
+    <div class="nav-item" id="nav-quality" onclick="navigate('quality', this)">
+      <span class="nav-icon">🔬</span> Quality
+    </div>
+>>>>>>> Terre
 
     <style>
       .modal-overlay {
@@ -881,6 +1073,14 @@
       .card-actions span:hover { background: rgba(255,255,255,0.2); }
     </style>
 
+<<<<<<< HEAD
+=======
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item" id="nav-supervisor" onclick="navigate('supervisor', this)" style="display:none;">
+      <span class="nav-icon">🛡</span> Supervisor Hub
+    </div>
+
+>>>>>>> Terre
     <div class="nav-section-label">System</div>
     <div class="nav-item" onclick="navigate('settings', this)">
       <span class="nav-icon">⊛</span> Settings
@@ -956,31 +1156,49 @@
       </div>
 
       <!-- Metric Cards -->
+<<<<<<< HEAD
       <div class="metrics-grid">
         <div class="metric-card glass-card">
           <span class="metric-icon">🌿</span>
           <div class="metric-label">Total Cultures</div>
           <div class="metric-value">12<span class="metric-unit">Units</span></div>
           <div class="metric-change up">↑ 3 new this week</div>
+=======
+      <div class="metrics-grid" id="main-metrics-grid">
+        <div class="metric-card glass-card">
+          <span class="metric-icon">🌿</span>
+          <div class="metric-label">Total Cultures</div>
+          <div class="metric-value" id="stat-cultures-count">12<span class="metric-unit">Units</span></div>
+          <div class="metric-change up">↑ active varieties</div>
+>>>>>>> Terre
           <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">⚙</span>
           <div class="metric-label">Active Equipment</div>
+<<<<<<< HEAD
           <div class="metric-value">9<span class="metric-unit">Units</span></div>
+=======
+          <div class="metric-value" id="stat-equipment-count">9<span class="metric-unit">Units</span></div>
+>>>>>>> Terre
           <div class="metric-change up">↑ All systems online</div>
           <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">◈</span>
           <div class="metric-label">Terre / Land</div>
+<<<<<<< HEAD
           <div class="metric-value">4<span class="metric-unit">Parcels</span></div>
+=======
+          <div class="metric-value" id="stat-lands-count">4<span class="metric-unit">Parcels</span></div>
+>>>>>>> Terre
           <div class="metric-change up">↑ 8.2 Ha total</div>
           <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">◎</span>
           <div class="metric-label">Total Workers</div>
+<<<<<<< HEAD
           <div class="metric-value">8<span class="metric-unit">Staff</span></div>
           <div class="metric-change up">↑ Full shift today</div>
           <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
@@ -998,6 +1216,94 @@
           <div class="metric-value">99<span class="metric-unit">%</span></div>
           <div class="metric-change up">↑ Systems nominal</div>
           <div class="progress-track"><div class="progress-fill" style="width:99%;background:linear-gradient(90deg,#34d399,#6ee7b7)"></div></div>
+=======
+          <div class="metric-value" id="stat-workers-count">8<span class="metric-unit">Staff</span></div>
+          <div class="metric-change up">↑ Full shift today</div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
+        </div>
+      </div>
+
+      <!-- Field Worker Dashboard Hub -->
+      <div id="fw-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="metrics-grid">
+          <div class="metric-card glass-card">
+            <span class="metric-icon">⏱️</span>
+            <div class="metric-label">Current Session</div>
+            <div class="metric-value" id="fw-hours-counter">0.0<span class="metric-unit">HRS</span></div>
+            <div class="metric-change" id="fw-status-label" style="color:var(--text-muted);">Status: Offline</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">💰</span>
+            <div class="metric-label">Estimated Salary</div>
+            <div class="metric-value" id="fw-salary-counter">0<span class="metric-unit">DZD</span></div>
+            <div class="metric-change up">↑ accrued this month</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">🌿</span>
+            <div class="metric-label">Active Crops</div>
+            <div class="metric-value" id="fw-stat-cultures">0</div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-icon">◈</span>
+            <div class="metric-label">Land Parcels</div>
+            <div class="metric-value" id="fw-stat-lands">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quality Inspector Dashboard Hub -->
+      <div id="quality-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="glass-card" style="padding:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Syne',sans-serif; font-size:1.1rem; margin:0;">Crop Quality Monitoring</h3>
+            <span style="font-size:0.6rem; letter-spacing:0.15em; font-weight:700; color:#60a5fa; background:rgba(96,165,250,0.1); padding:0.4rem 0.8rem; border-radius:20px; border:1px solid rgba(96,165,250,0.2);">QUALITY ACCESS</span>
+          </div>
+          
+          <div style="overflow-x:auto;">
+            <table class="premium-table" style="width:100%; border-collapse:separate; border-spacing:0 0.75rem;">
+              <thead>
+                <tr style="text-align:left; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">
+                  <th style="padding:0.5rem 1rem;">Culture</th>
+                  <th style="padding:0.5rem 1rem;">Variety</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Growth (%)</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Days Left</th>
+                  <th style="padding:0.5rem 1rem; text-align:center;">Health Status</th>
+                  <th style="padding:0.5rem 1rem;">Quality Notes</th>
+                  <th style="padding:0.5rem 1rem; text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="quality-dashboard-container"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="agro-dashboard-hub" style="display:none; margin-top:2rem;">
+        <div class="glass-card" style="padding:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Syne',sans-serif; font-size:1.1rem; margin:0;">Soil & Culture Mapping</h3>
+            <span style="font-size:0.6rem; letter-spacing:0.15em; font-weight:700; color:var(--emerald-vivid); background:rgba(16,185,129,0.1); padding:0.4rem 0.8rem; border-radius:20px; border:1px solid rgba(16,185,129,0.2);">AGRONOMIST ACCESS</span>
+          </div>
+          
+          <div style="overflow-x:auto;">
+            <table class="premium-table" style="width:100%; border-collapse:separate; border-spacing:0 0.75rem;">
+              <thead>
+                <tr style="text-align:left; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">
+                  <th style="padding:0.5rem 1rem;">Plot ID</th>
+                  <th style="padding:0.5rem 1rem;">Surface</th>
+                  <th style="padding:0.5rem 1rem;">Soil Type</th>
+                  <th style="padding:0.5rem 1rem;">pH</th>
+                  <th style="padding:0.5rem 0.5rem;">Nitrogen</th>
+                  <th style="padding:0.5rem 0.5rem;">Moisture</th>
+                  <th style="padding:0.5rem 1rem;">Culture</th>
+                  <th style="padding:0.5rem 1rem; text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="agro-land-list-container">
+                <!-- Rows injected via JS -->
+              </tbody>
+            </table>
+          </div>
+>>>>>>> Terre
         </div>
       </div>
 
@@ -1033,8 +1339,52 @@
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
       </div>
+<<<<<<< HEAD
     </section>
 
+=======
+
+
+      <!-- 📋 WORKER TIME TRACKING -->
+      <div id="worker-dashboard-extra" style="display:none; margin-top:2rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:1rem;">Weekly Time Tracking</div>
+        <div class="glass-card" style="padding:1.5rem; overflow-x:auto;">
+          <table class="premium-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Day</th>
+                <th style="text-align:center;">Hours Worked</th>
+                <th style="text-align:center;">Daily Salary</th>
+              </tr>
+            </thead>
+            <tbody id="timesheet-body" style="text-align:left;">
+              <!-- Weekly days injected via JS -->
+            </tbody>
+          </table>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <div style="font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">
+               HOURLY RATE: <span id="worker-hourly-rate">500</span> DZD/HR
+             </div>
+             <button class="btn-sm btn-filled" onclick="submitWeeklyHours()">Sync Timesheet</button>
+          </div>
+        </div>
+
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin:2rem 0 1rem;">Salary Summary</div>
+        <div class="metrics-grid">
+           <div class="metric-card glass-card">
+              <div class="metric-label">Weekly Hours</div>
+              <div class="metric-value" id="summary-weekly-hours">0<span class="metric-unit">HRS</span></div>
+           </div>
+           <div class="metric-card glass-card">
+              <div class="metric-label">Estimated Salary</div>
+              <div class="metric-value" id="summary-weekly-salary">0<span class="metric-unit">DZD</span></div>
+           </div>
+        </div>
+      </div>
+    </section>
+
+
+>>>>>>> Terre
     <!-- ════ CULTURES ════ -->
     <section id="page-cultures" class="page-section">
       <div class="page-header">
@@ -1052,11 +1402,28 @@
       </div>
     </section>
 
+<<<<<<< HEAD
+=======
+    <!-- ════ QUALITY INSPECTOR ════ -->
+    <section id="page-quality" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Crop Quality Control</h1>
+          <p class="page-subtitle">Enter growth data · Assess health status · Monitor yield</p>
+        </div>
+      </div>
+      <div class="cultures-grid" id="quality-cultures-container">
+        <!-- populated via JS -->
+      </div>
+    </section>
+
+>>>>>>> Terre
     <!-- ════ EQUIPMENT ════ -->
     <section id="page-equipment" class="page-section">
       <div class="page-header">
         <div>
           <h1 class="page-title">Equipment</h1>
+<<<<<<< HEAD
           <p class="page-subtitle">Machinery inventory · 9 units · Zone maintenance</p>
         </div>
         <div class="header-actions">
@@ -1119,6 +1486,17 @@
           </div>
           <span class="avail-chip avail-no">Active</span>
         </div>
+=======
+          <p class="page-subtitle" id="equip-subtitle">Machinery inventory · Zone maintenance</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-sm btn-outline" onclick="openEquipModal()">Schedule Maintenance</button>
+          <button class="btn-sm btn-filled" id="equip-add-btn" onclick="openEquipModal()">+ Add Unit</button>
+        </div>
+      </div>
+      <div class="equipment-list" id="equipment-container">
+        <!-- Dynamic content from Sid Ahmed's Equipment Microservice -->
+>>>>>>> Terre
       </div>
     </section>
 
@@ -1131,7 +1509,11 @@
         </div>
         <div class="header-actions" id="terre-admin-actions" style="display:none;">
           <button class="btn-sm btn-outline">Run Analysis</button>
+<<<<<<< HEAD
           <button class="btn-sm btn-filled">+ Add Plot</button>
+=======
+          <button class="btn-sm btn-filled" onclick="openLandModal(null)">+ Add Plot</button>
+>>>>>>> Terre
         </div>
       </div>
       
@@ -1161,6 +1543,7 @@
       </div>
 
       <div class="terre-grid" id="terre-container" style="margin-top:2rem;">
+<<<<<<< HEAD
         <!-- Plots with First Design (Gradients & Mono IDs) -->
         <div class="plot-card glass-card" onclick="showTerreDetails({id:1, name:'Alpha Field — North', surface:2.4, soil_type:'Silt Loam', crop_planted:'Strawberries'})">
           <div class="plot-id">PLOT · Z-ALPHA · 2.4 HA</div>
@@ -1207,6 +1590,9 @@
              <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">TOMATOES</span>
           </div>
         </div>
+=======
+        <!-- Plots populated by JS loadLands() -->
+>>>>>>> Terre
       </div>
     </section>
 
@@ -1219,7 +1605,10 @@
         </div>
         <div style="display:flex; gap:1rem;">
           <button class="btn-sm btn-outline" id="salary-hub-btn" onclick="openSalaryModal()">Salary Hub</button>
+<<<<<<< HEAD
           <button class="btn-sm btn-outline" onclick="openTaskModal()">Assign Job</button>
+=======
+>>>>>>> Terre
           <button class="btn-sm btn-filled" id="add-worker-btn" onclick="openWorkerModal()">+ Add Worker</button>
         </div>
       </div>
@@ -1263,6 +1652,43 @@
       </style>
     </section>
 
+<<<<<<< HEAD
+=======
+    <!-- ════ SUPERVISOR DASHBOARD ════ -->
+    <section id="page-supervisor" class="page-section">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Supervisor Dashboard</h1>
+          <p class="page-subtitle">Manage worker productivity and compensation</p>
+        </div>
+        <div class="header-actions">
+        </div>
+      </div>
+
+      <!-- Top Stats -->
+      <div class="supervisor-stats">
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Total Workers</span>
+          <span class="stat-value" id="stats-total-workers">0</span>
+        </div>
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Working Now</span>
+          <span class="stat-value" id="stats-active-workers" style="color:var(--emerald-vivid);">0</span>
+        </div>
+
+        <div class="stat-card glass-strong">
+          <span class="stat-label">Total Payroll</span>
+          <span class="stat-value" id="stats-total-payroll">0 DZD</span>
+        </div>
+      </div>
+
+      <!-- Card-based Worker List -->
+      <div class="supervisor-card-list" id="supervisor-worker-list">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+>>>>>>> Terre
     <!-- ════ SETTINGS ════ -->
     <section id="page-settings" class="page-section">
       <div class="page-header">
@@ -1378,6 +1804,62 @@
         .details-row span:last-child { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--text-primary); }
       </style>
     </section>
+<<<<<<< HEAD
+=======
+
+
+    <!-- ════ TERRE DETAILS PAGE ════ -->
+    <style>
+      @keyframes float-map-card {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+        100% { transform: translateY(0px); }
+      }
+      #detail-map {
+        animation: float-map-card 8s ease-in-out infinite;
+      }
+    </style>
+    <section id="page-terre-details" class="page-section" style="position:relative; height:calc(100vh - 2rem); padding:0; overflow:hidden; border-radius:24px; margin:1rem;">
+      <div id="detail-map" style="position:absolute; inset:-20px; z-index:0;"></div>
+      
+      <!-- Gradient Overlay for readability -->
+      <div style="position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(circle at 30% 50%, transparent 40%, rgba(2,44,34,0.7) 100%);"></div>
+      
+      <!-- Top Left Header -->
+      <div style="position:absolute; top:1.5rem; left:2rem; z-index:10; pointer-events:auto;">
+        <div class="glass-strong" style="padding:1.5rem; border-radius:20px; display:flex; align-items:center; gap:1.25rem;">
+          <button class="btn-sm btn-outline glass" style="width:44px; height:44px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; border-color:rgba(255,255,255,0.2);" onclick="closeTerreModal()">←</button>
+          <div>
+            <h1 class="page-title" id="td-title" style="margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.8);">Plot Details</h1>
+            <p class="page-subtitle" id="td-id" style="margin-top:0.3rem; text-shadow:0 1px 4px rgba(0,0,0,0.8);">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Panels -->
+      <div style="position:absolute; right:2rem; top:2rem; bottom:2rem; width:360px; z-index:10; display:flex; flex-direction:column; gap:1.5rem; pointer-events:auto; overflow-y:auto; padding-right:0.5rem;">
+        
+        <div class="glass-strong" style="padding:1.8rem; border-radius:24px;">
+          <div class="tile-label" style="margin-bottom:1.2rem;">Current Status</div>
+          <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.85rem;">Crop:</span> <span id="td-crop" style="font-weight:700;margin-left:0.5rem; font-size:1.1rem;"></span></div>
+          <div style="margin-bottom:1.5rem;"><span style="color:var(--text-muted);font-size:0.85rem;">Soil Type:</span> <span id="td-type" style="font-weight:700;margin-left:0.5rem; font-size:1.1rem;"></span></div>
+          <div id="td-health-badge"></div>
+        </div>
+        
+        <div class="glass-strong" style="padding:1.8rem; border-radius:24px;">
+          <div class="tile-label" style="margin-bottom:1.2rem;">Soil Composition</div>
+          <div id="td-soil-stats" style="display:flex; flex-direction:column; gap:1rem;">
+            <!-- Dynamic Bars -->
+          </div>
+        </div>
+
+        <div id="td-actions" style="margin-top:auto; display:flex; flex-direction:column; gap:0.75rem;">
+          <!-- Action buttons for Admin populated via JS -->
+        </div>
+      </div>
+    </section>
+
+>>>>>>> Terre
   </main>
 <!-- /main-content -->
 
@@ -1456,6 +1938,7 @@
         </div>
       </div>
 
+<<<<<<< HEAD
       <!-- Tasks Row (Full Width) -->
       <div style="grid-column: 1 / -1;">
         <div class="tile-label">Recent Activity</div>
@@ -1463,6 +1946,9 @@
           Loading tasks...
         </div>
       </div>
+=======
+
+>>>>>>> Terre
     </div>
 
     <!-- Action Footer -->
@@ -1493,6 +1979,10 @@
             <option value="field_worker">Field Worker</option>
             <option value="irrigation_worker">Irrigation Worker</option>
             <option value="equipment_operator">Equipment Operator</option>
+<<<<<<< HEAD
+=======
+            <option value="quality_inspector">Quality Inspector</option>
+>>>>>>> Terre
             <option value="supervisor">Supervisor</option>
             <option value="agronomist">Agronomist</option>
           </select>
@@ -1537,6 +2027,7 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- ════ TASK MODAL ════ -->
 <div class="modal-overlay" id="task-modal">
   <div class="modal-box glass-card">
@@ -1561,6 +2052,9 @@
     </form>
   </div>
 </div>
+=======
+
+>>>>>>> Terre
 
 <!-- ─── MOBILE NAV ─── -->
 <nav class="mobile-nav">
@@ -1586,10 +2080,118 @@
 
 <script>
   // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
+<<<<<<< HEAD
   const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
   const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
   const WORKERS_API_URL = "https://worker-service-hzwi.onrender.com/api";
   const LANDS_API_URL = `${WORKERS_API_URL}/mock/lands/`;
+=======
+  const USE_MOCK = false;
+  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
+  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
+  const WORKER_SERVICE_BASE = "https://worker-service-hzwi.onrender.com";
+  const WORKERS_API_URL = `${WORKER_SERVICE_BASE}/api`;
+  const LANDS_API_URL = "https://agritech-production-639b.up.railway.app/api/parcelles/";
+  const EQUIPMENT_API_URL = "https://equipment-service-v67j.onrender.com/api/equipements/";
+  const EQUIPMENT_MOCK_URL = `${WORKER_SERVICE_BASE}/mock/equipments/`;
+
+  // TODO: move to .env before deployment
+  const MAPBOX_TOKEN = "pk.eyJ1IjoibmFkam91YTEiLCJhIjoiY21kM20zbWtmMDVmOTJqc2RlZHU1bGc5bCJ9.M6PUG-qrsg_tTU1XY7vWhQ";
+  if (!MAPBOX_TOKEN) {
+    console.error("Mapbox token missing");
+  } else {
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+  }
+
+  let selectedLocation = null;
+  let adminMap = null;
+  let adminMarker = null;
+  let detailMap = null;
+  let particleInterval = null;
+
+  function createParticle() {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    
+    // Find the container to append to
+    const container = document.getElementById("detail-map");
+    if (container) {
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 3000);
+    }
+  }
+
+  function startParticles() {
+    if (particleInterval) clearInterval(particleInterval);
+    particleInterval = setInterval(createParticle, 300);
+  }
+
+  function stopParticles() {
+    if (particleInterval) clearInterval(particleInterval);
+    particleInterval = null;
+  }
+
+  let role = null;
+
+  function hasRole(...roles) {
+    return roles.includes(role);
+  }
+
+  const apiService = {
+    async fetchProfile() {
+      const token = localStorage.getItem('access_token');
+      const headers = { 'Authorization': `Bearer ${token}` };
+      
+      const res = await fetch(`${AUTH_API_URL}/profile/`, { headers });
+      if (!res.ok) throw new Error("Invalid token");
+      return res.json();
+    },
+    async fetchWorkers() {
+      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Could not fetch workers");
+      return res.json();
+    },
+
+    async fetchHoursSummary(workerId) {
+       const res = await fetch(`${WORKERS_API_URL}/hours/summary/?worker=${workerId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      return res.json();
+    }
+  };
+
+  function showNotification(message, type = 'info') {
+    const container = document.getElementById('notif-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `notif-toast notif-${type}`;
+    
+    const iconMap = {
+        success: '✓',
+        error: '⚠',
+        info: 'ℹ'
+    };
+    
+    toast.innerHTML = `
+        <div class="notif-icon">${iconMap[type] || 'ℹ'}</div>
+        <div class="notif-content" style="font-size:0.9rem; font-weight:500;">${message}</div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+  }
+
+  // Global alert override
+  window.alert = (msg) => showNotification(msg, 'info');
+>>>>>>> Terre
 
   function togglePass() {
     const p = document.getElementById('login-pass');
@@ -1647,6 +2249,7 @@
     }
   }
 
+<<<<<<< HEAD
   async function loadProfile() {
       const token = localStorage.getItem('access_token');
       if (!token) return false;
@@ -1698,6 +2301,388 @@
           loadWorkers();
           loadTasks();
           loadTerre();
+=======
+  /* ─── AGRONOMIST DASHBOARD LOGIC ─── */
+  async function loadAgronomistDashboard() {
+    const container = document.getElementById('agro-land-list-container');
+    if (!container) return;
+    
+    container.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:var(--text-muted);">Loading scientific data...</td></tr>`;
+    
+    try {
+        const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+        const [landsRes, culturesRes] = await Promise.all([
+            fetch(LANDS_API_URL, { headers: authHeader }).catch(() => ({ ok: false })),
+            fetch(CULTURES_API_URL, { headers: authHeader }).catch(() => ({ ok: false }))
+        ]);
+        
+        let apiLands = [];
+        if (landsRes.ok) apiLands = await landsRes.json();
+        
+        // Merge API data with LocalStorage (Consistent with Terre Hub)
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        const allLandsMap = {};
+        
+        // Normalize API data if it has .results
+        const normalizedApiLands = Array.isArray(apiLands) ? apiLands : (apiLands.results || []);
+        normalizedApiLands.forEach(l => allLandsMap[l.id] = l);
+        storedLands.forEach(l => allLandsMap[l.id] = l);
+        
+        const combinedLands = Object.values(allLandsMap);
+        
+        let cultures = [];
+        if (culturesRes.ok) {
+            const cultData = await culturesRes.json();
+            cultures = Array.isArray(cultData) ? cultData : (cultData.results || []);
+        }
+        
+        const cultureOptions = cultures.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        
+        if (combinedLands.length === 0) {
+            container.innerHTML = `<tr><td colspan="8" style="padding:3rem; text-align:center; color:var(--text-muted);">
+                No land plots detected. <br>
+                <small style="opacity:0.6;">Try adding plots in the Terre tab or check your network connection.</small>
+            </td></tr>`;
+            return;
+        }
+
+        container.innerHTML = combinedLands.map(l => {
+            const currentSoil = l.type_sol || l.tree_type || '';
+            const currentCult = l.culture_plantee || l.culture_type || '';
+            
+            return `
+            <tr style="background:rgba(255,255,255,0.02); transition:all 0.3s ease;">
+                <td style="padding:1rem; font-family:'Syne',sans-serif; font-weight:700; color:#fff;">${l.nom || l.name || 'Plot ' + l.id}</td>
+                <td style="padding:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">${l.surface || '--'} HA</td>
+                <td style="padding:1rem;">
+                    <input type="text" id="tree-${l.id}" value="${currentSoil}" placeholder="Soil Category" class="agro-input" style="width:120px; background:transparent; border:none; padding:0; font-size:0.85rem;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="ph-${l.id}" value="${l.ph || 6.8}" step="0.1" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="nitro-${l.id}" value="${l.nitrogen || 42}" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <input type="number" id="moist-${l.id}" value="${l.moisture || 71}" class="agro-input" style="width:50px; background:transparent; border:none; padding:0; text-align:center;">
+                </td>
+                <td style="padding:1rem;">
+                    <select id="cult-${l.id}" class="agro-select" style="width:130px; background:transparent; border:none; padding:0; font-size:0.85rem; color:var(--emerald-glow);">
+                        <option value="aucune">None</option>
+                        ${cultureOptions}
+                    </select>
+                </td>
+                <td style="padding:1rem; text-align:right;">
+                    <button onclick="saveAgroData('${l.id}')" class="btn-sm btn-filled" style="padding:0.5rem 1.2rem; border-radius:10px; font-weight:700; cursor:pointer;">Save Changes</button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+        
+        // Restore specific selections
+        combinedLands.forEach(l => {
+            const select = document.getElementById(`cult-${l.id}`);
+            const val = l.culture_plantee || l.culture_type || 'aucune';
+            if (select) select.value = val;
+        });
+        
+    } catch (e) {
+        console.error("Agro Dashboard Load Error:", e);
+        container.innerHTML = `<tr><td colspan="8" style="padding:2rem; text-align:center; color:#fca5a5;">Failed to load mapping data. Please refresh.</td></tr>`;
+    }
+  }
+
+  async function saveAgroData(id) {
+    const data = {
+        type_sol: document.getElementById(`tree-${id}`).value,
+        culture_plantee: document.getElementById(`cult-${id}`).value,
+        ph: parseFloat(document.getElementById(`ph-${id}`).value) || 6.8,
+        nitrogen: parseInt(document.getElementById(`nitro-${id}`).value) || 42,
+        moisture: parseInt(document.getElementById(`moist-${id}`).value) || 71
+    };
+    
+    // Optimistic UI: Show notification early
+    showNotification("Synchronizing with Railway...", "info");
+    
+    try {
+        const res = await fetch(`${LANDS_API_URL}${id}/`, {
+            method: 'PATCH',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (res.ok) {
+            // Update local storage too to keep everything in sync
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            const idx = storedLands.findIndex(l => l.id == id);
+            if (idx >= 0) {
+                // Map back to local names if needed
+                const updated = { ...storedLands[idx], ...data, tree_type: data.type_sol, culture_type: data.culture_plantee };
+                storedLands[idx] = updated;
+                localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+            }
+            showNotification("Data synchronized with Railway database", "success");
+        } else {
+            const errorData = await res.json().catch(() => ({}));
+            console.error("Server synchronization failed:", errorData);
+            showNotification(`Failed to save: ${errorData.detail || 'Access Denied'}`, "error");
+        }
+    } catch (e) {
+        console.error("Connection error:", e);
+        showNotification("Railway unreachable. Data saved in browser memory.", "info");
+        
+        // Fallback to local storage if server is truly down
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        const idx = storedLands.findIndex(l => l.id == id);
+        if (idx >= 0) {
+            const updated = { ...storedLands[idx], ...data, tree_type: data.type_sol, culture_type: data.culture_plantee };
+            storedLands[idx] = updated;
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        }
+    }
+  }
+
+  /* ─── FIELD WORKER LIVE TIMER LOGIC ─── */
+  let fwTimerInterval = null;
+  const FW_SESSION_KEY = 'fw_active_session';
+  const FW_HISTORY_KEY = 'fw_work_history';
+
+  async function loadFieldWorkerDashboard() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+    // 1. Load counts (culture, lands) – same as before, with fallback for lands
+    try {
+        const cRes = await fetch(CULTURES_API_URL, { headers: authHeader }).catch(() => ({ ok: false }));
+        if (cRes.ok) {
+            const d = await cRes.json();
+            const n = Array.isArray(d) ? d.length : (d.count || 0);
+            document.getElementById('fw-stat-cultures').textContent = n;
+        }
+    } catch (e) { }
+    // lands with fallback to local storage
+    try {
+        const lRes = await fetch(LANDS_API_URL, { headers: authHeader }).catch(() => ({ ok: false }));
+        let landCount = 0;
+        if (lRes.ok) {
+            const d = await lRes.json();
+            landCount = Array.isArray(d) ? d.length : (d.count || 0);
+        }
+        const saved = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        landCount = Math.max(landCount, saved.length);
+        document.getElementById('fw-stat-lands').textContent = landCount;
+    } catch (e) { }
+    // 2. Initialise UI – status label, counters are updated by a timer that watches the supervisor session
+    const rate = parseInt(localStorage.getItem(`rate_${user.id}`) || localStorage.getItem('hourly_rate') || '500');
+    // Ensure any previous interval is cleared
+    if (window.fwTimerInterval) clearInterval(window.fwTimerInterval);
+    // Update UI every second based on supervisor active session for this worker
+    window.fwTimerInterval = setInterval(() => {
+        const sessions = JSON.parse(localStorage.getItem('active_sessions') || '{}');
+        const session = sessions[user.id];
+        const label = document.getElementById('fw-status-label');
+        const hrsEl = document.getElementById('fw-hours-counter');
+        const salEl = document.getElementById('fw-salary-counter');
+        if (!label || !hrsEl || !salEl) return;
+        if (session && session.startTime) {
+            const elapsed = Math.floor((Date.now() - session.startTime) / 1000);
+            const totalSeconds = (session.total_seconds || 0) + elapsed;
+            const totalHours = (totalSeconds / 3600).toFixed(1);
+            const totalEarnings = Math.round((totalSeconds / 3600) * session.rate);
+            hrsEl.innerHTML = `${totalHours}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+            salEl.innerHTML = `${totalEarnings}<span class="metric-unit">DZD</span>`;
+            label.textContent = '● Working (Supervisor)';
+            label.style.color = 'var(--emerald-glow)';
+        } else {
+            // No active session – show summed history for today (if any)
+            const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+            const today = new Date().toDateString();
+            const todayEntries = history.filter(h => h.date === today);
+            const totalSec = todayEntries.reduce((s, h) => s + h.seconds, 0);
+            const totalHrs = (totalSec / 3600).toFixed(1);
+            const totalEarn = Math.round(todayEntries.reduce((s, h) => s + h.earnings, 0));
+            hrsEl.innerHTML = `${totalHrs}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+            salEl.innerHTML = `${totalEarn}<span class="metric-unit">DZD</span>`;
+            label.textContent = '○ Offline';
+            label.style.color = 'var(--text-muted)';
+        }
+    }, 1000);
+}
+
+
+  function updateFWStatus(online, rate) {
+    const label = document.getElementById('fw-status-label');
+    if (!label) return;
+    if (online) {
+        label.textContent = '● Working — Live';
+        label.style.color = 'var(--emerald-glow)';
+    } else {
+        label.textContent = '○ Offline';
+        label.style.color = 'var(--text-muted)';
+    }
+  }
+
+  function startFWTimer(startTime, rate, pastSeconds, pastEarnings) {
+    if (fwTimerInterval) clearInterval(fwTimerInterval);
+    fwTimerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const totalSeconds = pastSeconds + elapsed;
+        const totalEarnings = pastEarnings + (elapsed / 3600) * rate;
+
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        const formatted = [h, m, s].map(v => v < 10 ? '0' + v : v).join(':');
+
+        const hEl = document.getElementById('fw-hours-counter');
+        const sEl = document.getElementById('fw-salary-counter');
+        if (hEl) hEl.innerHTML = `${formatted}<span class="metric-unit" style="font-size:0.55rem;"> HRS</span>`;
+        if (sEl) sEl.innerHTML = `${Math.round(totalEarnings)}<span class="metric-unit">DZD</span>`;
+    }, 1000);
+  }
+
+  /* ─── QUALITY INSPECTOR HUB LOGIC ─── */
+  async function loadQualityInspectorDashboard() {
+    const container = document.getElementById('quality-dashboard-container');
+    if (!container) return;
+    
+    container.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:var(--text-muted);">Loading culture quality data...</td></tr>`;
+    
+    try {
+        const authHeader = { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` };
+        const res = await fetch(CULTURES_API_URL, { headers: authHeader });
+        if (!res.ok) throw new Error("Failed to fetch cultures");
+        
+        const cultData = await res.json();
+        const cultures = Array.isArray(cultData) ? cultData : (cultData.results || []);
+
+        // Apply Local Cache (Fallback if server didn't update yet)
+        const localCache = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
+        const mergedCultures = cultures.map(c => {
+            if (localCache[c.id]) {
+                return { ...c, ...localCache[c.id] };
+            }
+            return c;
+        });
+
+        if (mergedCultures.length === 0) {
+            container.innerHTML = `<tr><td colspan="7" style="padding:3rem; text-align:center; color:var(--text-muted);">No cultures found for inspection.</td></tr>`;
+            return;
+        }
+
+        container.innerHTML = mergedCultures.map(c => `
+            <tr style="background:rgba(255,255,255,0.02); transition:all 0.3s ease;">
+                <td style="padding:1rem;">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.5rem;">${c.emoji || '🌿'}</span>
+                        <span style="font-family:'Syne',sans-serif; font-weight:700; color:#fff;">${c.name}</span>
+                    </div>
+                </td>
+                <td style="padding:1rem; font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--text-muted);">${c.variety}</td>
+                <td style="padding:1rem; text-align:center;">
+                    <input type="number" id="q-growth-${c.id}" value="${c.growth || 0}" class="agro-input" style="width:60px; text-align:center;">
+                </td>
+                <td style="padding:1rem; text-align:center;">
+                    <input type="number" id="q-days-${c.id}" value="${c.days_left || 0}" class="agro-input" style="width:60px; text-align:center;">
+                </td>
+                <td style="padding:1rem; text-align:center;">
+                    <select id="q-health-${c.id}" class="agro-select" style="width:110px;">
+                        <option value="Excellent" ${c.health === 'Excellent' ? 'selected' : ''}>Excellent</option>
+                        <option value="Good" ${c.health === 'Good' ? 'selected' : ''}>Good</option>
+                        <option value="Fair" ${c.health === 'Fair' ? 'selected' : ''}>Fair</option>
+                        <option value="Poor" ${c.health === 'Poor' ? 'selected' : ''}>Poor</option>
+                    </select>
+                </td>
+                <td style="padding:1rem;">
+                    <input type="text" id="q-notes-${c.id}" value="${c.notes || ''}" placeholder="Add inspection note..." class="agro-input" style="width:100%;">
+                </td>
+                <td style="padding:1rem; text-align:right;">
+                    <button onclick="saveQualityDashboardData('${c.id}')" class="btn-sm btn-filled" style="background:#60a5fa; color:#fff;">Sync Quality</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = `<tr><td colspan="7" style="padding:2rem; text-align:center; color:#fca5a5;">Failed to load quality data.</td></tr>`;
+    }
+  }
+
+  async function saveQualityDashboardData(id) {
+    const data = {
+        growth: parseInt(document.getElementById(`q-growth-${id}`).value),
+        days_left: parseInt(document.getElementById(`q-days-${id}`).value),
+        health: document.getElementById(`q-health-${id}`).value,
+        notes: document.getElementById(`q-notes-${id}`).value
+    };
+
+    showNotification("Syncing quality metrics...", "info");
+
+    // 1. Save Locally First (Optimistic / Fallback)
+    const localCultures = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
+    localCultures[id] = { ...data, last_sync: new Date().toISOString() };
+    localStorage.setItem('saved_cultures_cache', JSON.stringify(localCultures));
+
+    // 2. Attempt Server Sync
+    const tryMethods = ['PATCH', 'PUT'];
+    let success = false;
+
+    for (const method of tryMethods) {
+        try {
+            const res = await fetch(`${CULTURES_API_URL}/${id}/`, {
+                method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                success = true;
+                break;
+            } else if (res.status === 405 && method === 'PATCH') {
+                continue; // Try PUT
+            } else if (res.status === 403) {
+                console.warn("Authorization Error (403). Backend permissions may need update for Quality Inspector.");
+                break; // Don't bother with other methods if forbidden
+            }
+        } catch (e) {
+            console.error("Connection error during quality sync:", e);
+            break;
+        }
+    }
+
+    if (success) {
+        showNotification("Quality metrics synchronized with server ✓", "success");
+    } else {
+        // Silent fallback - user is notified but not blocked by a "Failure" message
+        showNotification("Changes saved locally (Cloud sync pending/restricted)", "success");
+        console.info("Metric saved to local storage due to server permission or connection issue.");
+    }
+    
+    loadQualityInspectorDashboard();
+  }
+
+  async function loadProfile() {
+      try {
+          const user = await apiService.fetchProfile();
+          localStorage.setItem('user', JSON.stringify(user));
+          role = user.role;
+          
+          document.getElementById('ui-name').textContent = user.first_name ? `${user.first_name} ${user.last_name}` : user.username;
+          document.getElementById('ui-role').textContent = role.replace('_', ' ').toUpperCase();
+          document.getElementById('ui-avatar').textContent = user.username.substring(0,2).toUpperCase();
+          
+          renderUIByRole(user);
+
+          loadCultures();
+          loadWorkers();
+
+          loadTerre();
+          loadEquipment();
+          if (hasRole('quality_inspector', 'admin', 'farm_manager')) loadQuality();
+>>>>>>> Terre
           return true;
       } catch (e) {
           console.error(e);
@@ -1706,6 +2691,440 @@
       }
   }
 
+<<<<<<< HEAD
+=======
+  function renderUIByRole(user) {
+    const isMgmt = hasRole('admin', 'farm_manager');
+    const isAgro = hasRole('agronomist');
+    const isWorker = hasRole('field_worker', 'irrigation_worker', 'equipment_operator');
+    const isSupervisor = hasRole('supervisor');
+
+    // 1. Sidebar/Nav Removal (Strict)
+    if (isWorker) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            // Workers can see Dashboard, Cultures, and Terre (Read-Only)
+            if (!text.includes('dashboard') && !text.includes('cultures') && !text.includes('terre')) {
+                nav.remove();
+            }
+        });
+        
+        // Hide management elements in Dashboard
+        document.querySelectorAll('.farm-canvas, .status-grid, .page-subtitle, #main-metrics-grid').forEach(el => el.style.display = 'none');
+        
+        // Show Worker Dashboard Hub
+        const fwHub = document.getElementById('fw-dashboard-hub');
+        if (fwHub) {
+            fwHub.style.display = 'block';
+            loadFieldWorkerDashboard();
+        }
+        
+        // Show weekly tracking read-only
+        const extra = document.getElementById('worker-dashboard-extra');
+        if (extra) {
+            extra.style.display = 'block';
+            loadTimesheet();
+            // Disable manual sync button for workers
+            const syncBtn = extra.querySelector('button');
+            if (syncBtn) syncBtn.style.display = 'none';
+        }
+
+        // Apply Global Read-Only for Workers on Cultures and Terre
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #page-cultures .header-actions, #page-terre .header-actions { display: none !important; }
+            .card-actions, .edit-btn, .delete-btn, [onclick*="edit"], [onclick*="delete"] { display: none !important; }
+            #page-cultures input, #page-cultures select, #page-cultures textarea,
+            #page-terre input, #page-terre select, #page-terre textarea { pointer-events: none !important; opacity: 0.8; }
+            #fw-dashboard-hub .metrics-grid { justify-content: flex-end; }
+            .terre-input { background: transparent !important; border: none !important; color: inherit; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    if (isAgro) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            if (!text.includes('cultures') && !text.includes('terre') && !text.includes('dashboard')) {
+                nav.remove();
+            }
+        });
+        
+        document.querySelectorAll('.farm-canvas, .metrics-grid, .page-subtitle, .status-grid, .header-actions').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+
+        const agroHub = document.getElementById('agro-dashboard-hub');
+        if (agroHub) {
+            agroHub.style.display = 'block';
+            loadAgronomistDashboard();
+        }
+    }
+
+    if (hasRole('quality_inspector')) {
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            const text = nav.textContent.toLowerCase();
+            if (!text.includes('cultures') && !text.includes('terre') && !text.includes('dashboard')) {
+                nav.remove();
+            }
+        });
+
+        document.querySelectorAll('.farm-canvas, .metrics-grid, .page-subtitle, .status-grid, .header-actions').forEach(el => {
+            if (el) el.style.display = 'none';
+        });
+
+        const qualityHub = document.getElementById('quality-dashboard-hub');
+        if (qualityHub) {
+            qualityHub.style.display = 'block';
+            loadQualityInspectorDashboard();
+        }
+        
+        // Apply Read-Only for Terre tab, but ALLOW editing in Quality Hub
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #page-terre .header-actions { display: none !important; }
+            #page-terre .card-actions, #page-terre [onclick*="edit"], #page-terre [onclick*="delete"] { display: none !important; }
+            #page-terre input, #page-terre select { pointer-events: none !important; opacity: 0.8; }
+            #quality-dashboard-hub input, #quality-dashboard-hub select { pointer-events: auto !important; opacity: 1 !important; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    if (isSupervisor) {
+        // Supervisors can see these sections read-only
+        document.getElementById('nav-supervisor').style.display = 'flex';
+        loadSupervisorDashboard();
+        
+        // Hide adding buttons globally for supervisor
+        setTimeout(() => {
+            document.querySelectorAll('.btn-filled, .btn-primary').forEach(btn => {
+                const text = btn.textContent.toLowerCase();
+                if (text.includes('add') || text.includes('create') || text.includes('new')) {
+                    btn.style.display = 'none';
+                }
+            });
+            // Hide card actions (Edit/Delete)
+            const style = document.createElement('style');
+            style.id = 'supervisor-readonly-styles';
+            style.innerHTML = `
+                .card-actions, .edit-btn, .delete-btn, [onclick*="edit"], [onclick*="delete"] { display: none !important; }
+                input:not(.supervisor-allowed), select:not(.supervisor-allowed) { pointer-events: none !important; opacity: 0.8; }
+                .supervisor-allowed { pointer-events: auto !important; opacity: 1 !important; }
+            `;
+            document.head.appendChild(style);
+        }, 100);
+    } else {
+        const existingStyle = document.getElementById('supervisor-readonly-styles');
+        if (existingStyle) existingStyle.remove();
+    }
+
+    if (isMgmt) {
+        document.getElementById('nav-supervisor').style.display = 'flex';
+    }
+
+    // 2. Section visibility & Greetings
+    const dashTitle = document.querySelector('#page-dashboard .page-title');
+    if (isAgro && dashTitle) dashTitle.textContent = 'Good Morning, Agronomist';
+    if (isWorker && dashTitle) dashTitle.textContent = `Worker Dashboard — ${user.first_name || user.username}`;
+    if (isSupervisor && dashTitle) dashTitle.textContent = `Supervisor Hub — ${user.first_name || user.username}`;
+
+    // 3. Action Buttons
+    const cultAddBtn = document.querySelector('#page-cultures .btn-filled');
+    if (cultAddBtn) cultAddBtn.style.display = (isMgmt || hasRole('quality_inspector')) ? 'block' : 'none';
+
+    const addWorkBtn = document.getElementById('add-worker-btn');
+    if (addWorkBtn) addWorkBtn.style.display = isMgmt ? 'block' : 'none';
+
+    const salHubBtn = document.getElementById('salary-hub-btn');
+    if (salHubBtn) salHubBtn.style.display = (isMgmt || isSupervisor) ? 'block' : 'none';
+  }
+
+  /* ─── TIMESHEET LOGIC ─── */
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  function loadTimesheet() {
+    const tbody = document.getElementById('timesheet-body');
+    if (!tbody) return;
+    
+    const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const rate = parseInt(localStorage.getItem(`rate_${user.id}`) || localStorage.getItem('hourly_rate') || '500');
+    
+    // Group history by date for this user
+    const userHistory = history.filter(h => h.workerId == user.id);
+    const dailyStats = {};
+    
+    userHistory.forEach(h => {
+        const date = h.date || new Date().toDateString(); // Fallback to today if date missing
+        if (!dailyStats[date]) dailyStats[date] = { seconds: 0, earnings: 0 };
+        dailyStats[date].seconds += (h.seconds || 0);
+        dailyStats[date].earnings += (h.earnings || 0);
+    });
+
+    // Show last 7 days or just entries found
+    const sortedDates = Object.keys(dailyStats).sort((a,b) => new Date(b) - new Date(a));
+    
+    if (sortedDates.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:2rem; color:var(--text-muted);">No work history found yet.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = sortedDates.map(date => {
+        const stats = dailyStats[date];
+        const hrs = (stats.seconds / 3600).toFixed(1);
+        return `
+            <tr>
+                <td style="text-align:left; padding:1rem;">${date}</td>
+                <td style="text-align:center; padding:1rem;">${hrs} HRS</td>
+                <td style="text-align:center; padding:1rem;">${Math.round(stats.earnings)} DZD</td>
+            </tr>
+        `;
+    }).join('');
+    
+    updateSummary();
+  }
+
+  function calculateDiff(start, end) {
+    const s = start.split(':');
+    const e = end.split(':');
+    const diff = (parseInt(e[0]) + parseInt(e[1])/60) - (parseInt(s[0]) + parseInt(s[1])/60);
+    return Math.max(0, diff).toFixed(1);
+  }
+
+  function updateTime(day, field, value) {
+    const savedData = JSON.parse(localStorage.getItem('weekly_timesheet') || '{}');
+    if (!savedData[day]) savedData[day] = { start: '08:00', end: '17:00' };
+    savedData[day][field] = value;
+    localStorage.setItem('weekly_timesheet', JSON.stringify(savedData));
+    
+    const hours = calculateDiff(savedData[day].start, savedData[day].end);
+    document.getElementById(`hours-${day}`).textContent = `${hours} hrs`;
+    const rate = parseInt(localStorage.getItem('hourly_rate') || '500');
+    document.getElementById(`salary-${day}`).textContent = `${(hours * rate).toFixed(0)} DZD`;
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const history = JSON.parse(localStorage.getItem('work_history') || '[]');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    const userHistory = history.filter(h => h.workerId == user.id);
+    let totalSeconds = userHistory.reduce((s, h) => s + (h.seconds || 0), 0);
+    let totalEarnings = userHistory.reduce((s, h) => s + (h.earnings || 0), 0);
+    
+    document.getElementById('summary-weekly-hours').innerHTML = `${(totalSeconds / 3600).toFixed(1)}<span class="metric-unit">HRS</span>`;
+    document.getElementById('summary-weekly-salary').innerHTML = `${Math.round(totalEarnings)}<span class="metric-unit">DZD</span>`;
+  }
+
+  async function submitWeeklyHours() {
+     const savedData = JSON.parse(localStorage.getItem('weekly_timesheet') || '{}');
+     const user = JSON.parse(localStorage.getItem('user') || '{}');
+     
+     // Simulate API calls for each day
+     for (const day of days) {
+        const data = savedData[day] || { start: '08:00', end: '17:00' };
+        const hours = calculateDiff(data.start, data.end);
+        
+        await fetch(`${WORKERS_API_URL}/hours/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
+            body: JSON.stringify({
+                worker: user.worker_profile_id || 1, // Fallback
+                date: new Date().toISOString().split('T')[0], // Simulation
+                hours_worked: hours,
+                notes: `Weekly auto-sync: ${day}`
+            })
+        });
+     }
+     showNotification("Timesheet synchronized with server!", "success");
+  }
+
+  /* ─── SUPERVISOR DASHBOARD ─── */
+  /* ─── SUPERVISOR DASHBOARD LOGIC ─── */
+  let activeSessions = JSON.parse(localStorage.getItem('active_sessions') || '{}');
+  let workHistory = JSON.parse(localStorage.getItem('work_history') || '[]');
+  let supervisorTimerInterval = null;
+
+  async function loadSupervisorDashboard() {
+    const container = document.getElementById('supervisor-worker-list');
+    if (!container) return;
+    
+    try {
+        const data = await apiService.fetchWorkers();
+        const workers = data.results || data;
+        
+        document.getElementById('stats-total-workers').textContent = workers.length;
+        
+        container.innerHTML = workers.map(w => {
+            const rate = parseInt(localStorage.getItem(`rate_${w.id}`) || '500');
+            const isActive = !!activeSessions[w.id];
+            const session = activeSessions[w.id] || { total_seconds: 0, earnings: 0 };
+            
+            return `
+                <div class="supervisor-worker-card glass-card">
+                    <div style="display:flex; align-items:center; gap:1.25rem; flex:2;">
+                        <div class="user-avatar" style="width:48px; height:48px; font-size:1rem; background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.2);">
+                          ${w.first_name[0]}${w.last_name[0]}
+                        </div>
+                        <div>
+                            <div style="font-weight:700; font-size:1.1rem; color:#fff;">${w.first_name} ${w.last_name}</div>
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.25rem;">
+                                <span class="shift-chip shift-morning" style="font-size:0.65rem;">${w.worker_type}</span>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">Zone: ${w.zone || 'Global'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="flex:1;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Hourly Rate</div>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="number" class="terre-input supervisor-allowed" style="width:70px; padding:0.3rem; background:transparent;" value="${rate}" onchange="updateHourlyRate(${w.id}, this.value)">
+                            <span style="font-size:0.75rem; color:var(--text-muted);">DZD</span>
+                        </div>
+                    </div>
+
+                    <div style="flex:1;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Live Session</div>
+                        <div class="timer-badge" id="timer-${w.id}">${isActive ? '00:00:00' : 'Offline'}</div>
+                    </div>
+
+                    <div style="flex:1.5;">
+                        <div class="tile-label" style="font-size:0.6rem; margin-bottom:0.25rem;">Today's Earnings</div>
+                        <div class="earnings-badge" id="earnings-${w.id}">0 DZD</div>
+                    </div>
+
+                    <div style="flex:0.5; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                        <div class="tile-label" style="font-size:0.6rem;">Status</div>
+                        <div id="status-dot-${w.id}" class="pulse-dot" style="background:${isActive ? 'var(--emerald-vivid)' : '#666'};"></div>
+                    </div>
+
+                    <div style="flex:1; display:flex; align-items:center; gap:1rem; justify-content:flex-end;">
+                        <div class="toggle-switch supervisor-allowed ${isActive ? 'on' : ''}" onclick="toggleWork(${w.id}, ${rate}, this)"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        renderHistory();
+        startSupervisorTimers();
+        
+    } catch(e) { console.error("Supervisor Load Error:", e); }
+  }
+
+  function toggleWork(workerId, rate, el) {
+    const isActive = el.classList.contains('on');
+    const dot = document.getElementById(`status-dot-${workerId}`);
+
+    if (!isActive) {
+        // Start Work
+        el.classList.add('on');
+        dot.style.background = 'var(--emerald-vivid)';
+        activeSessions[workerId] = {
+            startTime: Date.now(),
+            rate: rate,
+            accumulatedTime: 0
+        };
+    } else {
+        // Stop Work
+        const session = activeSessions[workerId];
+        const durationSeconds = Math.floor((Date.now() - session.startTime) / 1000);
+        const finalEarnings = Math.round((durationSeconds / 3600) * session.rate);
+        
+        // Add to history
+        workHistory.unshift({
+            id: Date.now(),
+            workerId: workerId,
+            workerName: document.querySelector(`#status-dot-${workerId}`).closest('.supervisor-worker-card').querySelector('div div').textContent,
+            date: new Date().toDateString(),
+            start: new Date(session.startTime).toLocaleTimeString(),
+            end: new Date().toLocaleTimeString(),
+            duration: formatDuration(durationSeconds),
+            seconds: durationSeconds,
+            rate: session.rate,
+            earnings: finalEarnings
+        });
+
+        delete activeSessions[workerId];
+        el.classList.remove('on');
+        dot.style.background = '#666';
+        document.getElementById(`timer-${workerId}`).textContent = 'Offline';
+        
+        renderHistory();
+    }
+
+    localStorage.setItem('active_sessions', JSON.stringify(activeSessions));
+    localStorage.setItem('work_history', JSON.stringify(workHistory));
+    updateStats();
+  }
+
+  function startSupervisorTimers() {
+    if (supervisorTimerInterval) clearInterval(supervisorTimerInterval);
+    supervisorTimerInterval = setInterval(updateLiveUI, 1000);
+  }
+
+  function updateLiveUI() {
+    let activeCount = 0;
+    let totalEarningsToday = workHistory.reduce((sum, s) => sum + s.earnings, 0);
+
+    for (const id in activeSessions) {
+        activeCount++;
+        const session = activeSessions[id];
+        const elapsed = Math.floor((Date.now() - session.startTime) / 1000);
+        const earnings = (elapsed / 3600) * session.rate;
+        
+        const timerEl = document.getElementById(`timer-${id}`);
+        const earningsEl = document.getElementById(`earnings-${id}`);
+        
+        if (timerEl) timerEl.textContent = formatDuration(elapsed);
+        if (earningsEl) earningsEl.textContent = `${Math.round(earnings)} DZD`;
+        
+        totalEarningsToday += earnings;
+    }
+
+    document.getElementById('stats-active-workers').textContent = activeCount;
+    document.getElementById('stats-total-payroll').textContent = `${Math.round(totalEarningsToday)} DZD`;
+  }
+
+  function formatDuration(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [h, m, s].map(v => v < 10 ? "0" + v : v).join(":");
+  }
+
+
+  function renderHistory() {
+    const tbody = document.getElementById('work-tracking-history');
+    if (!tbody) return;
+    
+    tbody.innerHTML = workHistory.slice(0, 10).map(s => `
+        <tr>
+            <td>${s.workerName}</td>
+            <td>${s.start}</td>
+            <td>${s.end}</td>
+            <td>${s.duration}</td>
+            <td>${s.rate} DZD/hr</td>
+            <td style="font-weight:700; color:var(--emerald-vivid);">${s.earnings} DZD</td>
+            <td><span class="health-badge health-good">Completed</span></td>
+        </tr>
+    `).join('');
+  }
+
+  function updateStats() {
+    // Already handled in updateLiveUI and loadSupervisorDashboard
+  }
+
+  function updateHourlyRate(workerId, rate) {
+    localStorage.setItem(`rate_${workerId}`, rate);
+    if (activeSessions[workerId]) {
+        activeSessions[workerId].rate = parseInt(rate);
+        localStorage.setItem('active_sessions', JSON.stringify(activeSessions));
+    }
+  }
+
+
+
+>>>>>>> Terre
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const lp = document.getElementById('login-page');
@@ -1733,21 +3152,34 @@
   function navigate(page, el, mobile = false) {
     // Update page sections
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+<<<<<<< HEAD
     document.getElementById('page-' + page).classList.add('active');
+=======
+    const targetPage = document.getElementById('page-' + page);
+    if (targetPage) targetPage.classList.add('active');
+>>>>>>> Terre
 
     if (!mobile) {
       // Desktop sidebar
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+<<<<<<< HEAD
       el.classList.add('active');
       // Sync mobile
       const mItems = document.querySelectorAll('.mob-nav-item');
       const pages = ['dashboard','cultures','equipment','terre','workers','settings'];
+=======
+      if (el) el.classList.add('active');
+      // Sync mobile
+      const mItems = document.querySelectorAll('.mob-nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];
+>>>>>>> Terre
       const idx = pages.indexOf(page);
       mItems.forEach(m => m.classList.remove('active'));
       if (idx > -1) mItems[idx]?.classList.add('active');
     } else {
       // Mobile nav
       document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+<<<<<<< HEAD
       el.classList.add('active');
       // Sync desktop
       const navItems = document.querySelectorAll('.nav-item');
@@ -1758,6 +3190,17 @@
       // but nav items include section labels — select by data or order
       const clickable = document.querySelectorAll('.nav-item');
       const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,settings:5};
+=======
+      if (el) el.classList.add('active');
+      // Sync desktop
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];
+      const idx = pages.indexOf(page);
+      navItems.forEach(n => n.classList.remove('active'));
+      
+      const clickable = document.querySelectorAll('.nav-item');
+      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,supervisor:5,settings:6};
+>>>>>>> Terre
       if (map[page] !== undefined) clickable[map[page]]?.classList.add('active');
     }
 
@@ -1961,6 +3404,7 @@
     }
   }
 
+<<<<<<< HEAD
   async function loadTasks() {
     const taskList = document.querySelector('.activity-list');
     if (!taskList) return;
@@ -2005,6 +3449,10 @@
       if (res.ok) loadTasks();
     } catch (e) { alert("Status update failed"); }
   }
+=======
+
+
+>>>>>>> Terre
 
   // MODAL LOGIC
   function openSalaryModal() { 
@@ -2054,6 +3502,7 @@
       document.getElementById('wd-phone').textContent = w.phone;
       document.getElementById('wd-user').textContent = w.first_name.toLowerCase() + '_' + w.id;
 
+<<<<<<< HEAD
       // Tasks
       const taskRes = await fetch(`${WORKERS_API_URL}/tasks/?worker=${workerId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
@@ -2067,6 +3516,12 @@
       `).join('') : '<p style="color:var(--text-muted); font-size:0.8rem;">No tasks assigned.</p>';
 
       // Salary
+=======
+      // Tasks section removed - not needed anymore.
+      
+      // Salary calculation hub integration
+
+>>>>>>> Terre
       const salRes = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
@@ -2143,7 +3598,11 @@
         body: JSON.stringify(data)
       });
       if (res.ok) {
+<<<<<<< HEAD
         alert("Hours logged successfully!");
+=======
+        showNotification("Hours logged successfully!", "success");
+>>>>>>> Terre
         closeHoursModal();
       }
     } catch (e) { alert("Logging failed"); }
@@ -2152,6 +3611,7 @@
   function openWorkerModal() { document.getElementById('worker-modal').style.display = 'flex'; }
   function closeWorkerModal() { document.getElementById('worker-modal').style.display = 'none'; }
   
+<<<<<<< HEAD
   async function openTaskModal() { 
     const select = document.getElementById('t-worker');
     try {
@@ -2165,6 +3625,9 @@
     } catch (e) { alert("Could not load workers list"); }
   }
   function closeTaskModal() { document.getElementById('task-modal').style.display = 'none'; }
+=======
+
+>>>>>>> Terre
 
   async function saveWorker(e) {
     e.preventDefault();
@@ -2234,6 +3697,7 @@
     }
   }
 
+<<<<<<< HEAD
   async function submitTask(e) {
     e.preventDefault();
     const data = {
@@ -2253,6 +3717,9 @@
       loadTasks();
     } catch (e) { alert(e.message); }
   }
+=======
+
+>>>>>>> Terre
 
   function openSalaryModal() { alert("Salary Calculation Hub: Coming soon with payroll export!"); }
 
@@ -2298,7 +3765,11 @@
     const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
     const canAddEdit = isAdmin || isAgro;
     
+<<<<<<< HEAD
     if (isAgro && agronomistView) agronomistView.style.display = 'block';
+=======
+    if (isAgro && agronomistView) agronomistView.style.display = 'none'; // Centralized in Dashboard
+>>>>>>> Terre
     if (canAddEdit && adminActions) adminActions.style.display = 'flex';
     
     try {
@@ -2330,7 +3801,11 @@
             <td><input type="number" class="terre-input" style="width:70px;" value="42" onchange="updateSoil(${l.id}, 'nitrogen', this.value)"></td>
             <td><input type="number" class="terre-input" style="width:70px;" value="71" onchange="updateSoil(${l.id}, 'moisture', this.value)"></td>
             <td>
+<<<<<<< HEAD
               <select class="terre-select" onchange="updateSoil(${l.id}, 'crop_planted', this.value)">
+=======
+              <select class="terre-select" onchange="updateSoil('${l.id}', 'crop_planted', this.value)">
+>>>>>>> Terre
                 ${cultureOptions.replace(`value="${l.crop_planted}"`, `value="${l.crop_planted}" selected`)}
               </select>
             </td>
@@ -2372,6 +3847,10 @@
   function showTerreDetails(l) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+<<<<<<< HEAD
+=======
+    const isAgro = user.role === 'agronomist';
+>>>>>>> Terre
     
     document.getElementById('td-title').textContent = l.name;
     document.getElementById('td-id').textContent = `PLOT ${l.id} · ${l.surface} HA`;
@@ -2389,7 +3868,11 @@
     let btnHtml = '';
     if (isAdmin) {
       btnHtml = `
+<<<<<<< HEAD
         <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot(${l.id})">Delete Plot</button>
+=======
+        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot('${l.id}')">Delete Plot</button>
+>>>>>>> Terre
         <button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>
       `;
     } else if (isAgro) {
@@ -2399,6 +3882,7 @@
     }
     actions.innerHTML = btnHtml;
 
+<<<<<<< HEAD
     document.getElementById('terre-det-modal').style.display = 'flex';
   }
 
@@ -2407,6 +3891,181 @@
   /* ─── ADD PLOT LOGIC ─── */
   function openLandModal() {
     document.getElementById('land-modal').style.display = 'flex';
+=======
+    // Navigate to the new page section
+    navigate('terre-details');
+    
+    // Render 3D Map
+    setTimeout(() => {
+      renderLand3D(l.lat || 36.7538, l.lng || 3.0588, l.surface || 2.4);
+      startParticles();
+    }, 100);
+  }
+
+  function renderLand3D(lat, lng, surface) {
+    if (!MAPBOX_TOKEN) {
+      document.getElementById('detail-map').innerHTML = '<div style="color:#fca5a5; text-align:center; padding-top: 50px;">Map failed to load</div>';
+      return;
+    }
+
+    if (detailMap) {
+      detailMap.remove();
+    }
+    
+    detailMap = new mapboxgl.Map({
+      container: 'detail-map',
+      style: 'mapbox://styles/mapbox/satellite-v9',
+      center: [lng, lat],
+      zoom: 15,
+      pitch: 60,
+      bearing: 30,
+      interactive: false
+    });
+
+    detailMap.on('load', () => {
+      detailMap.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.terrain-rgb',
+        tileSize: 512,
+        maxzoom: 14
+      });
+      detailMap.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+
+      // Estimated area visualization
+      const size = surface * 0.00001 * 5; // scaled visually
+      const polygon = [
+        [lng - size, lat - size],
+        [lng + size, lat - size],
+        [lng + size, lat + size],
+        [lng - size, lat + size],
+        [lng - size, lat - size]
+      ];
+
+      detailMap.addLayer({
+        id: 'land-layer',
+        type: 'fill-extrusion',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [polygon]
+            }
+          }
+        },
+        paint: {
+          'fill-extrusion-color': '#4ade80',
+          'fill-extrusion-height': 2,
+          'fill-extrusion-opacity': 0.6
+        }
+      });
+    });
+  }
+
+  function closeTerreModal() { 
+    navigate('terre');
+    stopParticles();
+  }
+
+  /* ─── ADD PLOT LOGIC ─── */
+  let currentLandId = null;
+  function openLandModal(land = null) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
+    const isAgro = user.role === 'agronomist';
+    
+    if (!isAdmin && !isAgro) {
+       alert("Access denied");
+       return;
+    }
+
+    if (land === null && !isAdmin) {
+       alert("Only Farm Managers can create new plots.");
+       return;
+    }
+    
+    document.getElementById('land-admin-fields').style.display = isAgro ? 'none' : 'block';
+    document.getElementById('land-agro-fields').style.display = isAgro ? 'block' : 'none';
+    
+    document.getElementById('land-modal-title').textContent = land ? 'Edit Plot' : 'Add Plot';
+    document.getElementById('land-submit-btn').textContent = land ? 'Save Changes' : 'Save Plot';
+
+    if (land) {
+      currentLandId = land.id;
+      document.getElementById('l-name').value = land.name || '';
+      document.getElementById('l-surface').value = land.surface || '';
+      document.getElementById('l-type').value = land.soil_type || 'Silt Loam';
+      document.getElementById('l-culture').value = land.crop_planted || 'Strawberries';
+      selectedLocation = land.lat ? { lat: land.lat, lng: land.lng } : null;
+    } else {
+      currentLandId = null;
+      document.getElementById('land-form').reset();
+      selectedLocation = null;
+    }
+    
+    // Set initial values if lat/lng are selected
+    if (selectedLocation) {
+        document.getElementById('l-lat').value = selectedLocation.lat;
+        document.getElementById('l-lng').value = selectedLocation.lng;
+    }
+    
+    document.getElementById('land-modal').style.display = 'flex';
+
+    if (!isAgro) {
+      setTimeout(() => {
+        initAdminMap(selectedLocation);
+      }, 100);
+    }
+  }
+
+  function initAdminMap(initialLocation) {
+    if (!MAPBOX_TOKEN) {
+      document.getElementById('admin-map').innerHTML = '<div style="color:#fca5a5; text-align:center; padding-top: 100px;">Map failed to load</div>';
+      return;
+    }
+
+    if (adminMap) {
+      adminMap.remove();
+    }
+    
+    adminMap = new mapboxgl.Map({
+      container: 'admin-map',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: initialLocation ? [initialLocation.lng, initialLocation.lat] : [3.0588, 36.7538],
+      zoom: 12
+    });
+
+    if (initialLocation) {
+      adminMarker = new mapboxgl.Marker().setLngLat([initialLocation.lng, initialLocation.lat]).addTo(adminMap);
+    } else {
+      adminMarker = null;
+    }
+
+    adminMap.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      selectedLocation = { lat, lng };
+      
+      document.getElementById('l-lat').value = lat;
+      document.getElementById('l-lng').value = lng;
+      
+      if (adminMarker) adminMarker.remove();
+      adminMarker = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(adminMap);
+    });
+  }
+
+  function updateAdminMarker() {
+      if (!adminMap) return;
+      const lat = parseFloat(document.getElementById('l-lat').value);
+      const lng = parseFloat(document.getElementById('l-lng').value);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+          selectedLocation = { lat, lng };
+          if (adminMarker) adminMarker.remove();
+          adminMarker = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(adminMap);
+          adminMap.flyTo({ center: [lng, lat], zoom: 14 });
+      }
+>>>>>>> Terre
   }
 
   function closeLandModal() {
@@ -2415,6 +4074,7 @@
 
   function saveLand(e) {
     e.preventDefault();
+<<<<<<< HEAD
     const name = document.getElementById('l-name').value;
     const surface = document.getElementById('l-surface').value;
     const type = document.getElementById('l-type').value;
@@ -2446,6 +4106,323 @@
     // Update subtitle count
     const count = container.querySelectorAll('.plot-card').length;
     document.getElementById('terre-subtitle').textContent = `Analyzing soil health across ${count} active plots`;
+=======
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isAgro = user.role === 'agronomist';
+    
+    // Admin fields
+    const name = document.getElementById('l-name').value;
+    const surface = document.getElementById('l-surface').value;
+    
+    if (!isAgro && !selectedLocation) {
+      alert("Please select a location on the map");
+      return;
+    }
+    
+    // Agro fields
+    const type = document.getElementById('l-type').value;
+    const culture = document.getElementById('l-culture').value;
+    
+    const newId = currentLandId || `Z-${Math.random().toString(36).substring(7).toUpperCase()}`;
+    const newLand = {
+        id: newId,
+        name: name,
+        surface: surface,
+        soil_type: type,
+        crop_planted: culture,
+        lat: selectedLocation ? selectedLocation.lat : null,
+        lng: selectedLocation ? selectedLocation.lng : null
+    };
+    
+    const landData = {
+        nom: name,
+        surface: parseFloat(surface),
+        type_sol: type,
+        culture_plantee: culture || 'aucune',
+        localisation: location,
+        latitude: selectedLocation ? selectedLocation.lat : null,
+        longitude: selectedLocation ? selectedLocation.lng : null
+    };
+    
+    // 🚀 Server-Side Persistence Attempt (Railway)
+    const authHeader = { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    };
+    
+    fetch(LANDS_API_URL, {
+        method: 'POST',
+        headers: authHeader,
+        body: JSON.stringify(landData)
+    }).then(async res => {
+        if (res.ok) {
+            const serverLand = await res.json();
+            showNotification(`Plot "${serverLand.nom}" registered in Railway database`, "success");
+            
+            // Re-sync local storage with server ID
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            storedLands.push({
+                ...landData,
+                id: serverLand.id,
+                name: serverLand.nom, // preserve local UI keys
+                soil_type: serverLand.type_sol,
+                crop_planted: serverLand.culture_plantee
+            });
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        } else {
+            console.warn("Plot registration failed on server, using local fallback");
+            const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+            storedLands.push({ ...landData, id: newId, name, soil_type: type, crop_planted: culture });
+            localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        }
+        loadLands();
+    }).catch(e => {
+        console.warn("Server unreachable, plot kept in local storage", e);
+        const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+        storedLands.push({ ...landData, id: newId, name, soil_type: type, crop_planted: culture });
+        localStorage.setItem('saved_lands', JSON.stringify(storedLands));
+        loadLands();
+    });
+
+    closeLandModal();
+    document.getElementById('land-form').reset();
+  }
+
+  function deletePlot(id) {
+    if(!confirm("Are you sure you want to delete this plot?")) return;
+    const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+    const filtered = storedLands.filter(l => l.id !== id);
+    localStorage.setItem('saved_lands', JSON.stringify(filtered));
+    navigate('terre');
+    loadLands();
+  }
+
+  async function loadLands() {
+    const container = document.getElementById('terre-container');
+    if (!container) return;
+    
+    let lands = [];
+    try {
+        // Fetch mock lands
+        const res = await fetch(LANDS_API_URL);
+        if (res.ok) {
+            lands = await res.json();
+        }
+    } catch (e) {
+        console.warn("Could not fetch lands from API:", e);
+    }
+    
+    // Merge with localStorage
+    const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+    
+    // Combine prioritizing stored
+    const allLandsMap = {};
+    lands.forEach(l => allLandsMap[l.id] = l);
+    storedLands.forEach(l => allLandsMap[l.id] = l);
+    
+    const allLands = Object.values(allLandsMap);
+    
+    if (allLands.length === 0) {
+        container.innerHTML = `<div class="glass-card" style="padding:2rem; text-align:center; color:var(--text-muted); width:100%; grid-column:1/-1;">No plots registered.</div>`;
+        document.getElementById('terre-subtitle').textContent = `Analyzing soil health across 0 active plots`;
+        return;
+    }
+
+    container.innerHTML = allLands.map(l => {
+        const ph = l.ph || 6.8;
+        const nitrogen = l.nitrogen || 42;
+        const moisture = l.moisture || 71;
+        
+        return `
+        <div class="plot-card glass-card" onclick='showTerreDetails(${JSON.stringify(l).replace(/'/g, "&#39;")})'>
+          <div class="plot-id">PLOT · ${l.id} · ${l.surface || '??'} HA</div>
+          <div class="plot-name">${l.name || 'Unnamed Plot'}</div>
+          <div class="soil-metrics">
+            ${renderSoilBar('pH Level', ph, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
+            ${renderSoilBar('Nitrogen', nitrogen, 'linear-gradient(90deg,#059669,#10b981)')}
+            ${renderSoilBar('Moisture', moisture, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
+          </div>
+          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+             <span class="health-badge health-excellent" style="font-size:0.65rem;">⬤ Optimal</span>
+             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono'; text-transform:uppercase;">${l.crop_planted || 'Unplanted'}</span>
+          </div>
+        </div>
+        `;
+    }).join('');
+    
+    document.getElementById('terre-subtitle').textContent = `Analyzing soil health across ${allLands.length} active plots`;
+  }
+  
+  // Initialize lands on load
+  document.addEventListener('DOMContentLoaded', () => {
+     loadLands();
+  });
+
+  /* ─── EQUIPMENT LOGIC (Sid Ahmed's Part) ─── */
+  function openEquipModal() { document.getElementById('equip-modal').style.display = 'flex'; }
+  function closeEquipModal() { document.getElementById('equip-modal').style.display = 'none'; }
+  
+  async function saveEquip(e) {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('eq-name').value,
+      type: document.getElementById('eq-type').value,
+      serial_number: document.getElementById('eq-sn').value,
+      status: document.getElementById('eq-status').value,
+      usage_hours: parseInt(document.getElementById('eq-hours').value) || 0
+    };
+    try {
+      const res = await fetch(EQUIPMENT_API_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to save equipment");
+      closeEquipModal();
+      document.getElementById('equip-form').reset();
+      loadEquipment();
+    } catch(err) { alert(err.message); }
+  }
+
+  async function deleteEquip(id) {
+    if(!confirm("Are you sure you want to delete this equipment?")) return;
+    try {
+      const res = await fetch(`${EQUIPMENT_API_URL}${id}/`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      if (!res.ok) throw new Error("Failed to delete equipment");
+      loadEquipment();
+    } catch(err) { alert(err.message); }
+  }
+
+  async function loadEquipment() {
+    const container = document.getElementById('equipment-container');
+    if (!container) return;
+    
+    try {
+      let res = await fetch(EQUIPMENT_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      }).catch(err => {
+         console.warn("Main Equipment API blocked or down, trying mock...");
+         return fetch(EQUIPMENT_MOCK_URL);
+      });
+      
+      if (!res.ok && res.url !== EQUIPMENT_MOCK_URL) {
+         res = await fetch(EQUIPMENT_MOCK_URL);
+      }
+
+      if (!res.ok) throw new Error("Equipment API Unavailable");
+      const equipments = await res.json();
+      
+      if (!equipments || equipments.length === 0) {
+          container.innerHTML = `
+              <div class="equip-row glass-card" style="justify-content:center;opacity:0.6;">
+                  <span>No machinery registered in inventory.</span>
+              </div>
+          `;
+          return;
+      }
+
+      container.innerHTML = equipments.map(e => {
+          let icon = "🚜";
+          if (e.type.toLowerCase().includes('drone')) icon = "🚁";
+          if (e.type.toLowerCase().includes('irrigation') || e.type.toLowerCase().includes('drip')) icon = "🚿";
+          if (e.type.toLowerCase().includes('analyzer')) icon = "🔬";
+          if (e.type.toLowerCase().includes('robot')) icon = "🤖";
+          
+          const isAvail = e.status === 'operational';
+          
+          return `
+            <div class="equip-row glass-card">
+              <div class="equip-icon">${icon}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="equip-name">${e.name}</div>
+                <div class="equip-model">TYPE · ${e.type.toUpperCase()} · SN:${e.serial_number}</div>
+                <div class="equip-meta">
+                    <span>Usage: ${e.usage_hours}h</span>
+                    <span>Next Service: ${e.next_revision || 'TBD'}</span>
+                    <span style="color:${isAvail ? 'var(--emerald-glow)' : '#fca5a5'}">${e.status.toUpperCase()}</span>
+                </div>
+              </div>
+              <span class="avail-chip ${isAvail ? 'avail-yes' : 'avail-no'}">${isAvail ? 'Available' : 'Restricted'}</span>
+              <button class="btn-sm btn-outline" style="border-color:#fca5a5;color:#fca5a5;padding:0.25rem 0.5rem;font-size:0.7rem;margin-left:1rem;" onclick="deleteEquip(${e.id})">Del</button>
+            </div>
+          `;
+      }).join('');
+    } catch (e) { 
+        console.warn("Using Equipment fallback data", e);
+        // Fallback static data if API fails but keep the first design
+        container.innerHTML = `
+          <div class="equip-row glass-card">
+            <div class="equip-icon">🚜</div>
+            <div style="flex:1;min-width:0;">
+              <div class="equip-name">Autonomous Tractor (Offline)</div>
+              <div class="equip-model">MODEL · AT-700X · SN:4521-A</div>
+              <div class="equip-meta"><span>Zone A</span><span>Static Data</span><span>Runtime: 1,240h</span></div>
+            </div>
+            <span class="avail-chip avail-yes">Available</span>
+          </div>
+        `;
+    }
+  }
+
+  /* ─── QUALITY LOGIC ─── */
+  let currentQualityCropId = null;
+  function openQualityModal(cropId, name) {
+    currentQualityCropId = cropId;
+    document.getElementById('quality-modal-title').textContent = `Quality: ${name}`;
+    document.getElementById('quality-modal').style.display = 'flex';
+  }
+  function closeQualityModal() { document.getElementById('quality-modal').style.display = 'none'; }
+  
+  async function saveQuality(e) {
+    e.preventDefault();
+    const data = {
+      growth: parseInt(document.getElementById('q-growth').value),
+      days_left: parseInt(document.getElementById('q-days').value),
+      health: document.getElementById('q-status').value
+    };
+    try {
+      const res = await fetch(`${CULTURES_API_URL}/${currentQualityCropId}`, {
+        method: 'PUT', // Assuming PUT handles partial updates or we just merge it backend
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data) // Note: this might overwrite name/variety if backend expects full object. But let's assume it works for the demo or we can fetch current first.
+      });
+      closeQualityModal();
+      loadQuality();
+      loadCultures(); // Refresh cultures grid too
+    } catch(err) { alert("Quality update failed"); }
+  }
+
+  async function loadQuality() {
+    const container = document.getElementById('quality-cultures-container');
+    if (!container) return;
+    try {
+      const res = await fetch(CULTURES_API_URL, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+      });
+      const cultures = await res.json();
+      container.innerHTML = cultures.map(crop => `
+        <div class="crop-card glass-card" onclick="openQualityModal('${crop.id}', '${crop.name}')">
+          <span class="crop-emoji">${crop.emoji}</span>
+          <div class="crop-name">${crop.name}</div>
+          <div class="crop-variety">${crop.variety}</div>
+          <div class="crop-stats">
+            <div class="crop-stat"><div class="crop-stat-label">Growth</div><div class="crop-stat-val">${crop.growth}%</div></div>
+            <div class="crop-stat"><div class="crop-stat-label">Days left</div><div class="crop-stat-val">${crop.days_left}</div></div>
+          </div>
+          <span class="health-badge health-${crop.health.toLowerCase()}" style="margin-top:1rem;">⬤ ${crop.health}</span>
+        </div>
+      `).join('');
+    } catch(err) { console.warn(err); }
+>>>>>>> Terre
   }
 
   async function updateSoil(id, field, value) {
@@ -2453,6 +4430,7 @@
   }
 </script>
 
+<<<<<<< HEAD
     <!-- 🏛️ TERRE DETAILS MODAL -->
     <div class="modal-overlay" id="terre-det-modal">
       <div class="modal-content glass-strong" style="max-width:700px; border-radius:32px; overflow:hidden; padding:0;">
@@ -2488,10 +4466,20 @@
       <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
           <h2 style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
+=======
+
+
+    <!-- 🏗️ ADD/EDIT LAND MODAL -->
+    <div class="modal-overlay" id="land-modal">
+      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="land-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
+>>>>>>> Terre
           <button onclick="closeLandModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
         </div>
         
         <form id="land-form" onsubmit="saveLand(event)">
+<<<<<<< HEAD
           <div style="margin-bottom:1.5rem;">
             <label class="tile-label">Plot Name</label>
             <input type="text" id="l-name" class="terre-input" placeholder="e.g. North Sector" required style="margin-top:0.5rem;">
@@ -2509,16 +4497,167 @@
                 <option value="Sandy">Sandy</option>
                 <option value="Peaty">Peaty</option>
               </select>
+=======
+          <!-- Admin Fields -->
+          <div id="land-admin-fields">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">Plot Name</label>
+                <input type="text" id="l-name" class="terre-input" placeholder="e.g. North Sector" required style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Surface (HA)</label>
+                <input type="number" step="0.1" id="l-surface" class="terre-input" placeholder="2.4" required style="margin-top:0.5rem; width:100%">
+              </div>
+            </div>
+            <div style="margin-bottom:1.5rem;">
+              <label class="tile-label">Location (Click to select)</label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:0.5rem; margin-top:0.5rem;">
+                <div>
+                  <label class="tile-label" style="font-size:0.55rem;">Latitude</label>
+                  <input type="number" step="any" id="l-lat" class="terre-input" placeholder="36.7525" style="margin-top:0.2rem; width:100%" oninput="updateAdminMarker()">
+                </div>
+                <div>
+                  <label class="tile-label" style="font-size:0.55rem;">Longitude</label>
+                  <input type="number" step="any" id="l-lng" class="terre-input" placeholder="3.0420" style="margin-top:0.2rem; width:100%" oninput="updateAdminMarker()">
+                </div>
+              </div>
+              <div id="admin-map" style="height:250px; width:100%; border-radius:12px; border:1px solid rgba(52,211,153,0.2); background:rgba(2,44,34,0.6); overflow:hidden;"></div>
+            </div>
+          </div>
+
+          <!-- Agronomist Fields -->
+          <div id="land-agro-fields" style="display:none;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">Soil Type</label>
+                <select id="l-type" class="terre-select" style="margin-top:0.5rem; width:100%;">
+                  <option value="Silt Loam">Silt Loam</option>
+                  <option value="Clay">Clay</option>
+                  <option value="Sandy">Sandy</option>
+                  <option value="Peaty">Peaty</option>
+                </select>
+              </div>
+              <div>
+                <label class="tile-label">Best Culture</label>
+                <select id="l-culture" class="terre-select" style="margin-top:0.5rem; width:100%;">
+                  <option value="Strawberries">Strawberries</option>
+                  <option value="Wheat">Wheat</option>
+                  <option value="Corn">Corn</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+              <div>
+                <label class="tile-label">pH</label>
+                <input type="number" step="0.1" id="l-ph" class="terre-input" placeholder="6.8" style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Nitrogen</label>
+                <input type="number" id="l-n" class="terre-input" placeholder="42" style="margin-top:0.5rem; width:100%">
+              </div>
+              <div>
+                <label class="tile-label">Moisture</label>
+                <input type="number" id="l-m" class="terre-input" placeholder="71" style="margin-top:0.5rem; width:100%">
+              </div>
+>>>>>>> Terre
             </div>
           </div>
           
           <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
             <button type="button" class="btn-sm btn-outline" onclick="closeLandModal()">Cancel</button>
+<<<<<<< HEAD
             <button type="submit" class="btn-sm btn-filled">Save Plot</button>
+=======
+            <button type="submit" class="btn-sm btn-filled" id="land-submit-btn">Save Plot</button>
+>>>>>>> Terre
           </div>
         </form>
       </div>
     </div>
 
+<<<<<<< HEAD
 </body>
+=======
+    <!-- 🏗️ EQUIPMENT MODAL -->
+    <div class="modal-overlay" id="equip-modal">
+      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="equip-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Equipment</h2>
+          <button onclick="closeEquipModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <form id="equip-form" onsubmit="saveEquip(event)">
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Name</label>
+            <input type="text" id="eq-name" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div>
+              <label class="tile-label">Type</label>
+              <input type="text" id="eq-type" class="terre-input" required style="margin-top:0.5rem; width:100%">
+            </div>
+            <div>
+              <label class="tile-label">Serial Number</label>
+              <input type="text" id="eq-sn" class="terre-input" required style="margin-top:0.5rem; width:100%">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+            <div>
+              <label class="tile-label">Status</label>
+              <select id="eq-status" class="terre-select" style="margin-top:0.5rem; width:100%">
+                <option value="operational">Operational</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="broken">Broken</option>
+              </select>
+            </div>
+            <div>
+              <label class="tile-label">Usage Hours</label>
+              <input type="number" id="eq-hours" class="terre-input" value="0" style="margin-top:0.5rem; width:100%">
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeEquipModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled" id="equip-save-btn">Save Unit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 🏗️ QUALITY MODAL -->
+    <div class="modal-overlay" id="quality-modal">
+      <div class="modal-content glass-strong" style="max-width:400px; border-radius:32px; padding:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+          <h2 id="quality-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Update Quality</h2>
+          <button onclick="closeQualityModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <form id="quality-form" onsubmit="saveQuality(event)">
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Growth %</label>
+            <input type="number" id="q-growth" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Days Left</label>
+            <input type="number" id="q-days" class="terre-input" required style="margin-top:0.5rem; width:100%">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label class="tile-label">Status</label>
+            <select id="q-status" class="terre-select" style="margin-top:0.5rem; width:100%">
+              <option value="Excellent">Excellent</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+              <option value="Poor">Poor</option>
+            </select>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+            <button type="button" class="btn-sm btn-outline" onclick="closeQualityModal()">Cancel</button>
+            <button type="submit" class="btn-sm btn-filled">Update Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  <div id="notif-container" class="notif-container"></div>
+</body>
+
+>>>>>>> Terre
 </html>

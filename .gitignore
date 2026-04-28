@@ -1,13 +1,25 @@
+<<<<<<< HEAD
 # Security & Secrets
 firebase-key.json
 .env
 *.key
 *.pem
+=======
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+>>>>>>> Terre
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
+<<<<<<< HEAD
 venv/
 .venv/
 env/
@@ -24,3 +36,18 @@ services/cultures_service/venv/
 
 # Database
 *.sqlite3
+=======
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+media
+staticfiles/
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+>>>>>>> Terre
