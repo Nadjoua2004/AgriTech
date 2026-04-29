@@ -9,13 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cabinet+Grotesk:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-<<<<<<< HEAD
-=======
   
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
->>>>>>> Terre
-
   <style>
     :root {
       --emerald-deep:   #022c22;
@@ -103,8 +99,6 @@
       transform: translateY(-3px);
     }
 
-<<<<<<< HEAD
-=======
     /* ─── NOTIFICATION SYSTEM ─── */
     .notif-container {
       position: fixed; top: 2rem; right: 2rem; z-index: 10000;
@@ -163,8 +157,6 @@
     }
     .agro-input:focus, .agro-select:focus { border-color: var(--emerald-vivid); }
     .agro-select option { background: var(--emerald-deep); color: white; }
-
->>>>>>> Terre
     /* ─── LOGIN PAGE ─── */
     #login-page {
       position: fixed; inset: 0; z-index: 100;
@@ -634,8 +626,6 @@
       white-space: nowrap;
     }
 
-<<<<<<< HEAD
-=======
     /* ─── 3D MAPBOX ANIMATIONS ─── */
     .land-container {
       animation: float 4s ease-in-out infinite;
@@ -664,8 +654,6 @@
     .mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
       display: none !important;
     }
-
->>>>>>> Terre
     /* ─── CULTURES PAGE ─── */
     .cultures-grid {
       display: grid;
@@ -756,13 +744,6 @@
     }
     .worker-name { font-weight: 700; font-size: 0.95rem; color: var(--text-primary); }
     .worker-role { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.15rem; }
-<<<<<<< HEAD
-    .worker-task { flex: 1; }
-    .task-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(110,231,183,0.4); }
-    .task-val { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
-=======
-
->>>>>>> Terre
     .shift-chip {
       padding: 0.25rem 0.65rem;
       border-radius: 6px;
@@ -836,22 +817,6 @@
       .metrics-grid { grid-template-columns: 1fr 1fr; }
       .cultures-grid { grid-template-columns: 1fr; }
       .page-title { font-size: 1.4rem; }
-<<<<<<< HEAD
-    /* ─── ROLE-BASED ACCESS CONTROL (CSS) ─── */
-    body.role-agronomist .nav-item[onclick*="page-workers"],
-    body.role-agronomist .mob-nav-item[onclick*="page-workers"],
-    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("worker")),
-    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("task")),
-    body.role-agronomist .stat-card:has(.stat-label:contains-lowercase("health")) {
-        display: none !important;
-    }
-    
-    /* Fallback for browsers not supporting :has() and :contains() */
-    body.role-agronomist .hide-agronomist { display: none !important; }
-
-    /* Custom CSS to target by text content via attribute or similar if needed, 
-       but we will mark them with classes for reliability */
-=======
     }
     /* ─── SUPERVISOR DASHBOARD STYLES ─── */
     .supervisor-stats {
@@ -930,9 +895,7 @@
     @media (max-width: 1000px) {
       .supervisor-worker-card { flex-wrap: wrap; gap: 1rem; padding: 1.25rem; }
       .supervisor-worker-card > div { flex: 1 1 150px; }
-    }
->>>>>>> Terre
-  </style>
+    }  </style>
 </head>
 <body>
 
@@ -1029,13 +992,9 @@
       <span class="nav-icon">◎</span> Workers
       <span class="nav-badge">8</span>
     </div>
-<<<<<<< HEAD
-=======
     <div class="nav-item" id="nav-quality" onclick="navigate('quality', this)">
       <span class="nav-icon">🔬</span> Quality
     </div>
->>>>>>> Terre
-
     <style>
       .modal-overlay {
         position: fixed; top:0; left:0; width:100%; height:100%;
@@ -1073,14 +1032,10 @@
       .card-actions span:hover { background: rgba(255,255,255,0.2); }
     </style>
 
-<<<<<<< HEAD
-=======
     <div class="nav-section-label">Management</div>
     <div class="nav-item" id="nav-supervisor" onclick="navigate('supervisor', this)" style="display:none;">
       <span class="nav-icon">🛡</span> Supervisor Hub
     </div>
-
->>>>>>> Terre
     <div class="nav-section-label">System</div>
     <div class="nav-item" onclick="navigate('settings', this)">
       <span class="nav-icon">⊛</span> Settings
@@ -1156,67 +1111,28 @@
       </div>
 
       <!-- Metric Cards -->
-<<<<<<< HEAD
-      <div class="metrics-grid">
-        <div class="metric-card glass-card">
-          <span class="metric-icon">🌿</span>
-          <div class="metric-label">Total Cultures</div>
-          <div class="metric-value">12<span class="metric-unit">Units</span></div>
-          <div class="metric-change up">↑ 3 new this week</div>
-=======
       <div class="metrics-grid" id="main-metrics-grid">
         <div class="metric-card glass-card">
           <span class="metric-icon">🌿</span>
           <div class="metric-label">Total Cultures</div>
           <div class="metric-value" id="stat-cultures-count">12<span class="metric-unit">Units</span></div>
-          <div class="metric-change up">↑ active varieties</div>
->>>>>>> Terre
-          <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+          <div class="metric-change up">↑ active varieties</div>          <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">⚙</span>
           <div class="metric-label">Active Equipment</div>
-<<<<<<< HEAD
-          <div class="metric-value">9<span class="metric-unit">Units</span></div>
-=======
-          <div class="metric-value" id="stat-equipment-count">9<span class="metric-unit">Units</span></div>
->>>>>>> Terre
-          <div class="metric-change up">↑ All systems online</div>
+          <div class="metric-value" id="stat-equipment-count">9<span class="metric-unit">Units</span></div>          <div class="metric-change up">↑ All systems online</div>
           <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">◈</span>
           <div class="metric-label">Terre / Land</div>
-<<<<<<< HEAD
-          <div class="metric-value">4<span class="metric-unit">Parcels</span></div>
-=======
-          <div class="metric-value" id="stat-lands-count">4<span class="metric-unit">Parcels</span></div>
->>>>>>> Terre
-          <div class="metric-change up">↑ 8.2 Ha total</div>
+          <div class="metric-value" id="stat-lands-count">4<span class="metric-unit">Parcels</span></div>          <div class="metric-change up">↑ 8.2 Ha total</div>
           <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
         </div>
         <div class="metric-card glass-card">
           <span class="metric-icon">◎</span>
           <div class="metric-label">Total Workers</div>
-<<<<<<< HEAD
-          <div class="metric-value">8<span class="metric-unit">Staff</span></div>
-          <div class="metric-change up">↑ Full shift today</div>
-          <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
-        </div>
-        <div class="metric-card glass-card">
-          <span class="metric-icon">⬢</span>
-          <div class="metric-label">Task Completion</div>
-          <div class="metric-value">85<span class="metric-unit">%</span></div>
-          <div class="metric-change up">↑ Above daily target</div>
-          <div class="progress-track"><div class="progress-fill" style="width:85%"></div></div>
-        </div>
-        <div class="metric-card glass-card">
-          <span class="metric-icon">⚡</span>
-          <div class="metric-label">Platform Health</div>
-          <div class="metric-value">99<span class="metric-unit">%</span></div>
-          <div class="metric-change up">↑ Systems nominal</div>
-          <div class="progress-track"><div class="progress-fill" style="width:99%;background:linear-gradient(90deg,#34d399,#6ee7b7)"></div></div>
-=======
           <div class="metric-value" id="stat-workers-count">8<span class="metric-unit">Staff</span></div>
           <div class="metric-change up">↑ Full shift today</div>
           <div class="progress-track"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#059669,#10b981)"></div></div>
@@ -1302,9 +1218,7 @@
                 <!-- Rows injected via JS -->
               </tbody>
             </table>
-          </div>
->>>>>>> Terre
-        </div>
+          </div>        </div>
       </div>
 
       <!-- System Status -->
@@ -1339,10 +1253,6 @@
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
       </div>
-<<<<<<< HEAD
-    </section>
-
-=======
 
 
       <!-- 📋 WORKER TIME TRACKING -->
@@ -1383,8 +1293,6 @@
       </div>
     </section>
 
-
->>>>>>> Terre
     <!-- ════ CULTURES ════ -->
     <section id="page-cultures" class="page-section">
       <div class="page-header">
@@ -1402,8 +1310,6 @@
       </div>
     </section>
 
-<<<<<<< HEAD
-=======
     <!-- ════ QUALITY INSPECTOR ════ -->
     <section id="page-quality" class="page-section">
       <div class="page-header">
@@ -1416,77 +1322,11 @@
         <!-- populated via JS -->
       </div>
     </section>
-
->>>>>>> Terre
     <!-- ════ EQUIPMENT ════ -->
     <section id="page-equipment" class="page-section">
       <div class="page-header">
         <div>
           <h1 class="page-title">Equipment</h1>
-<<<<<<< HEAD
-          <p class="page-subtitle">Machinery inventory · 9 units · Zone maintenance</p>
-        </div>
-        <div class="header-actions">
-          <button class="btn-sm btn-outline">Schedule</button>
-          <button class="btn-sm btn-filled">+ Add Unit</button>
-        </div>
-      </div>
-      <div class="equipment-list">
-        <div class="equip-row glass-card">
-          <div class="equip-icon">🚜</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">Autonomous Tractor</div>
-            <div class="equip-model">MODEL · AT-700X · SN:4521-A</div>
-            <div class="equip-meta"><span>Zone A</span><span>Last service: 3 days ago</span><span>Runtime: 1,240h</span></div>
-          </div>
-          <span class="avail-chip avail-yes">Available</span>
-        </div>
-        <div class="equip-row glass-card">
-          <div class="equip-icon">🚿</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">Precision Drip Array</div>
-            <div class="equip-model">MODEL · DA-200 · SN:8823-B</div>
-            <div class="equip-meta"><span>All Zones</span><span>Active since 06:00</span><span>Pressure: 2.4 bar</span></div>
-          </div>
-          <span class="avail-chip avail-no">In Use</span>
-        </div>
-        <div class="equip-row glass-card">
-          <div class="equip-icon">🤖</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">Harvesting Robot Mk.II</div>
-            <div class="equip-model">MODEL · HR-MK2 · SN:0019-C</div>
-            <div class="equip-meta"><span>Zone B</span><span>Last service: 14 days ago</span><span>Battery: 87%</span></div>
-          </div>
-          <span class="avail-chip avail-yes">Available</span>
-        </div>
-        <div class="equip-row glass-card">
-          <div class="equip-icon">🚁</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">Surveillance Drone Fleet</div>
-            <div class="equip-model">MODEL · SD-X12 · Fleet: 4 units</div>
-            <div class="equip-meta"><span>Airborne · Zone A–C</span><span>Mission: Field survey</span><span>ETA: 40min</span></div>
-          </div>
-          <span class="avail-chip avail-no">In Use</span>
-        </div>
-        <div class="equip-row glass-card">
-          <div class="equip-icon">🔬</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">Soil Analyzer Unit</div>
-            <div class="equip-model">MODEL · SA-PRO · SN:3301-D</div>
-            <div class="equip-meta"><span>Lab Station</span><span>Calibration due in 7 days</span><span>Status: Idle</span></div>
-          </div>
-          <span class="avail-chip avail-main">Maintenance</span>
-        </div>
-        <div class="equip-row glass-card">
-          <div class="equip-icon">💡</div>
-          <div style="flex:1;min-width:0;">
-            <div class="equip-name">LED Grow Light Array</div>
-            <div class="equip-model">MODEL · GL-360 · Panels: 48</div>
-            <div class="equip-meta"><span>Greenhouse 1 & 2</span><span>Spectrum B · 16h cycle</span><span>Power: 4.8kW</span></div>
-          </div>
-          <span class="avail-chip avail-no">Active</span>
-        </div>
-=======
           <p class="page-subtitle" id="equip-subtitle">Machinery inventory · Zone maintenance</p>
         </div>
         <div class="header-actions">
@@ -1495,9 +1335,7 @@
         </div>
       </div>
       <div class="equipment-list" id="equipment-container">
-        <!-- Dynamic content from Sid Ahmed's Equipment Microservice -->
->>>>>>> Terre
-      </div>
+        <!-- Dynamic content from Sid Ahmed's Equipment Microservice -->      </div>
     </section>
 
     <!-- ════ TERRE ════ -->
@@ -1509,12 +1347,7 @@
         </div>
         <div class="header-actions" id="terre-admin-actions" style="display:none;">
           <button class="btn-sm btn-outline">Run Analysis</button>
-<<<<<<< HEAD
-          <button class="btn-sm btn-filled">+ Add Plot</button>
-=======
-          <button class="btn-sm btn-filled" onclick="openLandModal(null)">+ Add Plot</button>
->>>>>>> Terre
-        </div>
+          <button class="btn-sm btn-filled" onclick="openLandModal(null)">+ Add Plot</button>        </div>
       </div>
       
       <!-- 📋 AGRONOMIST VIEW: Soil Management Table -->
@@ -1543,57 +1376,7 @@
       </div>
 
       <div class="terre-grid" id="terre-container" style="margin-top:2rem;">
-<<<<<<< HEAD
-        <!-- Plots with First Design (Gradients & Mono IDs) -->
-        <div class="plot-card glass-card" onclick="showTerreDetails({id:1, name:'Alpha Field — North', surface:2.4, soil_type:'Silt Loam', crop_planted:'Strawberries'})">
-          <div class="plot-id">PLOT · Z-ALPHA · 2.4 HA</div>
-          <div class="plot-name">Alpha Field — North</div>
-          <div class="soil-metrics">
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>pH Level</span><span>6.8</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:68%;background:linear-gradient(90deg,var(--emerald-base),var(--emerald-glow));"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>Nitrogen</span><span>42 mg/kg</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:55%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>Moisture</span><span>71%</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:71%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
-            </div>
-          </div>
-          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-             <span class="health-badge health-excellent">⬤ Optimal</span>
-             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">STRAWBERRIES</span>
-          </div>
-        </div>
-
-        <div class="plot-card glass-card" onclick="showTerreDetails({id:2, name:'Beta Field — East Wing', surface:1.8, soil_type:'Clay', crop_planted:'Tomatoes'})">
-          <div class="plot-id">PLOT · Z-BETA · 1.8 HA</div>
-          <div class="plot-name">Beta Field — East Wing</div>
-          <div class="soil-metrics">
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>pH Level</span><span>5.9</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:52%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>Nitrogen</span><span>29 mg/kg</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:40%;background:linear-gradient(90deg,#059669,#10b981);"></div></div>
-            </div>
-            <div class="soil-metric">
-              <div class="soil-metric-header"><span>Moisture</span><span>44%</span></div>
-              <div class="soil-bar"><div class="soil-bar-fill" style="width:44%;background:linear-gradient(90deg,#0891b2,#06b6d4);"></div></div>
-            </div>
-          </div>
-          <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-             <span class="health-badge health-warning">⬤ Needs Care</span>
-             <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">TOMATOES</span>
-          </div>
-        </div>
-=======
-        <!-- Plots populated by JS loadLands() -->
->>>>>>> Terre
-      </div>
+        <!-- Plots populated by JS loadLands() -->      </div>
     </section>
 
     <!-- ════ TEAM ════ -->
@@ -1605,10 +1388,6 @@
         </div>
         <div style="display:flex; gap:1rem;">
           <button class="btn-sm btn-outline" id="salary-hub-btn" onclick="openSalaryModal()">Salary Hub</button>
-<<<<<<< HEAD
-          <button class="btn-sm btn-outline" onclick="openTaskModal()">Assign Job</button>
-=======
->>>>>>> Terre
           <button class="btn-sm btn-filled" id="add-worker-btn" onclick="openWorkerModal()">+ Add Worker</button>
         </div>
       </div>
@@ -1652,8 +1431,6 @@
       </style>
     </section>
 
-<<<<<<< HEAD
-=======
     <!-- ════ SUPERVISOR DASHBOARD ════ -->
     <section id="page-supervisor" class="page-section">
       <div class="page-header">
@@ -1687,8 +1464,6 @@
         <!-- Populated via JS -->
       </div>
     </section>
-
->>>>>>> Terre
     <!-- ════ SETTINGS ════ -->
     <section id="page-settings" class="page-section">
       <div class="page-header">
@@ -1804,8 +1579,6 @@
         .details-row span:last-child { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--text-primary); }
       </style>
     </section>
-<<<<<<< HEAD
-=======
 
 
     <!-- ════ TERRE DETAILS PAGE ════ -->
@@ -1858,8 +1631,6 @@
         </div>
       </div>
     </section>
-
->>>>>>> Terre
   </main>
 <!-- /main-content -->
 
@@ -1938,17 +1709,6 @@
         </div>
       </div>
 
-<<<<<<< HEAD
-      <!-- Tasks Row (Full Width) -->
-      <div style="grid-column: 1 / -1;">
-        <div class="tile-label">Recent Activity</div>
-        <div id="wd-tasks" class="tasks-list" style="margin-top:1rem; max-height:150px; overflow-y:auto; padding-right:0.5rem;">
-          Loading tasks...
-        </div>
-      </div>
-=======
-
->>>>>>> Terre
     </div>
 
     <!-- Action Footer -->
@@ -1979,11 +1739,7 @@
             <option value="field_worker">Field Worker</option>
             <option value="irrigation_worker">Irrigation Worker</option>
             <option value="equipment_operator">Equipment Operator</option>
-<<<<<<< HEAD
-=======
-            <option value="quality_inspector">Quality Inspector</option>
->>>>>>> Terre
-            <option value="supervisor">Supervisor</option>
+            <option value="quality_inspector">Quality Inspector</option>            <option value="supervisor">Supervisor</option>
             <option value="agronomist">Agronomist</option>
           </select>
         </div>
@@ -2027,34 +1783,6 @@
   </div>
 </div>
 
-<<<<<<< HEAD
-<!-- ════ TASK MODAL ════ -->
-<div class="modal-overlay" id="task-modal">
-  <div class="modal-box glass-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-      <h2 style="font-family:'Syne',sans-serif;font-weight:700;">Assign Task</h2>
-      <span style="cursor:pointer;opacity:0.5;" onclick="closeTaskModal()">✕</span>
-    </div>
-    <form onsubmit="submitTask(event)">
-      <div class="form-group" style="margin-bottom:1rem;">
-        <label>Assign To</label>
-        <select id="t-worker" class="settings-select" style="width:100%;background:rgba(0,0,0,0.2);"></select>
-      </div>
-      <div class="form-group" style="margin-bottom:1rem;">
-        <label>Job Description</label>
-        <textarea id="t-desc" placeholder="Details of the job..." required style="width:100%;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem;color:white;"></textarea>
-      </div>
-      <div class="form-grid">
-        <div class="form-group"><label>Date</label><input type="date" id="t-date" value="2024-04-26"></div>
-        <div class="form-group"><label>Land ID</label><input type="number" id="t-land" placeholder="1"></div>
-      </div>
-      <button type="submit" class="btn-sm btn-filled" style="width:100%;margin-top:1.5rem;padding:0.75rem;">Assign Job</button>
-    </form>
-  </div>
-</div>
-=======
-
->>>>>>> Terre
 
 <!-- ─── MOBILE NAV ─── -->
 <nav class="mobile-nav">
@@ -2080,14 +1808,8 @@
 
 <script>
   // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
-<<<<<<< HEAD
-  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
-  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
-  const WORKERS_API_URL = "https://worker-service-hzwi.onrender.com/api";
-  const LANDS_API_URL = `${WORKERS_API_URL}/mock/lands/`;
-=======
   const USE_MOCK = false;
-  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
+  const AUTH_API_URL = "http://127.0.0.1:8001/api/auth";
   const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
   const WORKER_SERVICE_BASE = "https://worker-service-hzwi.onrender.com";
   const WORKERS_API_URL = `${WORKER_SERVICE_BASE}/api`;
@@ -2191,8 +1913,6 @@
 
   // Global alert override
   window.alert = (msg) => showNotification(msg, 'info');
->>>>>>> Terre
-
   function togglePass() {
     const p = document.getElementById('login-pass');
     const t = document.getElementById('pass-toggle');
@@ -2249,59 +1969,6 @@
     }
   }
 
-<<<<<<< HEAD
-  async function loadProfile() {
-      const token = localStorage.getItem('access_token');
-      if (!token) return false;
-      try {
-          const res = await fetch(`${AUTH_API_URL}/profile/`, {
-              headers: {'Authorization': `Bearer ${token}`}
-          });
-          if (!res.ok) throw new Error("Invalid token");
-          const user = await res.json();
-          localStorage.setItem('user', JSON.stringify(user));
-          document.getElementById('ui-name').textContent = user.first_name ? `${user.first_name} ${user.last_name}` : user.username;
-          document.getElementById('ui-role').textContent = user.role.replace('_', ' ').toUpperCase();
-          document.getElementById('ui-avatar').textContent = user.username.substring(0,2).toUpperCase();
-          
-          // RBAC: Toggle Action Buttons
-          const isMgmt = user.role === 'admin' || user.role === 'farm_manager';
-          
-          const cultBtn = document.querySelector('#page-cultures .btn-filled');
-          if (cultBtn) cultBtn.style.display = isMgmt ? 'block' : 'none';
-
-          const addWorkBtn = document.getElementById('add-worker-btn');
-          if (addWorkBtn) addWorkBtn.style.display = isMgmt ? 'block' : 'none';
-
-          const salBtn = document.getElementById('salary-hub-btn');
-          if (salBtn) salBtn.style.display = isMgmt ? 'block' : 'none';
-
-          const isAgro = user.role === 'agronomist';
-          document.body.className = isAgro ? 'role-agronomist' : (user.role === 'admin' ? 'role-admin' : '');
-          
-          if (isAgro) {
-              // Personalized Greeting
-              const dashTitle = document.querySelector('#page-dashboard .page-title');
-              if (dashTitle) dashTitle.textContent = "Good Morning, Agronomist";
-              
-              // Tag stats for CSS hiding (reliable fallback)
-              document.querySelectorAll('.stat-card').forEach(card => {
-                  const label = card.querySelector('.stat-label')?.textContent.toLowerCase();
-                  if (label && (label.includes('task') || label.includes('worker') || label.includes('health'))) {
-                      card.classList.add('hide-agronomist');
-                  }
-              });
-              
-              // Hide Add Equipment Button
-              const addEquipBtn = document.querySelector('#page-equipment .btn-filled');
-              if (addEquipBtn) addEquipBtn.style.display = 'none';
-          }
-
-          loadCultures();
-          loadWorkers();
-          loadTasks();
-          loadTerre();
-=======
   /* ─── AGRONOMIST DASHBOARD LOGIC ─── */
   async function loadAgronomistDashboard() {
     const container = document.getElementById('agro-land-list-container');
@@ -2681,9 +2348,7 @@
 
           loadTerre();
           loadEquipment();
-          if (hasRole('quality_inspector', 'admin', 'farm_manager')) loadQuality();
->>>>>>> Terre
-          return true;
+          if (hasRole('quality_inspector', 'admin', 'farm_manager')) loadQuality();          return true;
       } catch (e) {
           console.error(e);
           handleLogout();
@@ -2691,8 +2356,6 @@
       }
   }
 
-<<<<<<< HEAD
-=======
   function renderUIByRole(user) {
     const isMgmt = hasRole('admin', 'farm_manager');
     const isAgro = hasRole('agronomist');
@@ -3123,8 +2786,6 @@
   }
 
 
-
->>>>>>> Terre
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const lp = document.getElementById('login-page');
@@ -3152,45 +2813,20 @@
   function navigate(page, el, mobile = false) {
     // Update page sections
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-<<<<<<< HEAD
-    document.getElementById('page-' + page).classList.add('active');
-=======
     const targetPage = document.getElementById('page-' + page);
     if (targetPage) targetPage.classList.add('active');
->>>>>>> Terre
-
     if (!mobile) {
       // Desktop sidebar
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-<<<<<<< HEAD
-      el.classList.add('active');
-      // Sync mobile
-      const mItems = document.querySelectorAll('.mob-nav-item');
-      const pages = ['dashboard','cultures','equipment','terre','workers','settings'];
-=======
       if (el) el.classList.add('active');
       // Sync mobile
       const mItems = document.querySelectorAll('.mob-nav-item');
-      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];
->>>>>>> Terre
-      const idx = pages.indexOf(page);
+      const pages = ['dashboard','cultures','equipment','terre','workers','supervisor','settings'];      const idx = pages.indexOf(page);
       mItems.forEach(m => m.classList.remove('active'));
       if (idx > -1) mItems[idx]?.classList.add('active');
     } else {
       // Mobile nav
       document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
-<<<<<<< HEAD
-      el.classList.add('active');
-      // Sync desktop
-      const navItems = document.querySelectorAll('.nav-item');
-      const pages = ['dashboard','cultures','equipment','terre','workers','settings'];
-      const idx = pages.indexOf(page);
-      navItems.forEach(n => n.classList.remove('active'));
-      // desktop nav: home=0, cultures=1, equip=2, terre=3, workers=4, settings=5
-      // but nav items include section labels — select by data or order
-      const clickable = document.querySelectorAll('.nav-item');
-      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,settings:5};
-=======
       if (el) el.classList.add('active');
       // Sync desktop
       const navItems = document.querySelectorAll('.nav-item');
@@ -3199,9 +2835,7 @@
       navItems.forEach(n => n.classList.remove('active'));
       
       const clickable = document.querySelectorAll('.nav-item');
-      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,supervisor:5,settings:6};
->>>>>>> Terre
-      if (map[page] !== undefined) clickable[map[page]]?.classList.add('active');
+      const map = {dashboard:0,cultures:1,equipment:2,terre:3,workers:4,supervisor:5,settings:6};      if (map[page] !== undefined) clickable[map[page]]?.classList.add('active');
     }
 
     // Scroll top
@@ -3404,55 +3038,7 @@
     }
   }
 
-<<<<<<< HEAD
-  async function loadTasks() {
-    const taskList = document.querySelector('.activity-list');
-    if (!taskList) return;
-    try {
-      const res = await fetch(`${WORKERS_API_URL}/tasks/`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
-      });
-      const data = await res.json();
-      const tasks = data.results || data;
-      
-      taskList.innerHTML = tasks.length ? tasks.map(t => `
-        <div class="task-item glass-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem; margin-bottom:0.75rem; border-radius:16px;">
-          <div style="display:flex; align-items:center; gap:1.25rem;">
-            <div style="width:36px; height:36px; border-radius:10px; background:rgba(52,211,153,0.1); display:flex; align-items:center; justify-content:center; color:var(--emerald-glow);">⚡</div>
-            <div>
-              <div style="font-weight:600; font-size:0.9rem;">${t.description}</div>
-              <div style="font-size:0.7rem; color:var(--text-muted);">Worker ID #${t.worker} · ${t.date}</div>
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; gap:1rem;">
-            <span class="task-status-btn ${t.status === 'done' ? 'status-done' : 'status-pending'}" 
-                  onclick="toggleTaskStatus(${t.id}, '${t.status}')" style="padding:0.4rem 0.8rem; border-radius:20px; font-size:0.7rem; font-weight:600; cursor:pointer; border:1px solid transparent;">
-              ${t.status === 'done' ? '✓ Done' : '⌛ Pending'}
-            </span>
-          </div>
-        </div>
-      `).join('') : '<div style="color:var(--text-muted); text-align:center;">No active tasks assigned</div>';
-    } catch (e) { console.error("Task load error", e); }
-  }
 
-  async function toggleTaskStatus(id, currentStatus) {
-    const newStatus = currentStatus === 'done' ? 'pending' : 'done';
-    try {
-      const res = await fetch(`${WORKERS_API_URL}/tasks/${id}/status/`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-      if (res.ok) loadTasks();
-    } catch (e) { alert("Status update failed"); }
-  }
-=======
-
-
->>>>>>> Terre
 
   // MODAL LOGIC
   function openSalaryModal() { 
@@ -3502,26 +3088,9 @@
       document.getElementById('wd-phone').textContent = w.phone;
       document.getElementById('wd-user').textContent = w.first_name.toLowerCase() + '_' + w.id;
 
-<<<<<<< HEAD
-      // Tasks
-      const taskRes = await fetch(`${WORKERS_API_URL}/tasks/?worker=${workerId}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
-      });
-      const tasks = (await taskRes.json()).results || [];
-      tasksEl.innerHTML = tasks.length ? tasks.map(t => `
-        <div style="padding:0.75rem; background:rgba(255,255,255,0.03); border-radius:10px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:0.8rem; font-weight:600;">${t.description}</div>
-          <span class="task-status-btn ${t.status === 'done' ? 'status-done' : 'status-pending'}" style="padding:0.2rem 0.5rem; font-size:0.6rem;">${t.status}</span>
-        </div>
-      `).join('') : '<p style="color:var(--text-muted); font-size:0.8rem;">No tasks assigned.</p>';
-
-      // Salary
-=======
       // Tasks section removed - not needed anymore.
       
       // Salary calculation hub integration
-
->>>>>>> Terre
       const salRes = await fetch(`${WORKERS_API_URL}/salaries/calculate/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
@@ -3598,12 +3167,7 @@
         body: JSON.stringify(data)
       });
       if (res.ok) {
-<<<<<<< HEAD
-        alert("Hours logged successfully!");
-=======
-        showNotification("Hours logged successfully!", "success");
->>>>>>> Terre
-        closeHoursModal();
+        showNotification("Hours logged successfully!", "success");        closeHoursModal();
       }
     } catch (e) { alert("Logging failed"); }
   }
@@ -3611,23 +3175,6 @@
   function openWorkerModal() { document.getElementById('worker-modal').style.display = 'flex'; }
   function closeWorkerModal() { document.getElementById('worker-modal').style.display = 'none'; }
   
-<<<<<<< HEAD
-  async function openTaskModal() { 
-    const select = document.getElementById('t-worker');
-    try {
-      const res = await fetch(`${WORKERS_API_URL}/workers/`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
-      });
-      const data = await res.json();
-      const workers = data.results || data;
-      select.innerHTML = workers.map(w => `<option value="${w.id}">${w.first_name} ${w.last_name}</option>`).join('');
-      document.getElementById('task-modal').style.display = 'flex';
-    } catch (e) { alert("Could not load workers list"); }
-  }
-  function closeTaskModal() { document.getElementById('task-modal').style.display = 'none'; }
-=======
-
->>>>>>> Terre
 
   async function saveWorker(e) {
     e.preventDefault();
@@ -3697,29 +3244,6 @@
     }
   }
 
-<<<<<<< HEAD
-  async function submitTask(e) {
-    e.preventDefault();
-    const data = {
-      worker: parseInt(document.getElementById('t-worker').value),
-      description: document.getElementById('t-desc').value,
-      date: document.getElementById('t-date').value,
-      land_id: parseInt(document.getElementById('t-land').value) || 1
-    };
-    try {
-      const res = await fetch(`${WORKERS_API_URL}/tasks/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('access_token')}` },
-        body: JSON.stringify(data)
-      });
-      if (!res.ok) throw new Error("Task assignment failed");
-      closeTaskModal();
-      loadTasks();
-    } catch (e) { alert(e.message); }
-  }
-=======
-
->>>>>>> Terre
 
   function openSalaryModal() { alert("Salary Calculation Hub: Coming soon with payroll export!"); }
 
@@ -3765,12 +3289,7 @@
     const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
     const canAddEdit = isAdmin || isAgro;
     
-<<<<<<< HEAD
-    if (isAgro && agronomistView) agronomistView.style.display = 'block';
-=======
-    if (isAgro && agronomistView) agronomistView.style.display = 'none'; // Centralized in Dashboard
->>>>>>> Terre
-    if (canAddEdit && adminActions) adminActions.style.display = 'flex';
+    if (isAgro && agronomistView) agronomistView.style.display = 'none'; // Centralized in Dashboard    if (canAddEdit && adminActions) adminActions.style.display = 'flex';
     
     try {
       const res = await fetch(LANDS_API_URL, {
@@ -3801,12 +3320,7 @@
             <td><input type="number" class="terre-input" style="width:70px;" value="42" onchange="updateSoil(${l.id}, 'nitrogen', this.value)"></td>
             <td><input type="number" class="terre-input" style="width:70px;" value="71" onchange="updateSoil(${l.id}, 'moisture', this.value)"></td>
             <td>
-<<<<<<< HEAD
-              <select class="terre-select" onchange="updateSoil(${l.id}, 'crop_planted', this.value)">
-=======
-              <select class="terre-select" onchange="updateSoil('${l.id}', 'crop_planted', this.value)">
->>>>>>> Terre
-                ${cultureOptions.replace(`value="${l.crop_planted}"`, `value="${l.crop_planted}" selected`)}
+              <select class="terre-select" onchange="updateSoil('${l.id}', 'crop_planted', this.value)">                ${cultureOptions.replace(`value="${l.crop_planted}"`, `value="${l.crop_planted}" selected`)}
               </select>
             </td>
             <td><button class="btn-sm btn-outline" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit</button></td>
@@ -3847,11 +3361,7 @@
   function showTerreDetails(l) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isAdmin = user.role === 'admin' || user.role === 'farm_manager';
-<<<<<<< HEAD
-=======
-    const isAgro = user.role === 'agronomist';
->>>>>>> Terre
-    
+    const isAgro = user.role === 'agronomist';    
     document.getElementById('td-title').textContent = l.name;
     document.getElementById('td-id').textContent = `PLOT ${l.id} · ${l.surface} HA`;
     document.getElementById('td-crop').textContent = l.crop_planted || 'Unplanted';
@@ -3868,12 +3378,7 @@
     let btnHtml = '';
     if (isAdmin) {
       btnHtml = `
-<<<<<<< HEAD
-        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot(${l.id})">Delete Plot</button>
-=======
-        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot('${l.id}')">Delete Plot</button>
->>>>>>> Terre
-        <button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>
+        <button class="btn-sm btn-outline" style="color:#fca5a5; border-color:rgba(239,68,68,0.2);" onclick="deletePlot('${l.id}')">Delete Plot</button>        <button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>
       `;
     } else if (isAgro) {
       btnHtml = `<button class="btn-sm btn-filled" onclick="openLandModal(${JSON.stringify(l).replace(/"/g, '&quot;')})">Edit Plot</button>`;
@@ -3882,16 +3387,6 @@
     }
     actions.innerHTML = btnHtml;
 
-<<<<<<< HEAD
-    document.getElementById('terre-det-modal').style.display = 'flex';
-  }
-
-  function closeTerreModal() { document.getElementById('terre-det-modal').style.display = 'none'; }
-
-  /* ─── ADD PLOT LOGIC ─── */
-  function openLandModal() {
-    document.getElementById('land-modal').style.display = 'flex';
-=======
     // Navigate to the new page section
     navigate('terre-details');
     
@@ -4064,9 +3559,7 @@
           if (adminMarker) adminMarker.remove();
           adminMarker = new mapboxgl.Marker().setLngLat([lng, lat]).addTo(adminMap);
           adminMap.flyTo({ center: [lng, lat], zoom: 14 });
-      }
->>>>>>> Terre
-  }
+      }  }
 
   function closeLandModal() {
     document.getElementById('land-modal').style.display = 'none';
@@ -4074,39 +3567,6 @@
 
   function saveLand(e) {
     e.preventDefault();
-<<<<<<< HEAD
-    const name = document.getElementById('l-name').value;
-    const surface = document.getElementById('l-surface').value;
-    const type = document.getElementById('l-type').value;
-    
-    const container = document.getElementById('terre-container');
-    const newId = `Z-${Math.random().toString(36).substring(7).toUpperCase()}`;
-    
-    const newCard = document.createElement('div');
-    newCard.className = 'plot-card glass-card';
-    newCard.onclick = () => showTerreDetails({id: newId, name, surface, soil_type: type});
-    newCard.innerHTML = `
-      <div class="plot-id">PLOT · ${newId} · ${surface} HA</div>
-      <div class="plot-name">${name}</div>
-      <div class="soil-metrics">
-        ${renderSoilBar('pH Level', 7.0, 'linear-gradient(90deg,var(--emerald-base),var(--emerald-glow))')}
-        ${renderSoilBar('Nitrogen', 45, 'linear-gradient(90deg,#059669,#10b981)')}
-        ${renderSoilBar('Moisture', 65, 'linear-gradient(90deg,#0891b2,#06b6d4)')}
-      </div>
-      <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-         <span class="health-badge health-excellent">⬤ New</span>
-         <span style="font-size:0.7rem; opacity:0.5; font-family:'DM Mono';">UNPLANTED</span>
-      </div>
-    `;
-    
-    container.appendChild(newCard);
-    closeLandModal();
-    document.getElementById('land-form').reset();
-    
-    // Update subtitle count
-    const count = container.querySelectorAll('.plot-card').length;
-    document.getElementById('terre-subtitle').textContent = `Analyzing soil health across ${count} active plots`;
-=======
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const isAgro = user.role === 'agronomist';
     
@@ -4421,83 +3881,23 @@
           <span class="health-badge health-${crop.health.toLowerCase()}" style="margin-top:1rem;">⬤ ${crop.health}</span>
         </div>
       `).join('');
-    } catch(err) { console.warn(err); }
->>>>>>> Terre
-  }
+    } catch(err) { console.warn(err); }  }
 
   async function updateSoil(id, field, value) {
     console.log(`Updating land ${id}: ${field} = ${value}`);
   }
 </script>
 
-<<<<<<< HEAD
-    <!-- 🏛️ TERRE DETAILS MODAL -->
-    <div class="modal-overlay" id="terre-det-modal">
-      <div class="modal-content glass-strong" style="max-width:700px; border-radius:32px; overflow:hidden; padding:0;">
-        <div style="height:150px; background:linear-gradient(135deg, #065f46 0%, #064e3b 100%); padding:2rem; position:relative;">
-          <h2 id="td-title" style="margin:0; font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800;">Plot Alpha</h2>
-          <p id="td-id" style="margin:0; font-family:'DM Mono',monospace; opacity:0.6; font-size:0.8rem;">Z-ALPHA · 2.4 HA</p>
-          <button onclick="closeTerreModal()" style="position:absolute; top:1.5rem; right:1.5rem; background:rgba(0,0,0,0.2); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer;">✕</button>
-        </div>
-        <div style="padding:2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
-          <div>
-            <div class="tile-label">Soil Composition</div>
-            <div id="td-soil-stats" style="margin-top:1rem;">
-              <!-- Dynamic Bars -->
-            </div>
-          </div>
-          <div>
-            <div class="tile-label">Current Status</div>
-            <div style="margin-top:1rem; padding:1.5rem; background:rgba(0,0,0,0.2); border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
-              <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.8rem;">Crop:</span> <span id="td-crop" style="font-weight:700;margin-left:0.5rem;">Strawberries</span></div>
-              <div style="margin-bottom:1rem;"><span style="color:var(--text-muted);font-size:0.8rem;">Soil Type:</span> <span id="td-type" style="font-weight:700;margin-left:0.5rem;">Silt Loam</span></div>
-              <div id="td-health-badge"></div>
-            </div>
-          </div>
-        </div>
-        <div id="td-actions" style="padding:1.5rem 2.5rem; background:rgba(255,255,255,0.02); border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:flex-end; gap:1rem;">
-          <!-- Action buttons for Admin -->
-        </div>
-      </div>
-    </div>
-
-    <!-- 🏗️ ADD LAND MODAL -->
-    <div class="modal-overlay" id="land-modal">
-      <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-          <h2 style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
-=======
 
 
     <!-- 🏗️ ADD/EDIT LAND MODAL -->
     <div class="modal-overlay" id="land-modal">
       <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
-          <h2 id="land-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>
->>>>>>> Terre
-          <button onclick="closeLandModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+          <h2 id="land-modal-title" style="margin:0; font-family:'Syne',sans-serif; font-size:1.8rem;">Add Plot</h2>          <button onclick="closeLandModal()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
         </div>
         
         <form id="land-form" onsubmit="saveLand(event)">
-<<<<<<< HEAD
-          <div style="margin-bottom:1.5rem;">
-            <label class="tile-label">Plot Name</label>
-            <input type="text" id="l-name" class="terre-input" placeholder="e.g. North Sector" required style="margin-top:0.5rem;">
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-            <div>
-              <label class="tile-label">Surface (HA)</label>
-              <input type="number" step="0.1" id="l-surface" class="terre-input" placeholder="2.4" required style="margin-top:0.5rem;">
-            </div>
-            <div>
-              <label class="tile-label">Soil Type</label>
-              <select id="l-type" class="terre-select" style="margin-top:0.5rem;">
-                <option value="Silt Loam">Silt Loam</option>
-                <option value="Clay">Clay</option>
-                <option value="Sandy">Sandy</option>
-                <option value="Peaty">Peaty</option>
-              </select>
-=======
           <!-- Admin Fields -->
           <div id="land-admin-fields">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
@@ -4559,26 +3959,16 @@
               <div>
                 <label class="tile-label">Moisture</label>
                 <input type="number" id="l-m" class="terre-input" placeholder="71" style="margin-top:0.5rem; width:100%">
-              </div>
->>>>>>> Terre
-            </div>
+              </div>            </div>
           </div>
           
           <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
             <button type="button" class="btn-sm btn-outline" onclick="closeLandModal()">Cancel</button>
-<<<<<<< HEAD
-            <button type="submit" class="btn-sm btn-filled">Save Plot</button>
-=======
-            <button type="submit" class="btn-sm btn-filled" id="land-submit-btn">Save Plot</button>
->>>>>>> Terre
-          </div>
+            <button type="submit" class="btn-sm btn-filled" id="land-submit-btn">Save Plot</button>          </div>
         </form>
       </div>
     </div>
 
-<<<<<<< HEAD
-</body>
-=======
     <!-- 🏗️ EQUIPMENT MODAL -->
     <div class="modal-overlay" id="equip-modal">
       <div class="modal-content glass-strong" style="max-width:500px; border-radius:32px; padding:2.5rem;">
@@ -4658,6 +4048,4 @@
 
   <div id="notif-container" class="notif-container"></div>
 </body>
-
->>>>>>> Terre
 </html>
