@@ -1827,15 +1827,16 @@
 </nav>
 
 <script>
-  // DEPLOYMENT NOTE: Replace the localhost URL with your Vercel URL (e.g., https://your-app.vercel.app/api/auth)
+  // Deployed microservice URLs (browser calls Render/Vercel directly).
   const USE_MOCK = false;
-  const AUTH_API_URL = "/api/auth";
-  const CULTURES_API_URL = "/api/cultures";
-  const WORKER_SERVICE_BASE = "/api/worker";
+  const AUTH_API_URL = "https://auth-service-rho-two.vercel.app/api/auth";
+  const WORKER_ORIGIN = "https://worker-service-hzwi.onrender.com";
+  const WORKER_SERVICE_BASE = `${WORKER_ORIGIN}/api`;
   const WORKERS_API_URL = `${WORKER_SERVICE_BASE}`;
-  const LANDS_API_URL = "/api/terre/api/parcelles/";
-  const EQUIPMENT_API_URL = "/api/equipment/api/equipements/";
-  const EQUIPMENT_MOCK_URL = `${WORKER_SERVICE_BASE}/mock/equipments/`;
+  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
+  const LANDS_API_URL = "https://agritechterre.onrender.com/api/parcelles/";
+  const EQUIPMENT_API_URL = "https://equipment-service-v67j.onrender.com/api/equipements/";
+  const EQUIPMENT_MOCK_URL = `${WORKER_ORIGIN}/mock/equipments/`;
 
   // TODO: move to .env before deployment
   const MAPBOX_TOKEN = "{{ MAPBOX_TOKEN }}";
@@ -1946,6 +1947,13 @@
     }
   }
 
+  async function parseApiResponse(res, fallbackMessage) {
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) return res.json();
+    await res.text();
+    throw new Error(`${fallbackMessage}. Endpoint returned HTML/text instead of JSON.`);
+  }
+
   async function handleLogin() {
     const user = document.getElementById('login-user').value.trim();
     const pass = document.getElementById('login-pass').value.trim();
@@ -1961,7 +1969,7 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: user, password: pass})
         });
-        const data = await res.json();
+        const data = await parseApiResponse(res, "Login failed");
         
         if (!res.ok) {
             throw new Error(data.detail || "Invalid credentials");

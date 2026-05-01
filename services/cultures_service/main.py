@@ -48,10 +48,18 @@ else:
 
 app = FastAPI(title="AgriTech Cultures Service")
 
+_origins_raw = os.getenv("ALLOWED_ORIGINS", "*").strip()
+_origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
+# Browsers reject allow_credentials=True together with Access-Control-Allow-Origin: *.
+_cors_credentials = True
+if not _origins or _origins == ["*"]:
+    _origins = ["*"]
+    _cors_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("ALLOWED_ORIGINS", "*").split(","),
-    allow_credentials=True,
+    allow_origins=_origins,
+    allow_credentials=_cors_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
