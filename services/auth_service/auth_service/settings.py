@@ -79,13 +79,13 @@ WSGI_APPLICATION = 'auth_service.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
+import os, dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL", "postgresql://neondb_owner:npg_BqFDGwCl1u0j@ep-little-cell-am1bgvc1-pooler.c-5.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"),
         conn_max_age=600,
-        ssl_require=True if os.getenv('DATABASE_URL') else False
+        ssl_require=True
     )
 }
 

@@ -3,7 +3,8 @@
 import os
 import sys
 
-
+# Add parent directory to path so 'frontend.urls' can be resolved
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
