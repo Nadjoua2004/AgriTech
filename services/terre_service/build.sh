@@ -2,6 +2,10 @@
 # exit on error
 set -o errexit
 
+# Clear cache
+find . -path "*/__pycache__/*" -delete
+find . -name "*.pyc" -delete
+
 pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
