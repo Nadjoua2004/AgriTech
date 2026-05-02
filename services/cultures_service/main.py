@@ -57,6 +57,13 @@ else:
 app = FastAPI(title="AgriTech Cultures Service", redirect_slashes=False)
 
 # --- MIDDLEWARE ---
+@app.middleware("http")
+async def log_requests(request, call_next):
+    print(f"📥 Incoming Request: {request.method} {request.url}")
+    response = await call_next(request)
+    print(f"📤 Response Status: {response.status_code}")
+    return response
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -89,6 +96,10 @@ class Culture(BaseModel):
 
 class GrowthUpdate(BaseModel):
     growth: int
+
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "AgriTech Cultures Service is running", "database": USE_FIREBASE}
 
 # --- AUTH HELPERS ---
 def get_user_data(authorization: str = Header(None)):
