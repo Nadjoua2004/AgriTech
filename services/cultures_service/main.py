@@ -18,99 +18,59 @@ FIREBASE_KEY_PATH = os.getenv("FIREBASE_CREDENTIALS_JSON", "firebase-key.json")
 FIREBASE_CONFIG = os.getenv("FIREBASE_CONFIG") # Entire JSON as string
 
 # --- FIREBASE INIT ---
-import signal
-import sys
+USE_FIREBASE = False
+db = None
+mock_db = [
+    {
+        "id": "1",
+        "name": "Tomatoes",
+        "variety": "Cherry",
+        "growth": 75,
+        "days_left": 15,
+        "yield_est": "2.5 kg",
+        "health": "Good",
+        "emoji": "🍅",
+        "zone": 1
+    },
+    {
+        "id": "2", 
+        "name": "Lettuce",
+        "variety": "Romaine",
+        "growth": 45,
+        "days_left": 20,
+        "yield_est": "1.8 kg",
+        "health": "Excellent",
+        "emoji": "🥬",
+        "zone": 2
+    }
+]
 
-def timeout_handler(signum, frame):
-    raise TimeoutError("Firebase initialization timed out")
+# Only try Firebase if explicitly enabled
+ENABLE_FIREBASE = os.getenv("ENABLE_FIREBASE", "false").lower() == "true"
 
-try:
-    if FIREBASE_CONFIG:
-        # For Cloud Deployment (Koyeb/Railway)
-        print("🔧 Attempting Firebase initialization from FIREBASE_CONFIG...")
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(10)  # 10 second timeout
-        
-        config_dict = json.loads(FIREBASE_CONFIG)
-        cred = credentials.Certificate(config_dict)
-        firebase_admin.initialize_app(cred)
-        db = firestore.client()
-        USE_FIREBASE = True
-        
-        signal.alarm(0)  # Cancel timeout
-        print("✅ Firebase initialized successfully from FIREBASE_CONFIG")
-        
-    elif os.path.exists(FIREBASE_KEY_PATH):
-        # For Local Development
-        print("🔧 Attempting Firebase initialization from file...")
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(10)  # 10 second timeout
-        
-        cred = credentials.Certificate(FIREBASE_KEY_PATH)
-        firebase_admin.initialize_app(cred)
-        db = firestore.client()
-        USE_FIREBASE = True
-        
-        signal.alarm(0)  # Cancel timeout
-        print("✅ Firebase initialized successfully from file")
-        
-    else:
-        print(f"WARNING: No Firebase config found. Running in Mock Mode.")
-        USE_FIREBASE = False
-        mock_db = [
-            {
-                "id": "1",
-                "name": "Tomatoes",
-                "variety": "Cherry",
-                "growth": 75,
-                "days_left": 15,
-                "yield_est": "2.5 kg",
-                "health": "Good",
-                "emoji": "🍅",
-                "zone": 1
-            },
-            {
-                "id": "2", 
-                "name": "Lettuce",
-                "variety": "Romaine",
-                "growth": 45,
-                "days_left": 20,
-                "yield_est": "1.8 kg",
-                "health": "Excellent",
-                "emoji": "🥬",
-                "zone": 2
-            }
-        ]
-        
-except (json.JSONDecodeError, Exception, TimeoutError) as e:
-    print(f"❌ Firebase Init Error: {e}")
-    print("⚠️ Falling back to Mock Mode - Service will continue without Firebase")
-    USE_FIREBASE = False
-    mock_db = [
-        {
-            "id": "1",
-            "name": "Tomatoes",
-            "variety": "Cherry",
-            "growth": 75,
-            "days_left": 15,
-            "yield_est": "2.5 kg",
-            "health": "Good",
-            "emoji": "🍅",
-            "zone": 1
-        },
-        {
-            "id": "2", 
-            "name": "Lettuce",
-            "variety": "Romaine",
-            "growth": 45,
-            "days_left": 20,
-            "yield_est": "1.8 kg",
-            "health": "Excellent",
-            "emoji": "🥬",
-            "zone": 2
-        }
-    ]
-    signal.alarm(0)  # Ensure timeout is cancelled
+if ENABLE_FIREBASE:
+    print("🔧 Firebase explicitly enabled - attempting initialization...")
+    try:
+        if FIREBASE_CONFIG:
+            config_dict = json.loads(FIREBASE_CONFIG)
+            cred = credentials.Certificate(config_dict)
+            firebase_admin.initialize_app(cred)
+            db = firestore.client()
+            USE_FIREBASE = True
+            print("✅ Firebase initialized successfully from FIREBASE_CONFIG")
+        elif os.path.exists(FIREBASE_KEY_PATH):
+            cred = credentials.Certificate(FIREBASE_KEY_PATH)
+            firebase_admin.initialize_app(cred)
+            db = firestore.client()
+            USE_FIREBASE = True
+            print("✅ Firebase initialized successfully from file")
+        else:
+            print("⚠️ Firebase enabled but no credentials found")
+    except Exception as e:
+        print(f"❌ Firebase Init Error: {e}")
+        print("⚠️ Continuing in Mock Mode")
+else:
+    print("⚠️ Firebase disabled - Running in Mock Mode (set ENABLE_FIREBASE=true to enable)")
 
 if USE_FIREBASE:
     print("✅ Database Connected: Firebase Firestore is active.")
