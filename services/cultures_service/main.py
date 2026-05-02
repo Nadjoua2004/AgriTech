@@ -216,6 +216,13 @@ async def health_check():
 @app.get("/api/cultures/public")
 async def get_cultures_public():
     """Public endpoint for testing without authentication"""
+    if USE_FIREBASE:
+        try:
+            docs = db.collection("cultures").stream()
+            return [ {**doc.to_dict(), "id": doc.id} for doc in docs ]
+        except Exception as e:
+            print(f"Error fetching from Firebase: {e}")
+            return []
     return mock_db
 
 @app.get("/api/debug/auth")
