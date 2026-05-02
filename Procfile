@@ -1,1 +1,1 @@
-web: gunicorn agri_equipment_service.wsgi --pythonpath services/equipment_service
+web: cd services/equipment_service && gunicorn agri_equipment_service.wsgi:application --bind 0.0.0.0:10000
