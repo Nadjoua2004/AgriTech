@@ -66,18 +66,13 @@ async def startup_event():
         if hasattr(route, 'path') and hasattr(route, 'methods'):
             print(f"   {route.methods} {route.path}")
 
-_origins_raw = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").strip()
-_origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
-# Browsers reject allow_credentials=True together with Access-Control-Allow-Origin: *.
-_cors_credentials = True
-if not _origins or _origins == ["*"]:
-    _origins = ["*"]
-    _cors_credentials = False
+
+app = FastAPI(title="AgriTech Cultures Service")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_origins,
-    allow_credentials=_cors_credentials,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
