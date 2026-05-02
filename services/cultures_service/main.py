@@ -1,7 +1,7 @@
 import os
 import jwt
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Header, Depends, status
+from fastapi import FastAPI, HTTPException, Header, Depends, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import firebase_admin
@@ -59,8 +59,23 @@ app = FastAPI(title="AgriTech Cultures Service", redirect_slashes=False)
 # --- MIDDLEWARE ---
 @app.middleware("http")
 async def log_requests(request, call_next):
+    # Handle OPTIONS preflight manually
+    if request.method == "OPTIONS":
+        response = Response()
+        response.status_code = 204
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        return response
+
     print(f"📥 Incoming Request: {request.method} {request.url}")
     response = await call_next(request)
+    
+    # Brute force CORS headers onto every response
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    
     print(f"📤 Response Status: {response.status_code}")
     return response
 
