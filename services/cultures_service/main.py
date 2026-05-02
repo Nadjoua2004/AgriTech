@@ -56,6 +56,15 @@ else:
 
 app = FastAPI(title="AgriTech Cultures Service")
 
+# --- MIDDLEWARE ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 async def startup_event():
     print("🚀 Culture Service Starting Up...")
@@ -65,17 +74,6 @@ async def startup_event():
     for route in app.routes:
         if hasattr(route, 'path') and hasattr(route, 'methods'):
             print(f"   {route.methods} {route.path}")
-
-
-app = FastAPI(title="AgriTech Cultures Service")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # --- MODELS ---
 class Culture(BaseModel):
