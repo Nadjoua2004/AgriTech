@@ -3,7 +3,7 @@ services:
     name: agritech-api
     env: python
     plan: free
-    buildCommand: pip install -r services/equipment_service/requirements.txt && cd services/equipment_service && python manage.py migrate
+    buildCommand: Commandpip install -r services/equipment_service/requirements.txt && cd services/equipment_service && python manage.py migrate
     startCommand: cd services/equipment_service && gunicorn agri_equipment_service.wsgi:application --bind 0.0.0.0:10000
     envVars:
       - key: DJANGO_SETTINGS_MODULE
