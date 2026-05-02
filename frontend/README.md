@@ -4,7 +4,6 @@ This is the flat-structured Django frontend for the AgriTech platform.
 
 ## Project Structure
 
-The project has been flattened to a single-level structure for simplicity:
 
 - **`manage.py`**: Entry point for administrative tasks.
 - **`settings.py`**: Project settings.
