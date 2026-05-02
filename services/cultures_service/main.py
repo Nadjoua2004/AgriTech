@@ -45,11 +45,11 @@ mock_db = [
     }
 ]
 
-# Only try Firebase if explicitly enabled
-ENABLE_FIREBASE = os.getenv("ENABLE_FIREBASE", "false").lower() == "true"
+# Enable Firebase if credentials are available
+ENABLE_FIREBASE = os.getenv("ENABLE_FIREBASE", "true").lower() == "true"
 
-if ENABLE_FIREBASE:
-    print("🔧 Firebase explicitly enabled - attempting initialization...")
+if ENABLE_FIREBASE and (FIREBASE_CONFIG or os.path.exists(FIREBASE_KEY_PATH)):
+    print("🔧 Firebase credentials found - attempting initialization...")
     try:
         if FIREBASE_CONFIG:
             config_dict = json.loads(FIREBASE_CONFIG)
@@ -64,13 +64,13 @@ if ENABLE_FIREBASE:
             db = firestore.client()
             USE_FIREBASE = True
             print("✅ Firebase initialized successfully from file")
-        else:
-            print("⚠️ Firebase enabled but no credentials found")
     except Exception as e:
         print(f"❌ Firebase Init Error: {e}")
         print("⚠️ Continuing in Mock Mode")
+elif not (FIREBASE_CONFIG or os.path.exists(FIREBASE_KEY_PATH)):
+    print("⚠️ No Firebase credentials found - Running in Mock Mode")
 else:
-    print("⚠️ Firebase disabled - Running in Mock Mode (set ENABLE_FIREBASE=true to enable)")
+    print("⚠️ Firebase disabled by environment - Running in Mock Mode")
 
 if USE_FIREBASE:
     print("✅ Database Connected: Firebase Firestore is active.")
