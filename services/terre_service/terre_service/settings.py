@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-43^uas$$-wmpnd4-t%+wa)k_!+nm6e0=c1l9fj^*8ldh#dolu@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'services.terre_service.terre_service.urls'
+ROOT_URLCONF = 'terre_service.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
