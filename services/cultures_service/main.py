@@ -18,28 +18,99 @@ FIREBASE_KEY_PATH = os.getenv("FIREBASE_CREDENTIALS_JSON", "firebase-key.json")
 FIREBASE_CONFIG = os.getenv("FIREBASE_CONFIG") # Entire JSON as string
 
 # --- FIREBASE INIT ---
+import signal
+import sys
+
+def timeout_handler(signum, frame):
+    raise TimeoutError("Firebase initialization timed out")
+
 try:
     if FIREBASE_CONFIG:
         # For Cloud Deployment (Koyeb/Railway)
+        print("🔧 Attempting Firebase initialization from FIREBASE_CONFIG...")
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(10)  # 10 second timeout
+        
         config_dict = json.loads(FIREBASE_CONFIG)
         cred = credentials.Certificate(config_dict)
         firebase_admin.initialize_app(cred)
         db = firestore.client()
         USE_FIREBASE = True
+        
+        signal.alarm(0)  # Cancel timeout
+        print("✅ Firebase initialized successfully from FIREBASE_CONFIG")
+        
     elif os.path.exists(FIREBASE_KEY_PATH):
         # For Local Development
+        print("🔧 Attempting Firebase initialization from file...")
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(10)  # 10 second timeout
+        
         cred = credentials.Certificate(FIREBASE_KEY_PATH)
         firebase_admin.initialize_app(cred)
         db = firestore.client()
         USE_FIREBASE = True
+        
+        signal.alarm(0)  # Cancel timeout
+        print("✅ Firebase initialized successfully from file")
+        
     else:
         print(f"WARNING: No Firebase config found. Running in Mock Mode.")
         USE_FIREBASE = False
-        mock_db = [] 
-except Exception as e:
+        mock_db = [
+            {
+                "id": "1",
+                "name": "Tomatoes",
+                "variety": "Cherry",
+                "growth": 75,
+                "days_left": 15,
+                "yield_est": "2.5 kg",
+                "health": "Good",
+                "emoji": "🍅",
+                "zone": 1
+            },
+            {
+                "id": "2", 
+                "name": "Lettuce",
+                "variety": "Romaine",
+                "growth": 45,
+                "days_left": 20,
+                "yield_est": "1.8 kg",
+                "health": "Excellent",
+                "emoji": "🥬",
+                "zone": 2
+            }
+        ]
+        
+except (json.JSONDecodeError, Exception, TimeoutError) as e:
     print(f"❌ Firebase Init Error: {e}")
+    print("⚠️ Falling back to Mock Mode - Service will continue without Firebase")
     USE_FIREBASE = False
-    mock_db = []
+    mock_db = [
+        {
+            "id": "1",
+            "name": "Tomatoes",
+            "variety": "Cherry",
+            "growth": 75,
+            "days_left": 15,
+            "yield_est": "2.5 kg",
+            "health": "Good",
+            "emoji": "🍅",
+            "zone": 1
+        },
+        {
+            "id": "2", 
+            "name": "Lettuce",
+            "variety": "Romaine",
+            "growth": 45,
+            "days_left": 20,
+            "yield_est": "1.8 kg",
+            "health": "Excellent",
+            "emoji": "🥬",
+            "zone": 2
+        }
+    ]
+    signal.alarm(0)  # Ensure timeout is cancelled
 
 if USE_FIREBASE:
     print("✅ Database Connected: Firebase Firestore is active.")
@@ -164,6 +235,15 @@ async def delete_culture(culture_id: str, user_data=Depends(require_roles(["admi
     global mock_db
     mock_db = [c for c in mock_db if c["id"] != culture_id]
     return {"status": "deleted"}
+
+@app.get("/api/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "service": "cultures-service",
+        "firebase_connected": USE_FIREBASE,
+        "version": "1.0.0"
+    }
 
 @app.get("/api/debug/auth")
 async def debug_auth(user_data=Depends(get_user_data)):
