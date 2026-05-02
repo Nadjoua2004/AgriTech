@@ -3353,11 +3353,47 @@
         cultureOptions += cultures.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
       } catch (e) { console.warn("Could not fetch cultures"); }
       
-      if (!lands || lands.length === 0) return; // Keep fallbacks if no data
+      // Use fallback data if API returns empty or fails
+      let finalLands = lands;
+      if (!lands || lands.length === 0) {
+        console.log("Using fallback terre data");
+        finalLands = [
+          {
+            id: 1,
+            name: "Z-YFG81",
+            surface: 15.50,
+            soil_type: "argileux",
+            ph: 6.5,
+            nitrogen: 45,
+            moisture: 68,
+            crop_planted: "ble"
+          },
+          {
+            id: 2,
+            name: "A-ABC12", 
+            surface: 22.75,
+            soil_type: "limoneux",
+            ph: 7.2,
+            nitrogen: 38,
+            moisture: 72,
+            crop_planted: "mais"
+          },
+          {
+            id: 3,
+            name: "B-XYZ99",
+            surface: 18.25,
+            soil_type: "sableux", 
+            ph: 6.8,
+            nitrogen: 42,
+            moisture: 71,
+            crop_planted: "tomate"
+          }
+        ];
+      }
 
       // 📋 Populate Agronomist Table
       if (isAgro && tableBody) {
-        tableBody.innerHTML = lands.map(l => `
+        tableBody.innerHTML = finalLands.map(l => `
           <tr>
             <td><span style="font-family:'DM Mono',monospace;">${l.name}</span></td>
             <td>${l.surface} HA</td>
@@ -3376,7 +3412,7 @@
       }
 
       // 🗺️ Update Cards with Live Data
-      container.innerHTML = lands.map(l => `
+      container.innerHTML = finalLands.map(l => `
         <div class="plot-card glass-card" onclick="showTerreDetails(${JSON.stringify(l).replace(/"/g, '&quot;')})">
           <div class="plot-id">PLOT · ${l.id} · ${l.surface} HA</div>
           <div class="plot-name">${l.name}</div>
