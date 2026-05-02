@@ -119,6 +119,16 @@ else:
 
 app = FastAPI(title="AgriTech Cultures Service")
 
+@app.on_event("startup")
+async def startup_event():
+    print("🚀 Culture Service Starting Up...")
+    print(f"📊 Firebase Connected: {USE_FIREBASE}")
+    print(f"📝 Mock Data Items: {len(mock_db) if not USE_FIREBASE else 'N/A'}")
+    print("✅ All endpoints registered:")
+    for route in app.routes:
+        if hasattr(route, 'path') and hasattr(route, 'methods'):
+            print(f"   {route.methods} {route.path}")
+
 _origins_raw = os.getenv("ALLOWED_ORIGINS", "*").strip()
 _origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
 # Browsers reject allow_credentials=True together with Access-Control-Allow-Origin: *.
@@ -244,6 +254,11 @@ async def health_check():
         "firebase_connected": USE_FIREBASE,
         "version": "1.0.0"
     }
+
+@app.get("/api/cultures/public")
+async def get_cultures_public():
+    """Public endpoint for testing without authentication"""
+    return mock_db
 
 @app.get("/api/debug/auth")
 async def debug_auth(user_data=Depends(get_user_data)):
