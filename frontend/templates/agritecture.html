@@ -1836,7 +1836,7 @@
   const WORKER_ORIGIN = "https://worker-service-hzwi.onrender.com";
   const WORKER_SERVICE_BASE = `${WORKER_ORIGIN}/api`;
   const WORKERS_API_URL = `${WORKER_SERVICE_BASE}`;
-  const CULTURES_API_URL = "https://cultures-service.onrender.com/api/cultures";
+  const CULTURES_API_URL = "https://culture-sayh.onrender.com/api/cultures";
   const LANDS_API_URL = "https://agritechterre.onrender.com/api/parcelles/";
   const EQUIPMENT_API_URL = "https://agritech-1-fbgz.onrender.com/api/equipements/";
   const EQUIPMENT_MOCK_URL = `${WORKER_ORIGIN}/mock/equipments/`;
@@ -2101,7 +2101,7 @@
     };
     
     // Optimistic UI: Show notification early
-    showNotification("Synchronizing with Railway...", "info");
+    showNotification("Saving changes...", "info");
     
     try {
         const res = await fetch(`${LANDS_API_URL}${id}/`, {
@@ -2123,7 +2123,7 @@
                 storedLands[idx] = updated;
                 localStorage.setItem('saved_lands', JSON.stringify(storedLands));
             }
-            showNotification("Data synchronized with Railway database", "success");
+            showNotification("Data saved successfully", "success");
         } else {
             const errorData = await res.json().catch(() => ({}));
             console.error("Server synchronization failed:", errorData);
@@ -2131,7 +2131,7 @@
         }
     } catch (e) {
         console.error("Connection error:", e);
-        showNotification("Railway unreachable. Data saved in browser memory.", "info");
+        showNotification("Server unreachable. Data saved locally.", "info");
         
         // Fallback to local storage if server is truly down
         const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
@@ -2318,9 +2318,12 @@
     showNotification("Syncing quality metrics...", "info");
 
     // 1. Save Locally First (Optimistic / Fallback)
-    const localCultures = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
-    localCultures[id] = { ...data, last_sync: new Date().toISOString() };
-    localStorage.setItem('saved_cultures_cache', JSON.stringify(localCultures));
+    const localLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+    const landIndex = localLands.findIndex(l => l.id == id);
+    if (landIndex >= 0) {
+        localLands[landIndex] = { ...localLands[landIndex], ...data, last_sync: new Date().toISOString() };
+        localStorage.setItem('saved_lands', JSON.stringify(localLands));
+    }
 
     // 2. Attempt Server Sync
     const tryMethods = ['PATCH', 'PUT'];
@@ -2328,7 +2331,7 @@
 
     for (const method of tryMethods) {
         try {
-            const res = await fetch(`${CULTURES_API_URL}/${id}/`, {
+            const res = await fetch(`${LANDS_API_URL}${id}/`, {
                 method,
                 headers: { 
                     'Content-Type': 'application/json',
@@ -3664,7 +3667,7 @@
     }).then(async res => {
         if (res.ok) {
             const serverLand = await res.json();
-            showNotification(`Plot "${serverLand.nom}" registered in Railway database`, "success");
+            showNotification(`Plot "${serverLand.nom}" saved successfully`, "success");
             
             // Re-sync local storage with server ID
             const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
