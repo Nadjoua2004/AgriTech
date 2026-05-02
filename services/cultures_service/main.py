@@ -172,6 +172,21 @@ async def update_culture(culture_id: str, culture: Culture, user_data=Depends(re
             return mock_db[i]
     raise HTTPException(status_code=404, detail="Culture not found")
 
+@app.patch("/api/cultures/{culture_id}")
+async def patch_culture(culture_id: str, data: dict, user_data=Depends(require_roles(["admin", "farm_manager", "quality_inspector"]))):
+    if USE_FIREBASE:
+        doc_ref = db.collection("cultures").document(culture_id)
+        if not doc_ref.get().exists:
+            raise HTTPException(status_code=404, detail="Culture not found")
+        doc_ref.update(data)
+        return {"id": culture_id, **data}
+    
+    for i, c in enumerate(mock_db):
+        if c["id"] == culture_id:
+            mock_db[i].update(data)
+            return mock_db[i]
+    raise HTTPException(status_code=404, detail="Culture not found")
+
 @app.patch("/api/cultures/{culture_id}/growth")
 async def update_growth(culture_id: str, update: GrowthUpdate, user_data=Depends(require_roles(["admin", "farm_manager", "quality_inspector"]))):
     if USE_FIREBASE:

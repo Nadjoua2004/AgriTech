@@ -2328,7 +2328,7 @@
 
     for (const method of tryMethods) {
         try {
-            const res = await fetch(`${CULTURES_API_URL}/${id}/`, {
+            const res = await fetch(`${CULTURES_API_URL}/${id}`, {
                 method,
                 headers: { 
                     'Content-Type': 'application/json',
