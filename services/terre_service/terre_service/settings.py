@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'services.terre_service.terre_service.urls'
+ROOT_URLCONF = 'terre_service.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
