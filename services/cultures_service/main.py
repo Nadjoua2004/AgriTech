@@ -101,13 +101,13 @@ async def startup_event():
 class Culture(BaseModel):
     id: Optional[str] = None
     name: str
-    variety: str
-    growth: int
-    days_left: int
-    yield_est: str
-    health: str
-    emoji: str
-    zone: int
+    variety: Optional[str] = "Unknown"
+    growth: Optional[int] = 0
+    days_left: Optional[int] = 0
+    yield_est: Optional[str] = "N/A"
+    health: Optional[str] = "Good"
+    emoji: Optional[str] = "🌱"
+    zone: Optional[int] = 1
 
 class GrowthUpdate(BaseModel):
     growth: int
