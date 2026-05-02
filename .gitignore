@@ -57,3 +57,10 @@ htmlcov/
 # Node (if any)
 node_modules/
 npm-debug.log
+
+db.sqlite3
+*.sqlite3
+__pycache__/
+*.pyc
+.env
+venv/
