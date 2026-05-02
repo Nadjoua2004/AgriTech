@@ -1,16 +1,5 @@
-# Root requirements.txt for Vercel Monorepo
-Django>=5.1
-django-cors-headers
+django
 djangorestframework
-djangorestframework-simplejwt
+django-cors-headers
 gunicorn
-dj-database-url
-psycopg2-binary
 whitenoise
-python-dotenv
-requests
-pika
-fastapi
-uvicorn
-firebase-admin
-PyJWT

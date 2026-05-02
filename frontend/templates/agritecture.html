@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AgriTech — Agritecture Platform</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cabinet+Grotesk:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
@@ -1838,7 +1838,7 @@
   const WORKERS_API_URL = `${WORKER_SERVICE_BASE}`;
   const CULTURES_API_URL = "https://culture-sayh.onrender.com/api/cultures";
   const LANDS_API_URL = "https://agritechterre.onrender.com/api/parcelles/";
-  const EQUIPMENT_API_URL = "https://agritech-1-fbgz.onrender.com/api/equipements/";
+  const EQUIPMENT_API_URL = "https://agritech-y7gj.onrender.com/api/equipements/";
   const EQUIPMENT_MOCK_URL = `${WORKER_ORIGIN}/mock/equipments/`;
 
   // TODO: move to .env before deployment
@@ -2101,10 +2101,10 @@
     };
     
     // Optimistic UI: Show notification early
-    showNotification("Saving changes...", "info");
+    showNotification("Synchronizing with Railway...", "info");
     
     try {
-        const res = await fetch(`${LANDS_API_URL}${id}/`, {
+        const res = await fetch(`${LANDS_API_URL}${id}`, {
             method: 'PATCH',
             headers: { 
                 'Content-Type': 'application/json',
@@ -2123,7 +2123,7 @@
                 storedLands[idx] = updated;
                 localStorage.setItem('saved_lands', JSON.stringify(storedLands));
             }
-            showNotification("Data saved successfully", "success");
+            showNotification("Data synchronized with Railway database", "success");
         } else {
             const errorData = await res.json().catch(() => ({}));
             console.error("Server synchronization failed:", errorData);
@@ -2131,7 +2131,7 @@
         }
     } catch (e) {
         console.error("Connection error:", e);
-        showNotification("Server unreachable. Data saved locally.", "info");
+        showNotification("Railway unreachable. Data saved in browser memory.", "info");
         
         // Fallback to local storage if server is truly down
         const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
@@ -2142,31 +2142,7 @@
             localStorage.setItem('saved_lands', JSON.stringify(storedLands));
         }
     }
-    
-    // Start real-time polling for collaborative updates
-    setInterval(async () => {
-        try {
-            const res = await fetch(LANDS_API_URL, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
-            });
-            if (res.ok) {
-                const latestLands = await res.json();
-                
-                // Check if data has changed and update UI
-                const currentLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
-                if (JSON.stringify(latestLands) !== JSON.stringify(currentLands)) {
-                    localStorage.setItem('saved_lands', JSON.stringify(latestLands));
-                    loadTerre(); // Refresh UI with new data
-                    showNotification("Data updated in real-time", "info");
-                }
-            }
-        } catch (e) {
-            console.log("Real-time polling:", e);
-        }
-    }, 5000); // Poll every 5 seconds
-    }
-
-  
+  }
 
   /* ─── FIELD WORKER LIVE TIMER LOGIC ─── */
   let fwTimerInterval = null;
@@ -2342,12 +2318,9 @@
     showNotification("Syncing quality metrics...", "info");
 
     // 1. Save Locally First (Optimistic / Fallback)
-    const localLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
-    const landIndex = localLands.findIndex(l => l.id == id);
-    if (landIndex >= 0) {
-        localLands[landIndex] = { ...localLands[landIndex], ...data, last_sync: new Date().toISOString() };
-        localStorage.setItem('saved_lands', JSON.stringify(localLands));
-    }
+    const localCultures = JSON.parse(localStorage.getItem('saved_cultures_cache') || '{}');
+    localCultures[id] = { ...data, last_sync: new Date().toISOString() };
+    localStorage.setItem('saved_cultures_cache', JSON.stringify(localCultures));
 
     // 2. Attempt Server Sync
     const tryMethods = ['PATCH', 'PUT'];
@@ -2355,7 +2328,7 @@
 
     for (const method of tryMethods) {
         try {
-            const res = await fetch(`${LANDS_API_URL}${id}/`, {
+            const res = await fetch(`${CULTURES_API_URL}/${id}`, {
                 method,
                 headers: { 
                     'Content-Type': 'application/json',
@@ -2773,11 +2746,42 @@
         document.getElementById(`timer-${workerId}`).textContent = 'Offline';
         
         renderHistory();
+        
+        // --- NEW: Sync with Backend ---
+        syncWorkHours(workerId, durationSeconds);
     }
 
     localStorage.setItem('active_sessions', JSON.stringify(activeSessions));
     localStorage.setItem('work_history', JSON.stringify(workHistory));
-    updateStats();
+  }
+
+  async function syncWorkHours(workerId, seconds) {
+    const hours = (seconds / 3600).toFixed(2);
+    const date = new Date().toISOString().split('T')[0];
+    
+    try {
+        const res = await fetch(`${WORKER_SERVICE_BASE}/hours/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify({
+                worker: workerId,
+                date: date,
+                hours_worked: hours,
+                overtime: 0,
+                notes: "Session completed via supervisor dashboard"
+            })
+        });
+        if (res.ok) {
+            console.log("Work hours synced to backend ✓");
+        } else {
+            console.error("Failed to sync work hours to backend");
+        }
+    } catch (e) {
+        console.error("Error syncing work hours:", e);
+    }
   }
 
   function startSupervisorTimers() {
@@ -3377,47 +3381,11 @@
         cultureOptions += cultures.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
       } catch (e) { console.warn("Could not fetch cultures"); }
       
-      // Use fallback data if API returns empty or fails
-      let finalLands = lands;
-      if (!lands || lands.length === 0) {
-        console.log("Using fallback terre data");
-        finalLands = [
-          {
-            id: 1,
-            name: "Z-YFG81",
-            surface: 15.50,
-            soil_type: "argileux",
-            ph: 6.5,
-            nitrogen: 45,
-            moisture: 68,
-            crop_planted: "ble"
-          },
-          {
-            id: 2,
-            name: "A-ABC12", 
-            surface: 22.75,
-            soil_type: "limoneux",
-            ph: 7.2,
-            nitrogen: 38,
-            moisture: 72,
-            crop_planted: "mais"
-          },
-          {
-            id: 3,
-            name: "B-XYZ99",
-            surface: 18.25,
-            soil_type: "sableux", 
-            ph: 6.8,
-            nitrogen: 42,
-            moisture: 71,
-            crop_planted: "tomate"
-          }
-        ];
-      }
+      if (!lands || lands.length === 0) return; // Keep fallbacks if no data
 
       // 📋 Populate Agronomist Table
       if (isAgro && tableBody) {
-        tableBody.innerHTML = finalLands.map(l => `
+        tableBody.innerHTML = lands.map(l => `
           <tr>
             <td><span style="font-family:'DM Mono',monospace;">${l.name}</span></td>
             <td>${l.surface} HA</td>
@@ -3436,7 +3404,7 @@
       }
 
       // 🗺️ Update Cards with Live Data
-      container.innerHTML = finalLands.map(l => `
+      container.innerHTML = lands.map(l => `
         <div class="plot-card glass-card" onclick="showTerreDetails(${JSON.stringify(l).replace(/"/g, '&quot;')})">
           <div class="plot-id">PLOT · ${l.id} · ${l.surface} HA</div>
           <div class="plot-name">${l.name}</div>
@@ -3727,7 +3695,7 @@
     }).then(async res => {
         if (res.ok) {
             const serverLand = await res.json();
-            showNotification(`Plot "${serverLand.nom}" saved successfully`, "success");
+            showNotification(`Plot "${serverLand.nom}" registered in Railway database`, "success");
             
             // Re-sync local storage with server ID
             const storedLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
