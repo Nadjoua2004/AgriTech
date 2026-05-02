@@ -21,6 +21,7 @@ class Parcelle(models.Model):
         ('autre', 'Autre'),
     ]
 
+    id = models.CharField(max_length=50, primary_key=True)
     nom = models.CharField(max_length=100, unique=True)
     surface = models.DecimalField(max_digits=10, decimal_places=2)
     type_sol = models.CharField(max_length=30, choices=TYPE_SOL_CHOICES)

@@ -1837,7 +1837,7 @@
   const WORKER_SERVICE_BASE = `${WORKER_ORIGIN}/api`;
   const WORKERS_API_URL = `${WORKER_SERVICE_BASE}`;
   const CULTURES_API_URL = "https://culture-sayh.onrender.com/api/cultures";
-  const LANDS_API_URL = "https://agritechterre.onrender.com/api/parcelles/";
+  const LANDS_API_URL = "https://terre.onrender.com/api/parcelles/";
   const EQUIPMENT_API_URL = "https://agritech-y7gj.onrender.com/api/equipements/";
   const EQUIPMENT_MOCK_URL = `${WORKER_ORIGIN}/mock/equipments/`;
 
@@ -2104,7 +2104,7 @@
     showNotification("Synchronizing with Railway...", "info");
     
     try {
-        const res = await fetch(`${LANDS_API_URL}${id}`, {
+        const res = await fetch(`${LANDS_API_URL}${id}/`, {
             method: 'PATCH',
             headers: { 
                 'Content-Type': 'application/json',
