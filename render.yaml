@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: agritech-api
+    env: python
+    plan: free
+    buildCommand: >
+      pip install -r requirements.txt &&
+      cd services/equipment_service &&
+      python manage.py migrate
+    startCommand: >
+      cd services/equipment_service &&
+      gunicorn agri_equipment_service.wsgi --bind 0.0.0.0:10000
