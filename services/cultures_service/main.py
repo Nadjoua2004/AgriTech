@@ -54,7 +54,7 @@ if USE_FIREBASE:
 else:
     print("⚠️ Database Warning: Running in Mock Mode (No Firebase).")
 
-app = FastAPI(title="AgriTech Cultures Service")
+app = FastAPI(title="AgriTech Cultures Service", redirect_slashes=False)
 
 # --- MIDDLEWARE ---
 app.add_middleware(
