@@ -2142,6 +2142,30 @@
             localStorage.setItem('saved_lands', JSON.stringify(storedLands));
         }
     }
+    
+    // Start real-time polling for collaborative updates
+    setInterval(async () => {
+        try {
+            const res = await fetch(LANDS_API_URL, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+            });
+            if (res.ok) {
+                const latestLands = await res.json();
+                
+                // Check if data has changed and update UI
+                const currentLands = JSON.parse(localStorage.getItem('saved_lands') || '[]');
+                if (JSON.stringify(latestLands) !== JSON.stringify(currentLands)) {
+                    localStorage.setItem('saved_lands', JSON.stringify(latestLands));
+                    loadTerre(); // Refresh UI with new data
+                    showNotification("Data updated in real-time", "info");
+                }
+            }
+        } catch (e) {
+            console.log("Real-time polling:", e);
+        }
+    }, 5000); // Poll every 5 seconds
+    }
+}
   }
 
   /* ─── FIELD WORKER LIVE TIMER LOGIC ─── */
